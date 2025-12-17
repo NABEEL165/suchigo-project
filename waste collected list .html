@@ -1,0 +1,474 @@
+
+{% extends 'waste_collector_dashboard.html' %}
+
+{% block title %}Suchigo{% endblock %}
+
+{% block content %}
+    <title>SuchiGo - Your Waste Collection Records</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f8f2 0%, #e0f4f1 100%);
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #27ae60 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+        }
+
+        .brand-text {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .welcome-text {
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #27ae60 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(41, 128, 185, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
+        }
+
+        .content-area {
+            padding: 20px;
+        }
+
+        /* Desktop Table */
+        .desktop-table {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: linear-gradient(135deg, #27ae60 0%, #2980b9 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        td img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Mobile Cards */
+        .mobile-cards {
+            display: none;
+        }
+
+        .record-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border-left: 4px solid #27ae60;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #27ae60 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f2f6;
+        }
+
+        .card-row:last-child {
+            border-bottom: none;
+        }
+
+        .card-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .card-value {
+            color: #34495e;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .card-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .card-actions {
+            padding: 15px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 15px;
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .no-records-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .logo-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .brand-text {
+                font-size: 24px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .welcome-text {
+                font-size: 16px;
+            }
+
+            .desktop-table {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
+            }
+
+            .content-area {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px;
+            }
+
+            .brand-text {
+                font-size: 20px;
+            }
+
+            .content-area {
+                padding: 10px;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
+        /* Animation for smooth transitions */
+        .record-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .record-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+    </style>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+
+            </div>
+            <h1 style="margin-top: 20px; font-size: 24px; font-weight: 600; text-align: center;">Your Waste Collection Records</h1>
+        </div>
+
+        <div class="top-bar">
+<!--            <div class="welcome-text">Welcome, {{ request.user.username }}</div>-->
+<!--            <a class="btn" href="{% url 'waste_collector:waste_collect_create' %}">-->
+<!--                ➕ Add New Collection-->
+<!--            </a>-->
+        </div>
+
+        <div class="content-area">
+            {% if collections %}
+
+            <!-- Desktop Table View -->
+            <div class="desktop-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Local Body</th>
+                            <th>Ward</th>
+                            <th>Location</th>
+                            <th>Building No</th>
+                            <th>Street Name</th>
+                            <th>KG</th>
+                            <th>Total (₹)</th>
+                            <th>Photo</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in collections %}
+                        <tr>
+                            <td>{{ item.customer.username }}</td>
+                            <td>{{ item.localbody }}</td>
+                            <td>{{ item.ward }}</td>
+                            <td>{{ item.location }}</td>
+                            <td>{{ item.building_no }}</td>
+                            <td>{{ item.street_name }}</td>
+                            <td>{{ item.kg }}</td>
+                            <td>{{ item.total_amount }}</td>
+                            <td>
+                                {% if item.photo %}
+                                    <img src="{{ item.photo.url }}" alt="Photo">
+                                {% else %}
+                                    No Image
+                                {% endif %}
+                            </td>
+                            <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <a class="btn btn-small" href="{% url 'waste_collector:waste_collect_update' item.pk %}">Edit</a>
+                                <a class="btn btn-small" href="{% url 'waste_collector:waste_collect_delete' item.pk %}">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="mobile-cards">
+                {% for item in collections %}
+                <div class="record-card">
+                    <div class="card-header">
+                        Collection #{{ forloop.counter }}
+                    </div>
+                    <div class="card-body">
+                        <div class="card-row">
+                            <span class="card-label">Customer:</span>
+                            <span class="card-value">{{ item.customer.username }}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Local Body:</span>
+                            <span class="card-value">{{ item.localbody }}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Ward:</span>
+                            <span class="card-value">{{ item.ward }}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Location:</span>
+                            <span class="card-value">{{ item.location }}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Building No:</span>
+                            <span class="card-value">{{ item.building_no }}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Street Name:</span>
+                            <span class="card-value">{{ item.street_name }}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Weight (KG):</span>
+                            <span class="card-value">{{ item.kg }}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Total Amount:</span>
+                            <span class="card-value">₹{{ item.total_amount }}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Photo:</span>
+                            <span class="card-value">
+                                {% if item.photo %}
+                                    <img src="{{ item.photo.url }}" alt="Photo" class="card-image">
+                                {% else %}
+                                    No Image
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Created At:</span>
+                            <span class="card-value">{{ item.created_at|date:"Y-m-d H:i" }}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn btn-small" href="{% url 'waste_collector:waste_collect_update' item.pk %}">✏️ Edit</a>
+                        <a class="btn btn-small" href="{% url 'waste_collector:waste_collect_delete' item.pk %}">🗑️ Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% else %}
+                <div class="no-records">
+                    <div class="no-records-icon">📋</div>
+                    <h3>No records found</h3>
+                    <p>Start by adding your first waste collection record!</p>
+                </div>
+            {% endif %}
+
+            <div class="back-button">
+<!--                <a href="{% url 'waste_collector:waste_collector_dashboard' %}" class="btn btn-secondary">-->
+<!--                    ◀️ Back to Dashboard-->
+<!--                </a>-->
+            </div>
+        </div>
+    </div>
+</body>
+
+
+{% endblock %}
