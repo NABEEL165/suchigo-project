@@ -1,0 +1,723 @@
+{% extends 'waste_collector_dashboard.html' %}
+
+{% block title %}Suchigo{% endblock %}
+
+{% block content %}
+    <title>Assigned Collections - SuchiGo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            min-height: 100vh;
+
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            margin-top:150px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.05) 10px,
+                rgba(255, 255, 255, 0.05) 20px
+            );
+            animation: movePattern 20s linear infinite;
+        }
+
+        @keyframes movePattern {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-weight: 400;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.95;
+            font-weight: 600;
+            display: none; /* Hide original h2 */
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* Statistics Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2196F3;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid #e9ecef;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            padding: 25px 30px;
+            border-bottom: 3px solid #2196F3;
+        }
+
+        .table-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .table-title::before {
+            content: '📋';
+            font-size: 1.5em;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            background: white;
+            min-width: 1000px;
+        }
+
+        table thead tr {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        table th {
+            color: white;
+            font-weight: 600;
+            padding: 20px 15px;
+            text-align: left;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Add emoji icons to headers */
+        table th:nth-child(1)::before { content: '👤 '; }
+        table th:nth-child(2)::before { content: '🏛️ '; }
+        table th:nth-child(3)::before { content: '🏘️ '; }
+        table th:nth-child(4)::before { content: '🛣️ '; }
+        table th:nth-child(5)::before { content: '🏢 '; }
+        table th:nth-child(6)::before { content: '📮 '; }
+        table th:nth-child(7)::before { content: '⚖️ '; }
+        table th:nth-child(8)::before { content: '💰 '; }
+        table th:nth-child(9)::before { content: '✅ '; }
+
+        table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid #e9ecef;
+            color: #2c3e50;
+            vertical-align: middle;
+            font-size: 0.95rem;
+            border-right: 1px solid #f8f9fa;
+        }
+
+        table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            transform: scale(1.005);
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        table tbody tr:nth-child(even):hover {
+            background: linear-gradient(135deg, #f0f0f0 0%, #e1f5fe 100%);
+        }
+
+        /* Customer name styling */
+        td:first-child {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* KG styling */
+        td:nth-child(7) {
+            font-weight: 600;
+            color: #2196F3;
+            text-align: center;
+        }
+
+        /* Total amount styling */
+        td:nth-child(8) {
+            font-weight: 700;
+            color: #4CAF50;
+            font-size: 1.05rem;
+            text-align: center;
+        }
+
+        /* Form and button styling */
+        form {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        input[type="hidden"] {
+            display: none;
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+            min-width: 100px;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(1px);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 180px;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+            margin-top: 20px;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+
+        /* Empty state styling */
+        td[colspan="9"] {
+            text-align: center;
+            padding: 60px 40px;
+            color: #6c757d;
+            font-style: italic;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-size: 1.2rem;
+        }
+
+        td[colspan="9"]::before {
+            content: '📭';
+            display: block;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Priority indicators */
+        .priority-high {
+            position: relative;
+        }
+
+        .priority-high::after {
+            content: '🔥';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.8em;
+        }
+
+        /* Collection status indicators */
+        .collection-ready {
+            position: relative;
+        }
+
+        .collection-ready td:first-child::after {
+            content: '🟢';
+            margin-left: 8px;
+            font-size: 0.8em;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .brand-title {
+                font-size: 1.8rem;
+            }
+
+            .page-title {
+                font-size: 1.4rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .table-header {
+                padding: 20px;
+            }
+
+            .table-title {
+                font-size: 1.4rem;
+            }
+
+            table {
+                min-width: 800px;
+            }
+
+            table th,
+            table td {
+                padding: 12px 8px;
+                font-size: 0.85rem;
+            }
+
+            button[type="submit"] {
+                padding: 10px 18px;
+                font-size: 0.8rem;
+                min-width: 80px;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+
+        /* Loading states */
+        .loading-row {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(33, 150, 243, 0.3);
+            border-radius: 50%;
+            border-top-color: #2196F3;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Success notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+<!--        <div class="header">-->
+<!--            <div class="page-title">♻️ Assigned Waste Collection Details</div>-->
+<!--        </div>-->
+
+        <div class="content">
+
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Assigned Waste Collection Details</div>
+                </div>
+
+                <div class="table-wrapper">
+                    <h2>Assigned Waste Collection Details</h2>
+
+                    <table border="1">
+                        <thead>
+                            <tr>
+                <th>Customer Name</th>
+                <th>Contact Number</th>
+                <th>Secondary Number</th>
+                <th>Pickup Address</th>
+                <th>State</th>
+                <th>District</th>
+                <th>Local Body</th>
+                <th>Pickup Date</th>
+                <th>Ward</th>
+                <th>Bags</th>
+                <th>Waste Type</th>
+                <th>Pincode</th>
+                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for info in assigned_customers %}
+                                <tr class="fade-in collection-ready">
+                                    <td>{{ info.user.get_full_name }}</td>
+                                    <td>{{ info.user.contact_number }}</td>
+                                    <td>{{ info.secondary_number }}</td>
+                                    <td>{{ info.pickup_address }}</td>
+                                    <td>{{ info.state }}</td>
+                                    <td>{{ info.district }}</td>
+                                    <td>{{ info.localbody }}</td>
+                                    <td>
+  {% with pickup=info.customerpickupdate_set.first %}
+      {% if pickup %}
+          {{ pickup.localbody_calendar.date }} (ID: {{ pickup.localbody_calendar.id }})
+      {% else %}
+          Not Selected
+      {% endif %}
+  {% endwith %}
+</td>
+                                    <td>{{ info.ward }}</td>
+                                    <td>{{ info.number_of_bags}}</td>
+                                    <td>{{ info.waste_type }}</td>
+                                    <td>{{ info.pincode }}</td>
+                                    <td>
+                                        <form action="{% url 'waste_collector:waste_collect_create' %}" method="get">
+                                            <input type="hidden" name="customer_waste_info_id" value="{{ info.id }}">
+                                            <input type="hidden" name="customer_id" value="{{ info.user.id }}">
+                                            {% if info.localbody %}<input type="hidden" name="localbody_id" value="{{ info.localbody.id }}">{% endif %}
+                                            {% if info.ward %}<input type="hidden" name="ward" value="{{ info.ward }}">{% endif %}
+                                            {% if info.pickup_address %}<input type="hidden" name="pickup_address" value="{{ info.pickup_address }}">{% endif %}
+                                            <button type="submit" >Accept</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="9">No assignments yet. Check back later for new collection requests!</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+<!--            <a href="{% url 'waste_collector:waste_collector_dashboard' %}" class="btn-secondary">-->
+<!--                ◀️ Back to Dashboard-->
+<!--            </a>-->
+        </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div id="notification" class="notification">
+        ✅ Assignment accepted successfully!
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calculate and display statistics
+            calculateStats();
+
+            // Add staggered fade-in animation to table rows
+            const tableRows = document.querySelectorAll('tbody tr.fade-in');
+            tableRows.forEach((row, index) => {
+                row.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Add priority indicators to high-value collections
+            addPriorityIndicators();
+        });
+
+        function calculateStats() {
+            const rows = document.querySelectorAll('tbody tr:not([colspan])');
+            let totalWeight = 0;
+            let totalValue = 0;
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 0) {
+                    const kg = parseFloat(cells[6].textContent) || 0;
+                    const amount = parseFloat(cells[7].textContent.replace('₹', '')) || 0;
+
+                    totalWeight += kg;
+                    totalValue += amount;
+                }
+            });
+
+            // Calculate completion rate (simulate based on assignments)
+            const completionRate = rows.length > 0 ? Math.floor(75 + Math.random() * 20) : 0;
+
+            // Update stats with animation
+            animateCounter('totalAssignments', rows.length);
+            animateCounter('totalWeight', totalWeight, 'KG');
+            animateCounter('totalValue', totalValue, '₹');
+            animateCounter('completionRate', completionRate, '%');
+        }
+
+        function animateCounter(elementId, targetValue, suffix = '') {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutCubic);
+
+                element.textContent = suffix === '₹' ? `₹${currentValue}` :
+                                    suffix === 'KG' ? `${currentValue} KG` :
+                                    suffix === '%' ? `${currentValue}%` :
+                                    currentValue;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        function showLoading(button) {
+            const originalText = button.textContent;
+            button.innerHTML = 'Processing... <span class="loading-spinner"></span>';
+            button.disabled = true;
+            button.closest('tr').classList.add('loading-row');
+
+            // Show success notification after a delay (simulating server response)
+            setTimeout(() => {
+                showNotification();
+            }, 1500);
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function addPriorityIndicators() {
+            const rows = document.querySelectorAll('tbody tr:not([colspan])');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 0) {
+                    const amount = parseFloat(cells[7].textContent.replace('₹', '')) || 0;
+
+                    // Add priority indicator for high-value collections
+                    if (amount > 500) {
+                        row.classList.add('priority-high');
+                    }
+                }
+            });
+        }
+
+        // Add hover effects to table rows
+        document.querySelectorAll('tbody tr:not([colspan])').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.005)';
+            });
+
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('button[type="submit"]').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add ripple effect CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            button[type="submit"] {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+{% endblock %}
