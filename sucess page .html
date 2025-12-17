@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuchiGo - Success</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Grid Background */
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grid-line {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .grid-line-horizontal {
+            width: 100%;
+            height: 1px;
+            animation: gridSlideH 8s linear infinite;
+        }
+
+        .grid-line-vertical {
+            height: 100%;
+            width: 1px;
+            animation: gridSlideV 6s linear infinite;
+        }
+
+        /* Header with Light Shade Animation */
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            animation: lightSweep 4s ease-in-out infinite;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.08),
+                transparent
+            );
+            animation: lightSweepReverse 6s ease-in-out infinite reverse;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Success Card */
+        .success-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            width: 100%;
+            animation: slideUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50 0%, #2196F3 100%);
+        }
+
+        /* Check Animation */
+        .check-container {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .check-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            animation: bounceIn 0.6s ease-out 0.2s both;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+
+        .check-mark {
+            color: white;
+            font-size: 36px;
+            animation: checkPop 0.4s ease-out 0.8s both;
+        }
+
+        /* Success Text */
+        .success-title {
+            color: #2c5530;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .success-message {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            animation: fadeInUp 0.6s ease-out 0.6s both;
+        }
+
+        /* Action Button */
+        .action-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out 0.8s both;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.4);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes checkPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Grid Animation Keyframes */
+        @keyframes gridSlideH {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100vw);
+            }
+        }
+
+        @keyframes gridSlideV {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+
+        /* Light Shade Animation Keyframes */
+        @keyframes lightSweep {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes lightSweepReverse {
+            0% {
+                right: -100%;
+            }
+            30% {
+                right: -100%;
+            }
+            70% {
+                right: 100%;
+            }
+            100% {
+                right: 100%;
+            }
+        }
+
+        /* Mobile-specific animations */
+        @keyframes lightSweepMobile {
+            0% {
+                left: -100%;
+            }
+            60% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes lightSweepReverseMobile {
+            0% {
+                right: -100%;
+            }
+            40% {
+                right: -100%;
+            }
+            80% {
+                right: 100%;
+            }
+            100% {
+                right: 100%;
+            }
+        }
+
+        @keyframes gridSlideMobileH {
+            0% {
+                transform: translateX(-100%);
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateX(100vw);
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes gridSlideMobileV {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .header::before {
+                animation: lightSweepMobile 3s ease-in-out infinite;
+            }
+
+            .header::after {
+                animation: lightSweepReverseMobile 4s ease-in-out infinite reverse;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+                border-radius: 18px;
+            }
+
+            .container {
+                padding: 20px 16px;
+            }
+
+            .success-card {
+                padding: 45px 28px;
+                margin: 0 16px;
+                border-radius: 20px;
+            }
+
+            .check-circle {
+                width: 75px;
+                height: 75px;
+                margin-bottom: 25px;
+            }
+
+            .check-mark {
+                font-size: 34px;
+            }
+
+            .success-title {
+                font-size: 28px;
+                margin-bottom: 14px;
+                line-height: 1.2;
+            }
+
+            .success-message {
+                font-size: 16px;
+                margin-bottom: 32px;
+                line-height: 1.5;
+            }
+
+            .action-btn {
+                padding: 14px 28px;
+                font-size: 15px;
+                border-radius: 40px;
+            }
+
+            .grid-background {
+                opacity: 0.06;
+            }
+
+            .grid-line-horizontal {
+                animation: gridSlideMobileH 6s linear infinite;
+            }
+
+            .grid-line-vertical {
+                animation: gridSlideMobileV 5s linear infinite;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 14px 16px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .logout-btn {
+                padding: 5px 10px;
+                font-size: 12px;
+                border-radius: 16px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .success-card {
+                padding: 40px 24px;
+                margin: 0 12px;
+                border-radius: 18px;
+            }
+
+            .check-circle {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 20px;
+            }
+
+            .check-mark {
+                font-size: 32px;
+            }
+
+            .success-title {
+                font-size: 26px;
+                margin-bottom: 12px;
+            }
+
+            .success-message {
+                font-size: 15px;
+                margin-bottom: 28px;
+            }
+
+            .action-btn {
+                padding: 12px 24px;
+                font-size: 14px;
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .grid-background {
+                opacity: 0.04;
+            }
+
+            .grid-line:nth-child(even) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .header {
+                padding: 12px 14px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .logout-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            .container {
+                padding: 14px 10px;
+            }
+
+            .success-card {
+                padding: 35px 20px;
+                margin: 0 10px;
+            }
+
+            .check-circle {
+                width: 65px;
+                height: 65px;
+            }
+
+            .check-mark {
+                font-size: 30px;
+            }
+
+            .success-title {
+                font-size: 24px;
+            }
+
+            .success-message {
+                font-size: 14px;
+            }
+
+            .action-btn {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .header {
+                padding: 24px 40px;
+            }
+
+            .logo {
+                font-size: 26px;
+            }
+
+            .logout-btn {
+                padding: 10px 18px;
+                font-size: 15px;
+            }
+
+            .container {
+                padding: 60px 40px;
+            }
+
+            .success-card {
+                padding: 65px 45px;
+                max-width: 500px;
+            }
+
+            .check-circle {
+                width: 85px;
+                height: 85px;
+            }
+
+            .check-mark {
+                font-size: 38px;
+            }
+
+            .success-title {
+                font-size: 34px;
+            }
+
+            .success-message {
+                font-size: 18px;
+            }
+
+            .action-btn {
+                padding: 16px 34px;
+                font-size: 16px;
+            }
+        }
+
+        /* Touch-friendly interactions */
+        @media (hover: none) and (pointer: coarse) {
+            .action-btn:hover {
+                transform: none;
+                box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3);
+            }
+
+            .logout-btn:hover {
+                transform: none;
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .logout-btn {
+                min-height: 44px;
+                min-width: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .action-btn {
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .action-btn:active {
+                transform: scale(0.98);
+                background: linear-gradient(135deg, #45a049 0%, #1976D2 100%);
+            }
+
+            .logout-btn:active {
+                transform: scale(0.95);
+                background: rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .success-card {
+                padding: 30px 35px;
+                max-width: 450px;
+            }
+
+            .check-circle {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 20px;
+            }
+
+            .check-mark {
+                font-size: 28px;
+            }
+
+            .success-title {
+                font-size: 24px;
+                margin-bottom: 12px;
+            }
+
+            .success-message {
+                font-size: 15px;
+                margin-bottom: 25px;
+            }
+
+            .action-btn {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+            .success-card {
+                backdrop-filter: blur(25px);
+            }
+
+            .header {
+                backdrop-filter: blur(20px);
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .success-card {
+                background: rgba(255, 255, 255, 0.12);
+                backdrop-filter: blur(25px);
+            }
+
+            .success-title {
+                color: #e8f5e8;
+            }
+
+            .success-message {
+                color: #b0b0b0;
+            }
+        }
+
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .header::before,
+            .header::after {
+                animation: none;
+            }
+
+            .grid-line {
+                animation: none;
+            }
+
+            .success-card {
+                animation: fadeIn 0.5s ease-out;
+            }
+
+            .check-circle {
+                animation: fadeIn 0.6s ease-out 0.2s both;
+            }
+
+            .check-mark,
+            .success-title,
+            .success-message,
+            .action-btn {
+                animation: fadeIn 0.4s ease-out 0.4s both;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Grid Background -->
+    <div class="grid-background">
+        <div class="grid-line grid-line-horizontal" style="top: 10%;"></div>
+        <div class="grid-line grid-line-horizontal" style="top: 30%;"></div>
+        <div class="grid-line grid-line-horizontal" style="top: 50%;"></div>
+        <div class="grid-line grid-line-horizontal" style="top: 70%;"></div>
+        <div class="grid-line grid-line-horizontal" style="top: 90%;"></div>
+
+        <div class="grid-line grid-line-vertical" style="left: 15%;"></div>
+        <div class="grid-line grid-line-vertical" style="left: 35%;"></div>
+        <div class="grid-line grid-line-vertical" style="left: 55%;"></div>
+        <div class="grid-line grid-line-vertical" style="left: 75%;"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">SuchiGo</div>
+        <button class="logout-btn">🔓 Logout</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="success-card">
+            <div class="check-container">
+                <div class="check-circle">
+                    <div class="check-mark">✓</div>
+                </div>
+            </div>
+
+            <h2 class="success-title">Successfully Registered!</h2>
+            <p class="success-message">Your waste information has been submitted successfully. You're all set for better waste collection service.</p>
+
+            <form action="{% url 'customer:waste_profile_detail' info.id %}" method="get">
+    <button type="submit" class="action-btn">View My Waste Info</button>
+</form>
+
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click effect to button
+            const btn = document.querySelector('.action-btn');
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255,255,255,0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                    `;
+
+                    this.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+
+                    // Navigate back to create waste info page
+                    setTimeout(() => {
+                        window.location.href = "{% url 'customer:waste_profile_create' %}";
+                    }, 300);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
