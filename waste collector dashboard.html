@@ -1,0 +1,1192 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuchiGo - Waste Collector Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8f8f2 0%, #e0f4f1 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: linear-gradient(135deg, #2e8b57 0%, #1c6d42 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 0.8rem 1rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+        }
+
+        .logo-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            padding: 2px;
+        }
+
+        .logo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: -2px;
+        }
+
+        .brand-tagline {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .navbar-search {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            color: white;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-input:focus {
+            background: rgba(255,255,255,0.25);
+            border-color: #4ade80;
+            box-shadow: 0 0 0 0.2rem rgba(74, 222, 128, 0.25);
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.7);
+        }
+
+        .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-icon-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-icon-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #4ade80;
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #4ade80;
+        }
+
+        .dropdown-menu {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 0.5rem;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.8rem 1.2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, #e8f8f2 0%, #e0f4f1 100%);
+            color: #2e8b57;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fffe 100%);
+            width: 280px;
+            height: calc(100vh - 70px);
+            position: fixed;
+            top: 70px;
+            left: 0;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            z-index: 1025;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #2e8b57 0%, #22d3ee 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20px;
+            width: 100px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50px;
+            transform: rotate(45deg);
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-section-title {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: linear-gradient(135deg, #e8f8f2 0%, #e0f4f1 100%);
+            color: #2e8b57;
+            border-left-color: #4ade80;
+            transform: translateX(5px);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .menu-badge {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        .logout-item {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white !important;
+            margin: 1rem;
+            border-radius: 8px;
+            border-left: none !important;
+            text-align: center;
+            font-weight: 600;
+            position: absolute;
+            bottom: 0;
+            width:86%;
+        }
+
+        .logout-item:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .navbar-nav .dropdown-menu {
+            position: absolute;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 0;
+            margin-top: 70px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - 70px);
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 280px;
+        }
+
+        .sidebar-toggle {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #4ade80;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1));
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .welcome-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Statistics Cards */
+        .stats-section {
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1));
+            border-radius: 0 0 0 50px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-card.total { border-left-color: #4ade80; }
+        .stat-card.today { border-left-color: #22d3ee; }
+        .stat-card.weight { border-left-color: #2e8b57; }
+        .stat-card.revenue { border-left-color: #10b981; }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2e8b57;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2e8b57;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .action-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2e8b57;
+        }
+
+        .action-description {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .table-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #2e8b57 0%, #0891b2 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-success {
+            border-color: #4ade80;
+            color: #4ade80;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-success:hover {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            border-color: #4ade80;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1020;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            py: 5;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .empty-state::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+        }
+
+        .empty-icon {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .navbar-search {
+                display: none;
+            }
+
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+
+            .brand-name {
+                font-size: 1.4rem;
+            }
+
+            .brand-tagline {
+                font-size: 0.6rem;
+            }
+
+            .welcome-title {
+                font-size: 1.8rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+
+            .welcome-section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-nav {
+                gap: 0.5rem;
+            }
+
+            .nav-icon-btn {
+                width: 35px;
+                height: 35px;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+
+            .action-card {
+                margin-bottom: 1rem;
+            }
+
+            .logo-container {
+                width: 35px;
+                height: 35px;
+            }
+
+            .welcome-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .welcome-subtitle {
+                font-size: 0.9rem;
+                text-align: center;
+            }
+
+            .welcome-section {
+                padding: 1rem;
+                text-align: center;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .stat-icon {
+                font-size: 2rem;
+            }
+
+            .action-icon {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .brand-text {
+                display: none;
+            }
+
+            .welcome-title {
+                font-size: 1.3rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .main-content {
+                padding: 0.5rem;
+            }
+
+            .welcome-section {
+                margin-bottom: 1rem;
+            }
+
+            .stats-section {
+                margin-bottom: 1rem;
+            }
+
+            .quick-actions {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#">
+                    <div class="logo-container">
+                        <img src="{% static 'images/logo.png.jpg' %}" alt="SuchiGo Logo" class="logo-image">
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">SuchiGo</span>
+                        <span class="brand-tagline">Schedule. Collect. Sustain</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="navbar-search d-none d-lg-block">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search collections, customers..." id="globalSearch">
+                </div>
+            </div>
+
+            <!-- Right side nav items -->
+            <div class="navbar-nav">
+                <!-- Notifications -->
+                <div class="nav-item">
+                    <div class="nav-icon-btn" onclick="toggleNotifications()" data-bs-toggle="tooltip" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
+
+                <!-- Profile Dropdown -->
+                <div class="nav-item profile-dropdown">
+                    <div class="dropdown">
+                        <div class="profile-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user-circle"></i>
+                                    My Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cog"></i>
+                                    Settings
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-question-circle"></i>
+                                    Help & Support
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'authentication:logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">
+                <i class="fas fa-tachometer-alt"></i> Dashboard Menu
+            </h5>
+        </div>
+
+        <div class="sidebar-menu">
+            <!-- Main Navigation -->
+            <div class="menu-section">
+                <div class="menu-section-title">Main</div>
+                <a href="{% url 'waste_collector:waste_collector_dashboard' %}" class="menu-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-plus-circle"></i>-->
+<!--                    <span>Add Collection</span>-->
+<!--                </a>-->
+                <a href="{% url 'waste_collector:waste_collect_list' %}" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span>View Records</span>
+                </a>
+                <a href="{% url 'waste_collector:assigned_customers' %}" class="menu-item">
+                    <i class="fas fa-tasks"></i>
+                    <span>Assigned Waste</span>
+                    <span class="menu-badge">5</span>
+                </a>
+            </div>
+
+            <!-- Management -->
+            <div class="menu-section">
+<!--                <div class="menu-section-title">Management</div>-->
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-users"></i>-->
+<!--                    <span>Customers</span>-->
+<!--                </a>-->
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-route"></i>-->
+<!--                    <span>Routes</span>-->
+<!--                </a>-->
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-calendar-alt"></i>-->
+<!--                    <span>Schedule</span>-->
+<!--                </a>-->
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-map-marked-alt"></i>-->
+<!--                    <span>Area Management</span>-->
+<!--                </a>-->
+            </div>
+
+            <!-- Reports & Analytics -->
+            <div class="menu-section">
+<!--                <div class="menu-section-title">Reports</div>-->
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-chart-bar"></i>-->
+<!--                    <span>Analytics</span>-->
+<!--                </a>-->
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-file-alt"></i>-->
+<!--                    <span>Reports</span>-->
+<!--                </a>-->
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-download"></i>-->
+<!--                    <span>Export Data</span>-->
+<!--                </a>-->
+            </div>
+
+            <!-- Settings -->
+            <div class="menu-section">
+                <div class="menu-section-title">Settings</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help</span>
+                </a>
+            </div>
+
+            <!-- Logout -->
+            <a href="{% url 'authentication:logout' %}" class="menu-item logout-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Main Content -->
+    {% block content %}
+
+
+    <div class="main-content" id="mainContent">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome back, {{ request.user.first_name }}! 👋</h1>
+            <p class="welcome-subtitle">Track, manage, and complete your assigned waste collections with ease and accuracy.</p>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="stats-section">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card total">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-number" id="totalCollections">{{ total_collections|default:"0" }}</div>
+                        <div class="stat-label">Total Collections</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card today">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-number" id="todayCollections">{{ today_collections|default:"0" }}</div>
+                        <div class="stat-label">Today's Collections</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card weight">
+                        <div class="stat-icon">
+                            <i class="fas fa-weight-hanging"></i>
+                        </div>
+                        <div class="stat-number" id="totalWeight">{{ total_weight|default:"0" }}</div>
+                        <div class="stat-label">Total KG Collected</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card revenue">
+                        <div class="stat-icon">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="stat-number" id="totalRevenue">₹{{ total_revenue|default:"0" }}</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Section -->
+        <div class="quick-actions">
+            <h3 class="section-title">
+                <i class="fas fa-bolt"></i> Quick Actions
+            </h3>
+            <div class="row">
+<!--                <div class="col-lg-3 col-md-6 mb-3">-->
+<!--                    <div class="action-card" onclick="addCollection()">-->
+<!--                        <div class="action-icon">-->
+<!--                            <i class="fas fa-plus-circle"></i>-->
+<!--                        </div>-->
+<!--                        <div class="action-title">Add Collection</div>-->
+<!--                        <div class="action-description">Record new waste collection</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="action-card" onclick="viewRecords()">
+                        <div class="action-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="action-title">View Records</div>
+                        <div class="action-description">Browse all collections</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="action-card" onclick="assignedWaste()">
+                        <div class="action-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="action-title">Assigned Waste</div>
+                        <div class="action-description">View assigned waste collections</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="action-card" onclick="generateReports()">
+                        <div class="action-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="action-title">Generate Reports</div>
+                        <div class="action-description">View analytics & reports</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="section-title mb-0">
+                    <i class="fas fa-clock"></i> Recent Activity
+                </h4>
+                <div>
+                    <button class="btn btn-outline-success btn-sm" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-clipboard-list fa-3x text-muted mb-3 empty-icon"></i>
+                <h5 class="text-muted mb-2">No Recent Activity</h5>
+                <p class="text-muted">No recent activity to display. Start a new waste assignment to see your data here</p>
+<!--                <button class="btn btn-success mt-3" onclick="addCollection()">-->
+<!--                    <i class="fas fa-plus-circle"></i> Add First Collection-->
+<!--                </button>-->
+            </div>
+        </div>
+    </div>
+
+
+     {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+
+            if (window.innerWidth > 992) {
+                mainContent.classList.toggle('sidebar-open');
+            }
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.getElementById('mainContent').classList.remove('sidebar-open');
+        }
+
+        // Global search functionality
+        document.getElementById('globalSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Implement search logic here
+            console.log('Searching for:', searchTerm);
+        });
+
+        // Notification functionality
+        function toggleNotifications() {
+            // Implement notification dropdown/modal here
+            alert('You have 3 new notifications:\n\n• New waste collection assigned\n• Route optimization completed\n• Monthly report available');
+        }
+
+        // Quick action functions
+        function addCollection() {
+            // Navigate to add collection page
+            window.location.href = "{% url 'waste_collector:waste_collect_create' %}";
+        }
+
+        function viewRecords() {
+            // Navigate to records page
+            window.location.href = "{% url 'waste_collector:waste_collect_list' %}";
+        }
+
+        function assignedWaste() {
+            // Navigate to assigned waste page
+            window.location.href = "{% url 'waste_collector:assigned_customers' %}";
+        }
+
+        function generateReports() {
+            // Navigate to reports page
+            alert('Reports functionality - implement as needed');
+        }
+
+        function refreshData() {
+            // Add loading animation
+            const refreshBtn = event.target.closest('button');
+            const originalContent = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            refreshBtn.disabled = true;
+
+            // Simulate data refresh
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalContent;
+                refreshBtn.disabled = false;
+                // You can add actual data refresh logic here
+                console.log('Data refreshed');
+            }, 2000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout from SuchiGo?')) {
+                window.location.href = "{% url 'authentication:logout' %}";
+            }
+        }
+
+        // Handle responsive behavior
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 992) {
+                document.getElementById('mainContent').classList.remove('sidebar-open');
+            }
+        });
+
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Add smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.getElementById('globalSearch');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+
+            // Escape to close sidebar
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
