@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Waste Entry - SuchiGo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-container {
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-image {
+            width: 120px;
+            height: auto;
+            max-height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+        }
+
+        h2 {
+            color: #2e7d32;
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            color: #2e7d32;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: #2e7d32;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e8f5e8;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Billing Information */
+        .billing-info {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .billing-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .billing-row:last-child {
+            border-bottom: none;
+        }
+
+        .billing-label {
+            font-weight: 600;
+            color: #2e7d32;
+        }
+
+        .billing-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            color: #2e7d32;
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* Camera Section */
+        .camera-section {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px dashed rgba(76, 175, 80, 0.3);
+            text-align: center;
+        }
+
+        .camera-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #video {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            height: auto;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        #preview {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #4CAF50;
+        }
+
+        .capture-btn {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .capture-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .camera-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4CAF50;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            border: 2px solid rgba(108, 117, 125, 0.2);
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(108, 117, 125, 0.15);
+            border-color: rgba(108, 117, 125, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Success Message */
+        .success-message {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .photo-captured {
+            background: rgba(76, 175, 80, 0.1);
+            border: 2px solid rgba(76, 175, 80, 0.3);
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+
+            .camera-container {
+                gap: 15px;
+            }
+
+            #video {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                justify-content: center;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .logo-image {
+                width: 100px;
+                max-height: 60px;
+            }
+        }
+
+        /* Hidden data container */
+        #localbody-rates-data {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="header-section">
+                <div class="logo-container">
+<img src="{% static 'images/logo.png.jpg' %}" alt="SuchiGo Logo" class="logo-image">
+                </div>
+                <h2> Waste Collection Entry Form </h2>
+                <p class="subtitle">Document your waste for sustainable management</p>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-section">
+                    <div class="section-title">📝 Waste Information</div>
+                    {{ form.as_p }}
+                </div>
+
+                 Billing Information Section
+                <div class="form-section">
+                    <div class="section-title">💰 Billing Information</div>
+                    <div class="billing-info">
+                        <div class="billing-row">
+                            <span class="billing-label">Local Body:</span>
+                            <span class="billing-value" id="localbody-name">-</span>
+                        </div>
+                        <div class="billing-row">
+                            <span class="billing-label">Rate Per KG:</span>
+                            <span class="billing-value" id="rate-per-kg">₹50.00</span>
+                        </div>
+                        <div class="billing-row">
+                            <span class="billing-label">Weight (KG):</span>
+                            <span class="billing-value" id="weight-value">0.00 KG</span>
+                        </div>
+                        <div class="total-amount">
+                            Total Amount: <span id="total-amount">₹0.00</span>
+                        </div>
+                        <div class="billing-row">
+                            <span class="billing-label">Customer Wallet Balance:</span>
+                            <span class="billing-value" id="wallet-balance">₹0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">📸 Photo Documentation</div>
+
+                    <div class="camera-section">
+                        <div class="camera-status">
+                            <div class="status-indicator"></div>
+                            Live Camera Feed
+                        </div>
+
+                        <div class="camera-container">
+                            <video id="video" width="320" height="240" autoplay></video>
+
+                            <button type="button" class="capture-btn" onclick="capturePhoto()">
+                                📸 Capture Photo
+                            </button>
+
+                            <canvas id="canvas" width="320" height="240"></canvas>
+
+                            <img id="preview" style="display:none;" />
+                            <input type="hidden" name="photo_data" id="photo_data">
+
+                            <div class="photo-captured" id="photo-success">
+                                ✅ Photo captured successfully! Ready to save.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        💾 Save Waste Entry
+                    </button>
+                    <a href="{% url 'waste_collector:waste_collector_dashboard' %}" class="btn-secondary">
+                        ◀️ Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+     Hidden data container for local body rates
+    <div id="localbody-rates-data">
+        {% if localbody_rates %}
+        {{ localbody_rates|json_script:"localbody-rates-json" }}
+        {% endif %}
+    </div>
+
+     <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const preview = document.getElementById('preview');
+    const photoSuccess = document.getElementById('photo-success');
+    const captureBtn = document.querySelector('.capture-btn');
+    const cameraStatus = document.querySelector('.camera-status');
+
+    // Billing elements
+    const localbodyName = document.getElementById('localbody-name');
+    const ratePerKg = document.getElementById('rate-per-kg');
+    const weightValue = document.getElementById('weight-value');
+    const totalAmount = document.getElementById('total-amount');
+    const walletBalance = document.getElementById('wallet-balance');
+    const kgInput = document.querySelector('input[name="kg"]');
+    const localbodySelect = document.querySelector('select[name="localbody"]');
+    const customerSelect = document.querySelector('select[name="customer"]');
+
+    // Local body rates data (passed from the server)
+    let localbodyRates = {};
+
+    // Parse local body rates from JSON
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            const ratesElement = document.getElementById('localbody-rates-json');
+            if (ratesElement) {
+                localbodyRates = JSON.parse(ratesElement.textContent);
+            }
+        } catch (e) {
+            console.error('Error parsing local body rates:', e);
+        }
+    });
+
+    // Initialize billing information
+    function updateBillingInfo() {
+        // Update local body name
+        if (localbodySelect && localbodySelect.options[localbodySelect.selectedIndex]) {
+            localbodyName.textContent = localbodySelect.options[localbodySelect.selectedIndex].text || '-';
+        }
+
+        // Update rate per kg based on selected local body
+        if (localbodySelect && localbodySelect.value) {
+            const localbodyId = localbodySelect.value;
+            const rate = localbodyRates[localbodyId] || 50.00;
+            ratePerKg.textContent = '₹' + rate.toFixed(2);
+        }
+
+        // Update weight value
+        if (kgInput) {
+            const weight = parseFloat(kgInput.value) || 0;
+            weightValue.textContent = weight.toFixed(2) + ' KG';
+
+            // Calculate total amount
+            const rate = parseFloat(ratePerKg.textContent.replace('₹', '')) || 50.00;
+            const total = weight * rate;
+            totalAmount.textContent = '₹' + total.toFixed(2);
+        }
+    }
+
+    // Add event listeners for real-time updates
+    if (kgInput) {
+        kgInput.addEventListener('input', updateBillingInfo);
+    }
+
+    if (localbodySelect) {
+        localbodySelect.addEventListener('change', updateBillingInfo);
+    }
+
+    if (customerSelect) {
+        customerSelect.addEventListener('change', function() {
+            // In a real implementation, this would fetch the actual wallet balance
+            // For now, we'll use a random value for demonstration
+            const balance = (Math.random() * 5000).toFixed(2);
+            walletBalance.textContent = '₹' + balance;
+        });
+    }
+
+    // Initialize billing info on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Delay to ensure rates are loaded
+        setTimeout(function() {
+            updateBillingInfo();
+
+            // Initialize wallet balance
+            if (customerSelect && customerSelect.options[customerSelect.selectedIndex]) {
+                const balance = (Math.random() * 5000).toFixed(2);
+                walletBalance.textContent = '₹' + balance;
+            }
+        }, 100);
+    });
+
+    // Check for camera access
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: "environment" } }
+    })
+    .then(stream => {
+        video.srcObject = stream;
+        cameraStatus.textContent = '✅ Rear camera active.';
+        if (captureBtn) {
+            captureBtn.style.display = 'inline-block';
+        }
+    })
+    .catch(err => {
+        console.error('Camera access error:', err);
+        cameraStatus.innerHTML =
+            '<span style="color: red;">❌ Camera access denied. Mobile rear camera is required.</span>';
+
+        if (captureBtn) {
+            captureBtn.style.display = 'none';  // Hide capture button
+        }
+
+        // Optional: display custom message for desktop users
+        if (window.innerWidth > 768) {
+            const errorBox = document.createElement('div');
+            errorBox.style.color = 'red';
+            errorBox.style.marginTop = '10px';
+            errorBox.innerHTML = '⚠️ This feature is only supported on mobile devices with a rear camera.';
+            cameraStatus.appendChild(errorBox);
+        }
+    });
+
+    function capturePhoto() {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataURL = canvas.toDataURL('image/png');
+        document.getElementById('photo_data').value = dataURL;
+        preview.src = dataURL;
+        preview.style.display = 'block';
+        preview.style.animation = 'fadeIn 0.4s ease-in-out';
+
+        photoSuccess.style.display = 'flex';
+
+        // Update button
+        if (captureBtn) {
+            captureBtn.innerHTML = '✅ Photo Captured – Retake?';
+            captureBtn.style.background = 'linear-gradient(to right, #2196F3, #42A5F5)';
+        }
+    }
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
