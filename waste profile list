@@ -1,0 +1,458 @@
+
+
+
+{% extends 'customer_dashboard.html' %}
+{% load static %}
+{% block title %}Waste profile Detail{% endblock %}
+
+{% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #e1f3f8 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .card-header h2 {
+            font-size: 2rem;
+<!--            margin-bottom: 0.5rem;-->
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header .subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: linear-gradient(135deg, #f8fffe 0%, #f0f9ff 100%);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            border-radius: 15px;
+            z-index: -1;
+            padding: 2px;
+            margin: -2px;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #4CAF50;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .pickup-info {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding-top: 2rem;
+            border-top: 2px solid #f0f9ff;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #45a049 0%, #5cb85c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #ef5350 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #d32f2f 0%, #e53935 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+        }
+
+        .icon-user { color: #4CAF50; }
+        .icon-phone { color: #2196F3; }
+        .icon-location { color: #FF9800; }
+        .icon-tag { color: #9C27B0; }
+        .icon-calendar { color: #F44336; }
+        .icon-trash { color: #607D8B; }
+        .icon-status { color: #4CAF50; }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 0.5rem;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .logo img {
+                height: 1.5rem;
+            }
+
+            .container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .card-header {
+                padding: 1.5rem;
+            }
+
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .card-content {
+                padding: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .info-item {
+                padding: 1rem;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .info-value {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 0.75rem 1rem;
+                min-width: 120px;
+            }
+        }
+
+        /* Loading animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+<body>
+
+
+    <div class="container">
+        <div class="profile-card fade-in">
+            <div class="card-header">
+                <h2><i class="fas fa-user-circle"></i> Waste Profile Details</h2>
+                <div class="subtitle">Complete waste management profile information</div>
+            </div>
+
+            <div class="card-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-user icon-user"></i>
+                            Full Name
+                        </div>
+                        <div class="info-value">{{ info.full_name }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-phone icon-phone"></i>
+                            Primary Number
+                        </div>
+                        <div class="info-value">{{ info.user.contact_number }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-mobile-alt icon-phone"></i>
+                            Secondary Number
+                        </div>
+                        <div class="info-value">{{ info.secondary_number }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-map-marker-alt icon-location"></i>
+                            Pickup Address
+                        </div>
+                        <div class="info-value">{{ info.pickup_address }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-landmark icon-location"></i>
+                            Landmark
+                        </div>
+                        <div class="info-value">{{ info.landmark }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-map icon-location"></i>
+                            State
+                        </div>
+                        <div class="info-value">{{ info.state }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-city icon-location"></i>
+                            District
+                        </div>
+                        <div class="info-value">{{ info.district }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-building icon-location"></i>
+                            Local Body
+                        </div>
+                        <div class="info-value">{{ info.localbody.name }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-home icon-location"></i>
+                            Ward
+                        </div>
+                        <div class="info-value">{{ info.ward }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-shopping-bag icon-tag"></i>
+                            Number of Bags
+                        </div>
+                        <div class="info-value">{{ info.number_of_bags }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-trash-alt icon-trash"></i>
+                            Waste Type
+                        </div>
+                        <div class="info-value">{{ info.waste_type }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-mail-bulk icon-location"></i>
+                            Pincode
+                        </div>
+                        <div class="info-value">{{ info.pincode }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-info-circle icon-status"></i>
+                            Status
+                        </div>
+                        <div class="info-value">
+                            <span class="status-badge">{{ info.get_status_display }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-calendar-plus icon-calendar"></i>
+                            Created At
+                        </div>
+                        <div class="info-value">{{ info.created_at }}</div>
+                    </div>
+                </div>
+
+                <div class="pickup-info">
+                    <div class="info-label">
+                        <i class="fas fa-calendar-check icon-calendar"></i>
+                        Pickup Date
+                    </div>
+                    <div class="info-value">
+                        {% with pickup=info.customerpickupdate_set.first %}
+                            {% if pickup %}
+                                {{ pickup.localbody_calendar.date }} (ID: {{ pickup.localbody_calendar.id }})
+                            {% else %}
+                                <span style="color: #FF9800; font-weight: 600;">Not Selected</span>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a href="{% url 'customer:waste_profile_update' info.id %}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i>
+                        Edit Profile
+                    </a>
+                    <a href="{% url 'customer:waste_profile_delete' info.id %}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i>
+                        Delete Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scroll behavior and loading animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add loading animation to elements
+            const elements = document.querySelectorAll('.info-item');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+                el.classList.add('fade-in');
+            });
+        });
+    </script>
+</body>
+{% endblock %}
