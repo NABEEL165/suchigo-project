@@ -1,0 +1,731 @@
+
+{% extends 'customer_dashboard.html' %}
+
+{% block title %}Update Waste Profile{% endblock %}
+
+{% block content %}
+<link href="https://cdn./npm/fullcalendar@6.1.11/main.min.css" rel="stylesheet">
+
+<style>
+
+
+    /* Scoped styles for waste form only - using .waste-form-container as namespace */
+    .waste-form-container {
+        background: linear-gradient(135deg, #e8f5e8 0%, #e1f4f8 100%);
+        padding: 20px;
+        border-radius: 16px;
+        margin: -1.5rem;
+    }
+
+    .waste-form-container .form-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .waste-form-container .form-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #28a745 0%, #17a2b8 50%, #20c997 100%);
+    }
+
+    .waste-form-container .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .waste-form-container .form-header h1 {
+        color: #2c3e50;
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .waste-form-container .form-subtitle {
+        color: #6c757d;
+        font-size: 16px;
+    }
+
+    .waste-form-container .form-grid {
+        display: grid;
+        gap: 25px;
+    }
+
+    .waste-form-container .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        align-items: end;
+    }
+
+    .waste-form-container .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .waste-form-container .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .waste-form-container .form-group label {
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .waste-form-container .required::after {
+        content: " *";
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    .waste-form-container input[type="text"],
+    .waste-form-container select,
+    .waste-form-container textarea {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 15px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+        outline: none;
+        font-family: inherit;
+    }
+
+    .waste-form-container input[type="text"]:focus,
+    .waste-form-container select:focus,
+    .waste-form-container textarea:focus {
+        border-color: #28a745;
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .waste-form-container select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2328a745' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 18px;
+        padding-right: 50px;
+    }
+
+    .waste-form-container textarea {
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+    }
+
+    .waste-form-container .calendar-container {
+        grid-column: 1 / -1;
+        margin: 20px 0;
+        border: 2px solid #e9ecef;
+        border-radius: 16px;
+        padding: 25px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+    }
+
+    .waste-form-container .calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .waste-form-container .calendar-title {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .waste-form-container .calendar-icon {
+        cursor: pointer;
+        padding: 12px;
+        border: 2px solid #28a745;
+        border-radius: 12px;
+        background: white;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+    }
+
+    .waste-form-container .calendar-icon:hover {
+        background: #28a745;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+    }
+
+    .waste-form-container .calendar-icon:hover svg {
+        color: white;
+    }
+
+    .waste-form-container .calendar-icon svg {
+        width: 22px;
+        height: 22px;
+        color: #28a745;
+        transition: color 0.3s ease;
+    }
+
+    .waste-form-container #calendar {
+        max-width: 100%;
+        margin: 0 auto;
+        display: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .waste-form-container #calendar.show {
+        display: block;
+        animation: slideDown 0.4s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+            max-height: 0;
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 600px;
+        }
+    }
+
+    .waste-form-container .submit-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 50%, #17a2b8 100%);
+        color: white;
+        border: none;
+        padding: 16px 40px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        display: block;
+        margin: 40px auto 0;
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .waste-form-container .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .waste-form-container .submit-btn:hover::before {
+        left: 100%;
+    }
+
+    .waste-form-container .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(40, 167, 69, 0.4);
+        background: linear-gradient(135deg, #218838 0%, #1e7e34 50%, #138496 100%);
+    }
+
+    .waste-form-container .submit-btn:active {
+        transform: translateY(-1px);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .waste-form-container {
+            padding: 10px;
+            margin: -1rem -0.5rem;
+        }
+
+        .waste-form-container .form-container {
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .waste-form-container .form-header h1 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .waste-form-container .form-subtitle {
+            font-size: 14px;
+        }
+
+        .waste-form-container .form-row {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .waste-form-container .form-grid {
+            gap: 20px;
+        }
+
+        .waste-form-container input[type="text"],
+        .waste-form-container select,
+        .waste-form-container textarea {
+            padding: 16px;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+
+        .waste-form-container .calendar-container {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 12px;
+        }
+
+        .waste-form-container .calendar-header {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .waste-form-container .calendar-title {
+            font-size: 16px;
+            flex: 1;
+        }
+
+        .waste-form-container .calendar-icon {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            padding: 10px;
+        }
+
+        .waste-form-container .submit-btn {
+            width: 100%;
+            margin: 30px 0 0;
+            padding: 18px 20px;
+            font-size: 14px;
+            border-radius: 25px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .waste-form-container .form-container {
+            padding: 15px;
+        }
+
+        .waste-form-container .form-header {
+            margin-bottom: 25px;
+        }
+
+        .waste-form-container .form-header h1 {
+            font-size: 20px;
+        }
+
+        .waste-form-container input[type="text"],
+        .waste-form-container select,
+        .waste-form-container textarea {
+            padding: 14px;
+        }
+
+        .waste-form-container .calendar-container {
+            padding: 12px;
+            margin: 12px 0;
+        }
+
+        .waste-form-container .calendar-title {
+            font-size: 14px;
+        }
+
+        .waste-form-container .calendar-icon {
+            width: 40px;
+            height: 40px;
+            padding: 8px;
+        }
+
+        .waste-form-container .calendar-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+</style>
+
+<div class="waste-form-container">
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Sustainable Waste Management</h1>
+            <p class="form-subtitle">Keep your details correct for timely collection.</p>
+        </div>
+
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="full_name" class="required">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" value="{{ info.full_name }}" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact_number">Contact Number</label>
+                    <input type="text" id="contact_number" name="contact_number" value="{{ request.user.contact_number }}" placeholder="Enter contact number">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="secondary_number">Secondary Number</label>
+                    <input type="text" id="secondary_number" name="secondary_number" value="{{ info.secondary_number }}" placeholder="Enter secondary contact">
+                </div>
+                <div class="form-group">
+                    <label for="pincode" class="required">Pincode</label>
+                    <input type="text" id="pincode" name="pincode" value="{{ info.pincode }}" placeholder="Enter pincode" required>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="pickup_address" class="required">Pickup Address</label>
+                <input type="text" id="pickup_address" name="pickup_address" value="{{ info.pickup_address }}" placeholder="Enter complete pickup address" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="landmark">Landmark</label>
+                <input type="text" id="landmark" name="landmark" value="{{ info.landmark }}" placeholder="Enter nearby landmark (optional)">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="state" class="required">State</label>
+                    <select id="state" name="state" required>
+                        <option value="">-- Select State --</option>
+                        {% for s in states %}
+                            <option value="{{ s.id }}" {% if info.state and info.state.id == s.id %}selected{% endif %}>{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="district" class="required">District</label>
+                    <select id="district" name="district" required>
+                        <option value="">-- Select District --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="localbody" class="required">Local Body</label>
+                <select id="localbody" name="localbody" required>
+                    <option value="">-- Select Local Body --</option>
+                </select>
+            </div>
+
+            <!--<input type="hidden" name="selected_date" id="selected_date" value="{{ info.pickup_date_id|default:'' }}">-->
+
+            <!--<div class="calendar-container">-->
+            <!--    <div class="calendar-header">-->
+            <!--        <div class="calendar-title">-->
+            <!--            <span>📅</span>-->
+            <!--            <span>Select Pickup Date</span>-->
+            <!--        </div>-->
+            <!--        <div class="calendar-icon" id="calendar-toggle">-->
+            <!--            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">-->
+            <!--                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>-->
+            <!--                <line x1="16" y1="2" x2="16" y2="6"></line>-->
+            <!--                <line x1="8" y1="2" x2="8" y2="6"></line>-->
+            <!--                <line x1="3" y1="10" x2="21" y2="10"></line>-->
+            <!--            </svg>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--    <div id="calendar"></div>-->
+            <!--</div>-->
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="ward" class="required">Ward</label>
+                    <select id="ward" name="ward" required>
+                        <option value="">-- Select Ward --</option>
+                        {% for i in ward_range %}
+                            <option value="{{ i }}" {% if info and info.ward == i %}selected{% endif %}>Ward {{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="number_of_bags" class="required">Number of Bags</label>
+                    <select id="number_of_bags" name="number_of_bags" required>
+                        <option value="">-- Select --</option>
+                        {% for i in bag_range %}
+                            <option value="{{ i }}" {% if info.number_of_bags == i %}selected{% endif %}>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="waste_type" class="required">Waste Type</label>
+                <select id="waste_type" name="waste_type" required>
+                    <option value="">-- Select Waste Type --</option>
+                    <option value="Sanitary Pad" {% if info.waste_type == "Sanitary Pad" %}selected{% endif %}>Sanitary Pad</option>
+                    <option value="Kids & Adult Diaper" {% if info.waste_type == "Kids & Adult Diaper" %}selected{% endif %}>Kids & Adult Diaper</option>
+                    <option value="Expiry Medicine" {% if info.waste_type == "Expiry Medicine" %}selected{% endif %}>Expiry Medicine</option>
+                    <option value="Hair Waste" {% if info.waste_type == "Hair Waste" %}selected{% endif %}>Hair Waste</option>
+                </select>
+            </div>
+
+
+
+
+
+
+
+ <input type="hidden" name="selected_date" id="selected_date" value="{{ info.pickup_date_id|default:'' }}">
+
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <div class="calendar-title">
+                        <span>📅</span>
+                        <span>Select Pickup Date</span>
+                    </div>
+                    <div class="calendar-icon" id="calendar-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                </div>
+                <div id="calendar"></div>
+            </div>
+
+
+
+
+
+
+            <div class="form-group full-width">
+                <label for="comments">Comments</label>
+                <textarea name="comments" id="comments" placeholder="Additional comments or special instructions (optional)">{{ info.comments|default:'' }}</textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit</button>
+
+        </form>
+
+
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<script>
+$(document).ready(function(){
+
+    // Preselected values from backend
+    let selectedDistrict = "{{ info.district.id|default:'' }}";
+    let selectedLocalbody = "{{ info.localbody.id|default:'' }}";
+    let selectedDateId = "{{ info.pickup_date_id|default:'' }}";
+
+    // Keep track of the currently selected event
+    let selectedEvent = null;
+
+    // Init FullCalendar
+    var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView: 'dayGridMonth',
+        selectable: false,
+        editable: false,
+        events: [],
+        height: 'auto',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth'
+        },
+        validRange: { start: new Date() },
+        initialDate: new Date(),
+
+        // ✅ Handle event click (select only one)
+        eventClick: function(info) {
+            if (info.event.title === "Available") {
+
+                // If another date was previously selected, reset its color
+                if (selectedEvent && selectedEvent.id !== info.event.id) {
+                    selectedEvent.setProp('backgroundColor', '#28a745'); // reset to green
+                    selectedEvent.setProp('borderColor', '#28a745');
+                }
+
+                // Update current selection
+                selectedEvent = info.event;
+                $("#selected_date").val(info.event.id);
+
+                // Change selected event to blue
+                info.event.setProp('backgroundColor', '#007bff');
+                info.event.setProp('borderColor', '#007bff');
+            }
+        },
+
+        // ✅ Style events
+        eventDidMount: function(info) {
+            if (info.event.title === "Available") {
+                info.el.style.backgroundColor = "#28a745";
+                info.el.style.borderColor = "#28a745";
+                info.el.style.cursor = "pointer";
+                info.el.style.borderRadius = "6px";
+                info.el.style.fontWeight = "500";
+            } else {
+                info.el.style.backgroundColor = "#6c757d";
+                info.el.style.borderColor = "#6c757d";
+                info.el.style.cursor = "not-allowed";
+                info.el.style.borderRadius = "6px";
+                info.el.style.opacity = "0.6";
+            }
+
+            // ✅ If editing existing selection
+            if (info.event.id === selectedDateId) {
+                selectedEvent = info.event;
+                info.event.setProp('backgroundColor', '#007bff');
+                info.event.setProp('borderColor', '#007bff');
+                $("#selected_date").val(selectedDateId);
+            }
+        }
+    });
+    calendar.render();
+
+    // Calendar toggle functionality
+    $("#calendar-toggle").click(function() {
+        const calendarElement = $("#calendar");
+        if (calendarElement.hasClass("show")) {
+            calendarElement.removeClass("show");
+            setTimeout(() => {
+                calendarElement.hide();
+            }, 400);
+        } else {
+            calendarElement.show();
+            setTimeout(() => {
+                calendarElement.addClass("show");
+                calendar.render();
+            }, 10);
+        }
+    });
+
+    // Load districts
+    function loadDistricts(stateId, callback){
+        $.get("/customer-dashboard/load_districts/" + stateId + "/", function(data){
+            $("#district").empty().append('<option value="">-- Select District --</option>');
+            data.forEach(function(d){
+                let sel = (d.id == selectedDistrict) ? "selected" : "";
+                $("#district").append('<option value="'+d.id+'" '+sel+'>'+d.name+'</option>');
+            });
+            if(callback) callback();
+        });
+    }
+
+    // Load local bodies
+    function loadLocalBodies(districtId, callback){
+        $.get("/customer-dashboard/load_localbodies/" + districtId + "/", function(data){
+            $("#localbody").empty().append('<option value="">-- Select Local Body --</option>');
+            data.forEach(function(lb){
+                let sel = (lb.id == selectedLocalbody) ? "selected" : "";
+                $("#localbody").append('<option value="'+lb.id+'" '+sel+'>'+lb.name+' ('+lb.body_type+')</option>');
+            });
+            if(callback) callback();
+        });
+    }
+
+    // Load calendar dates
+    function loadCalendar(localbodyId){
+        calendar.removeAllEvents();
+        $("#selected_date").val('');
+        selectedEvent = null;
+        $.get("/customer-dashboard/available_dates/" + localbodyId + "/", function(events){
+            events.forEach(function(e){
+                calendar.addEvent({
+                    id: e.id,
+                    title: e.picked ? "Picked" : "Available",
+                    start: e.date,
+                    color: e.picked ? "#17a2b8" : "#28a745",
+                    extendedProps: { picked: e.picked }
+                });
+            });
+        });
+    }
+
+    // State change
+    $("#state").change(function(){
+        let stateId = $(this).val();
+        if(stateId){
+            loadDistricts(stateId);
+        }
+    });
+
+    // District change
+    $("#district").change(function(){
+        let districtId = $(this).val();
+        if(districtId){
+            loadLocalBodies(districtId);
+        }
+    });
+
+    // Local body change
+    $("#localbody").change(function(){
+        let lbId = $(this).val();
+        if(lbId){
+            loadCalendar(lbId);
+        }
+    });
+
+    // ✅ Auto-load data when editing (prepopulate)
+    if($("#state").val()){
+        loadDistricts($("#state").val(), function(){
+            if(selectedDistrict){
+                loadLocalBodies(selectedDistrict, function(){
+                    if(selectedLocalbody){
+                        loadCalendar(selectedLocalbody);
+                    }
+                });
+            }
+        });
+    }
+
+    // ✅ Allow submit only if valid date selected
+    $("form").on("submit", function(e) {
+        const selectedDate = $("#selected_date").val();
+        if (!selectedDate) {
+            e.preventDefault();
+            alert("Please select an available pickup date before submitting.");
+            return false;
+        }
+        const event = calendar.getEventById(selectedDate);
+        if (!event || event.title !== "Available") {
+            e.preventDefault();
+            alert("Please select a valid available date (green) before submitting.");
+            return false;
+        }
+    });
+});
+</script>
+
+{% endblock %}
+
+
+
