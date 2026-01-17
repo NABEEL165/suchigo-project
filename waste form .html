@@ -202,6 +202,18 @@
         animation: slideDown 0.4s ease-out;
     }
 
+    /* Booking Info Styles */
+    .waste-form-container #booking-info {
+        margin-top: 15px;
+        padding: 12px;
+        background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 500;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
     @keyframes slideDown {
         from {
             opacity: 0;
@@ -370,6 +382,22 @@
             width: 18px;
             height: 18px;
         }
+        
+        .waste-form-container .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .waste-form-container .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #343a40 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
     }
 </style>
 
@@ -413,6 +441,23 @@
             <div class="form-group full-width">
                 <label for="landmark">Landmark</label>
                 <input type="text" id="landmark" name="landmark" value="{{ info.landmark }}" placeholder="Enter nearby landmark (optional)">
+            </div>
+            
+            <!-- Google Maps Location Picker -->
+            <div class="form-group full-width">
+                <label for="location_picker">Select Location on Map</label>
+                <div id="map" style="height: 300px; border: 2px solid #e9ecef; border-radius: 10px; margin-top: 10px;"></div>
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                    <div style="flex: 1;">
+                        <label for="latitude">Latitude</label>
+                        <input type="text" id="latitude" name="latitude" value="{{ info.latitude|default:'' }}" placeholder="Click on map to select location" readonly>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="longitude">Longitude</label>
+                        <input type="text" id="longitude" name="longitude" value="{{ info.longitude|default:'' }}" placeholder="Click on map to select location" readonly>
+                    </div>
+                </div>
+                <button type="button" id="use_current_location" class="btn btn-secondary" style="margin-top: 10px;">Use Current Location</button>
             </div>
 
             <div class="form-row">
@@ -492,14 +537,9 @@
                 </select>
             </div>
 
-
-
-
-
-
-
- <input type="hidden" name="selected_date" id="selected_date" value="{{ info.pickup_date_id|default:'' }}">
-
+            <!-- Date Selection - Moved after Waste Type -->
+            <input type="hidden" name="selected_date" id="selected_date" value="{{ info.pickup_date_id|default:'' }}">
+            
             <div class="calendar-container">
                 <div class="calendar-header">
                     <div class="calendar-title">
@@ -516,12 +556,10 @@
                     </div>
                 </div>
                 <div id="calendar"></div>
+                <div id="booking-info" style="margin-top: 15px; padding: 10px; background: #e8f5e8; border-radius: 8px; text-align: center; display: none;">
+                    <strong>Booking Info:</strong> You can book up to 4 pickups at a time. Currently selected: <span id="booking-count">0</span>/4
+                </div>
             </div>
-
-
-
-
-
 
             <div class="form-group full-width">
                 <label for="comments">Comments</label>
@@ -537,18 +575,112 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeOSXcduK-t-d1G2quF3__4IbMLatuGIQ&callback=initMap&libraries=places&v=weekly" async defer></script>
 
 <script>
-$(document).ready(function(){
+// Global variable for the map
+let map;
+let marker;
 
+// Initialize Google Map
+function initMap() {
+    // Default center (Kochi, India)
+    const defaultCenter = { lat: 9.9312, lng: 76.2673 };
+    
+    // Get existing coordinates if available
+    const latInput = document.getElementById('latitude');
+    const lngInput = document.getElementById('longitude');
+    
+    let center = defaultCenter;
+    if (latInput.value && lngInput.value) {
+        center = { 
+            lat: parseFloat(latInput.value), 
+            lng: parseFloat(lngInput.value) 
+        };
+    }
+    
+    // Initialize map
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 15,
+        center: center,
+        mapTypeId: 'roadmap'
+    });
+    
+    // Add marker
+    marker = new google.maps.Marker({
+        position: center,
+        map: map,
+        draggable: true,
+        title: 'Pickup Location'
+    });
+    
+    // Update coordinates when marker is dragged
+    marker.addListener('dragend', function() {
+        const position = marker.getPosition();
+        latInput.value = position.lat();
+        lngInput.value = position.lng();
+    });
+    
+    // Update marker when map is clicked
+    map.addListener('click', function(e) {
+        placeMarker(e.latLng);
+    });
+    
+    // Function to place marker
+    function placeMarker(location) {
+        marker.setPosition(location);
+        latInput.value = location.lat();
+        lngInput.value = location.lng();
+    }
+}
+
+// Use current location
+function useCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                
+                // Center map on current location
+                map.setCenter(pos);
+                
+                // Move marker to current location
+                marker.setPosition(pos);
+                
+                // Update input fields
+                document.getElementById('latitude').value = pos.lat;
+                document.getElementById('longitude').value = pos.lng;
+                
+                // Show success message
+                alert('Location updated successfully!');
+            },
+            function() {
+                alert('Error: The Geolocation service failed.');
+            }
+        );
+    } else {
+        alert('Error: Your browser doesn\'t support geolocation.');
+    }
+}
+
+$(document).ready(function(){
+    // Add event listener for current location button
+    $('#use_current_location').click(function() {
+        useCurrentLocation();
+    });
+    
     // Preselected values from backend
     let selectedDistrict = "{{ info.district.id|default:'' }}";
     let selectedLocalbody = "{{ info.localbody.id|default:'' }}";
     let selectedDateId = "{{ info.pickup_date_id|default:'' }}";
-
-    // Keep track of the currently selected event
-    let selectedEvent = null;
-
+    
+    // Keep track of the currently selected events (multiple selection)
+    let selectedEvents = [];
+    const MAX_BOOKINGS = 4;
+    
     // Init FullCalendar
     var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
         initialView: 'dayGridMonth',
@@ -563,28 +695,38 @@ $(document).ready(function(){
         },
         validRange: { start: new Date() },
         initialDate: new Date(),
-
-        // ✅ Handle event click (select only one)
+        
+        // Handle event click (multiple selection with limit)
         eventClick: function(info) {
             if (info.event.title === "Available") {
-
-                // If another date was previously selected, reset its color
-                if (selectedEvent && selectedEvent.id !== info.event.id) {
-                    selectedEvent.setProp('backgroundColor', '#28a745'); // reset to green
-                    selectedEvent.setProp('borderColor', '#28a745');
+                // Check if event is already selected
+                const index = selectedEvents.findIndex(e => e.id === info.event.id);
+                
+                if (index > -1) {
+                    // Deselect event
+                    selectedEvents.splice(index, 1);
+                    info.event.setProp('backgroundColor', '#28a745'); // reset to green
+                    info.event.setProp('borderColor', '#28a745');
+                } else {
+                    // Check if we can select more events
+                    if (selectedEvents.length >= MAX_BOOKINGS) {
+                        alert(`You can only book up to ${MAX_BOOKINGS} pickups at a time.`);
+                        return;
+                    }
+                    
+                    // Select new event
+                    selectedEvents.push(info.event);
+                    info.event.setProp('backgroundColor', '#007bff'); // blue for selected
+                    info.event.setProp('borderColor', '#007bff');
                 }
-
-                // Update current selection
-                selectedEvent = info.event;
-                $("#selected_date").val(info.event.id);
-
-                // Change selected event to blue
-                info.event.setProp('backgroundColor', '#007bff');
-                info.event.setProp('borderColor', '#007bff');
+                
+                // Update hidden input and booking info
+                updateSelectedDates();
+                updateBookingInfo();
             }
         },
-
-        // ✅ Style events
+        
+        // Style events
         eventDidMount: function(info) {
             if (info.event.title === "Available") {
                 info.el.style.backgroundColor = "#28a745";
@@ -599,18 +741,44 @@ $(document).ready(function(){
                 info.el.style.borderRadius = "6px";
                 info.el.style.opacity = "0.6";
             }
-
-            // ✅ If editing existing selection
+            
+            // If editing existing selection
             if (info.event.id === selectedDateId) {
-                selectedEvent = info.event;
+                selectedEvents.push(info.event);
                 info.event.setProp('backgroundColor', '#007bff');
                 info.event.setProp('borderColor', '#007bff');
-                $("#selected_date").val(selectedDateId);
+                updateSelectedDates();
+                updateBookingInfo();
             }
+        },
+        
+        // Handle date changes
+        datesSet: function() {
+            updateBookingInfo();
         }
     });
+    
     calendar.render();
-
+    
+    // Update selected dates in hidden input
+    function updateSelectedDates() {
+        const ids = selectedEvents.map(e => e.id).join(',');
+        $("#selected_date").val(ids);
+    }
+    
+    // Update booking info display
+    function updateBookingInfo() {
+        const bookingInfo = $("#booking-info");
+        const bookingCount = $("#booking-count");
+        
+        if (selectedEvents.length > 0) {
+            bookingInfo.show();
+            bookingCount.text(selectedEvents.length);
+        } else {
+            bookingInfo.hide();
+        }
+    }
+    
     // Calendar toggle functionality
     $("#calendar-toggle").click(function() {
         const calendarElement = $("#calendar");
@@ -627,7 +795,7 @@ $(document).ready(function(){
             }, 10);
         }
     });
-
+    
     // Load districts
     function loadDistricts(stateId, callback){
         $.get("/customer-dashboard/load_districts/" + stateId + "/", function(data){
@@ -639,7 +807,7 @@ $(document).ready(function(){
             if(callback) callback();
         });
     }
-
+    
     // Load local bodies
     function loadLocalBodies(districtId, callback){
         $.get("/customer-dashboard/load_localbodies/" + districtId + "/", function(data){
@@ -651,12 +819,14 @@ $(document).ready(function(){
             if(callback) callback();
         });
     }
-
+    
     // Load calendar dates
     function loadCalendar(localbodyId){
         calendar.removeAllEvents();
+        selectedEvents = []; // Reset selections
         $("#selected_date").val('');
-        selectedEvent = null;
+        updateBookingInfo();
+        
         $.get("/customer-dashboard/available_dates/" + localbodyId + "/", function(events){
             events.forEach(function(e){
                 calendar.addEvent({
@@ -669,7 +839,7 @@ $(document).ready(function(){
             });
         });
     }
-
+    
     // State change
     $("#state").change(function(){
         let stateId = $(this).val();
@@ -677,7 +847,7 @@ $(document).ready(function(){
             loadDistricts(stateId);
         }
     });
-
+    
     // District change
     $("#district").change(function(){
         let districtId = $(this).val();
@@ -685,7 +855,7 @@ $(document).ready(function(){
             loadLocalBodies(districtId);
         }
     });
-
+    
     // Local body change
     $("#localbody").change(function(){
         let lbId = $(this).val();
@@ -693,8 +863,8 @@ $(document).ready(function(){
             loadCalendar(lbId);
         }
     });
-
-    // ✅ Auto-load data when editing (prepopulate)
+    
+    // Auto-load data when editing (prepopulate)
     if($("#state").val()){
         loadDistricts($("#state").val(), function(){
             if(selectedDistrict){
@@ -706,20 +876,26 @@ $(document).ready(function(){
             }
         });
     }
-
-    // ✅ Allow submit only if valid date selected
+    
+    // Allow submit only if valid date selected
     $("form").on("submit", function(e) {
-        const selectedDate = $("#selected_date").val();
-        if (!selectedDate) {
+        const selectedDates = $("#selected_date").val();
+        if (!selectedDates) {
             e.preventDefault();
-            alert("Please select an available pickup date before submitting.");
+            alert("Please select at least one available pickup date before submitting.");
             return false;
         }
-        const event = calendar.getEventById(selectedDate);
-        if (!event || event.title !== "Available") {
-            e.preventDefault();
-            alert("Please select a valid available date (green) before submitting.");
-            return false;
+        
+        // Validate all selected dates
+        const dateIds = selectedDates.split(',');
+        for (let i = 0; i < dateIds.length; i++) {
+            const eventId = dateIds[i];
+            const event = calendar.getEventById(eventId);
+            if (!event || event.title !== "Available") {
+                e.preventDefault();
+                alert("Please select only valid available dates (green) before submitting.");
+                return false;
+            }
         }
     });
 });
