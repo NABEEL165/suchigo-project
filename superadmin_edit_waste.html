@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Waste Profile - SuchiGo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --suchigo-green: #4CAF50;
+            --suchigo-teal: #26A69A;
+            --suchigo-blue: #2196F3;
+            --suchigo-dark-green: #388E3C;
+            --suchigo-light-green: #E8F5E8;
+            --suchigo-gradient: linear-gradient(135deg, #4CAF50 0%, #26A69A 50%, #2196F3 100%);
+            --shadow-soft: 0 4px 20px rgba(76, 175, 80, 0.15);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E8F5E8 0%, #E0F2F1 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header-card {
+            background: var(--suchigo-gradient);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="3" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 20s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: rotate(0deg) translateX(0px); }
+            100% { transform: rotate(360deg) translateX(20px); }
+        }
+
+        .header-title {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .form-section {
+            padding: 2rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            color: var(--suchigo-dark-green);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--suchigo-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            color: var(--suchigo-dark-green);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--suchigo-teal);
+            box-shadow: 0 0 0 0.2rem rgba(38, 166, 154, 0.25);
+            background: white;
+            outline: none;
+        }
+
+        .form-control:read-only {
+            background: var(--suchigo-light-green);
+            border-color: var(--suchigo-green);
+            color: var(--suchigo-dark-green);
+            font-weight: 500;
+        }
+
+        .pickup-dates-list {
+            background: var(--suchigo-light-green);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .pickup-date-item {
+            background: white;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .pickup-date-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .no-pickup-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 12px;
+            padding: 1rem;
+            color: #856404;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .action-buttons {
+            background: #f8f9fa;
+            padding: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-suchigo-primary {
+            background: var(--suchigo-gradient);
+            border: none;
+            color: white;
+            padding: 0.875rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .btn-suchigo-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+            color: white;
+        }
+
+        .btn-suchigo-secondary {
+            background: white;
+            border: 2px solid var(--suchigo-green);
+            color: var(--suchigo-green);
+            padding: 0.875rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 140px;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-suchigo-secondary:hover {
+            background: var(--suchigo-green);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0.5rem;
+            }
+
+            .header-card {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .form-section {
+                padding: 1.5rem;
+            }
+
+            .action-buttons {
+                padding: 1.5rem;
+                flex-direction: column;
+            }
+
+            .btn-suchigo-primary,
+            .btn-suchigo-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .section-icon {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .form-section {
+                padding: 1rem;
+            }
+
+            .pickup-date-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading .form-control,
+        .loading .form-select {
+            background: #f0f0f0;
+        }
+
+        /* Custom checkbox and radio styles */
+        .form-check-input:checked {
+            background-color: var(--suchigo-green);
+            border-color: var(--suchigo-green);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: all 0.2s ease;
+        }
+
+        /* Success feedback */
+        .success-feedback {
+            background: var(--suchigo-light-green);
+            border: 1px solid var(--suchigo-green);
+            color: var(--suchigo-dark-green);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header Section -->
+        <div class="header-card">
+            <h1 class="header-title">
+                <i class="fas fa-edit"></i>
+                Edit Waste Profile
+            </h1>
+            <p class="header-subtitle">Schedule. Collect. Sustain</p>
+        </div>
+
+        <!-- Main Form -->
+        <div class="form-card">
+            <form method="post" id="wasteProfileForm">
+                {% csrf_token %}
+
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        Contact Information
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact" class="form-label">
+                            <i class="fas fa-phone-alt"></i>
+                            Contact Number
+                        </label>
+                        <input type="text" id="contact" class="form-control"
+                               value="{{ info.user.contact_number }}" readonly>
+                    </div>
+                </div>
+
+                <!-- Profile Details Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+                        Profile Details
+                    </div>
+
+                    <!-- Django form fields will be rendered here -->
+                    <div id="djangoFormFields">
+                        {{ form.as_p }}
+                    </div>
+                </div>
+
+                <!-- Pickup Schedule Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        Pickup Schedule
+                    </div>
+
+                    <!-- Current pickup dates -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-clock"></i>
+                            Current Pickup Dates
+                        </label>
+                        {% if existing_pickups %}
+                            <div class="pickup-dates-list">
+                                {% for pickup in existing_pickups %}
+                                    <div class="pickup-date-item">
+                                        <i class="fas fa-calendar-check text-success"></i>
+                                        <strong>{{ pickup.localbody_calendar.date }}</strong>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="no-pickup-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                No pickup dates assigned
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Assign / Update pickup date -->
+                    <div class="form-group">
+                        <label for="selected_date" class="form-label">
+                            <i class="fas fa-calendar-plus"></i>
+                            Assign / Update Pickup Date
+                        </label>
+                        <select name="selected_date" id="selected_date" class="form-select">
+                            <option value="">-- Select Date --</option>
+                            {% for cal in available_dates %}
+                                <option value="{{ cal.id }}"
+                                        {% if existing_pickups and cal.id == existing_pickups.first.localbody_calendar.id %}selected{% endif %}>
+                                    {{ cal.date }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="btn-suchigo-primary">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                    <a href="{% url 'super_admin_dashboard:waste_info_list' %}" class="btn-suchigo-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enhanced Script for dependent dropdown and UX improvements -->
+    <script>
+        $(document).ready(function () {
+            // Style Django form fields
+            styleDjangoFormFields();
+
+            // Dependent dropdown functionality
+            $("#id_district").change(function () {
+                var districtId = $(this).val();
+                var $localbody = $("#id_localbody");
+
+                if (!districtId) {
+                    $localbody.empty().append('<option value="">---------</option>');
+                    return;
+                }
+
+                // Add loading state
+                $localbody.addClass('loading').prop('disabled', true);
+                $localbody.html('<option value="">Loading...</option>');
+
+                var url = "{% url 'super_admin_dashboard:load_localbodies' 0 %}".replace("0", districtId);
+
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        $localbody.empty();
+                        $localbody.append('<option value="">-- Select Local Body --</option>');
+                        $.each(data, function (index, lb) {
+                            $localbody.append('<option value="' + lb.id + '">' + lb.name + ' (' + lb.body_type + ')</option>');
+                        });
+                    },
+                    error: function() {
+                        $localbody.html('<option value="">Error loading data</option>');
+                    },
+                    complete: function() {
+                        $localbody.removeClass('loading').prop('disabled', false);
+                    }
+                });
+            });
+
+            // Form submission with loading state
+            $("#wasteProfileForm").submit(function() {
+                $(this).find('button[type="submit"]').html('<i class="fas fa-spinner fa-spin"></i> Saving...').prop('disabled', true);
+            });
+
+            // Add smooth animations to form elements
+            $('.form-control, .form-select').on('focus', function() {
+                $(this).parent().addClass('focused');
+            }).on('blur', function() {
+                $(this).parent().removeClass('focused');
+            });
+        });
+
+        function styleDjangoFormFields() {
+            // Apply custom styling to Django form fields
+            $('#djangoFormFields p').each(function() {
+                $(this).addClass('form-group');
+
+                var $label = $(this).find('label');
+                var $input = $(this).find('input, select, textarea');
+
+                $label.addClass('form-label');
+                $input.addClass('form-control');
+
+                if ($input.is('select')) {
+                    $input.removeClass('form-control').addClass('form-select');
+                }
+
+                // Add icons to labels based on field names
+                var labelText = $label.text().toLowerCase();
+                var icon = '';
+
+                if (labelText.includes('district')) icon = '<i class="fas fa-map-marker-alt"></i> ';
+                else if (labelText.includes('local')) icon = '<i class="fas fa-building"></i> ';
+                else if (labelText.includes('address')) icon = '<i class="fas fa-home"></i> ';
+                else if (labelText.includes('waste')) icon = '<i class="fas fa-trash-alt"></i> ';
+                else if (labelText.includes('type')) icon = '<i class="fas fa-tags"></i> ';
+                else icon = '<i class="fas fa-info-circle"></i> ';
+
+                $label.prepend(icon);
+            });
+        }
+    </script>
+</body>
+</html>
