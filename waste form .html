@@ -510,9 +510,7 @@
                     <label for="ward" class="required">Ward</label>
                     <select id="ward" name="ward" required>
                         <option value="">-- Select Ward --</option>
-                        {% for i in ward_range %}
-                            <option value="{{ i }}" {% if info and info.ward == i %}selected{% endif %}>Ward {{ i }}</option>
-                        {% endfor %}
+                        <!-- Options will be populated dynamically based on selected local body -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -816,7 +814,23 @@ $(document).ready(function(){
                 let sel = (lb.id == selectedLocalbody) ? "selected" : "";
                 $("#localbody").append('<option value="'+lb.id+'" '+sel+'>'+lb.name+' ('+lb.body_type+')</option>');
             });
+            // Clear ward selection when local body changes
+            $("#ward").empty().append('<option value="">-- Select Ward --</option>');
             if(callback) callback();
+        });
+    }
+    
+    // Load wards
+    function loadWards(localbodyId, callback){
+        $.get("/super-admin-dashboard/load_wards/" + localbodyId + "/", function(data){
+            $("#ward").empty().append('<option value="">-- Select Ward --</option>');
+            data.forEach(function(ward){
+                let sel = (info && info.ward && info.ward.id == ward.id) ? "selected" : "";
+                $("#ward").append('<option value="'+ward.id+'" '+sel+'>'+ward.ward_number+'. '+ward.ward_name+'</option>');
+            });
+            if(callback) callback();
+        }).fail(function() {
+            $("#ward").empty().append('<option value="">-- Select Ward --</option>');
         });
     }
     
@@ -861,6 +875,7 @@ $(document).ready(function(){
         let lbId = $(this).val();
         if(lbId){
             loadCalendar(lbId);
+            loadWards(lbId);  // Load wards when local body changes
         }
     });
     
@@ -871,6 +886,7 @@ $(document).ready(function(){
                 loadLocalBodies(selectedDistrict, function(){
                     if(selectedLocalbody){
                         loadCalendar(selectedLocalbody);
+                        loadWards(selectedLocalbody);  // Load wards when editing
                     }
                 });
             }
