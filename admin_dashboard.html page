@@ -1,0 +1,933 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuchiGo Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .logo-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .logo-img .fallback-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+
+        .search-container {
+            position: relative;
+            margin-left: 2rem;
+        }
+
+        .search-input {
+            width: 350px;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 25px;
+            background: rgba(248, 249, 250, 0.8);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #4CAF50;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .profile-trigger:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .profile-role {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .dropdown-arrow {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 1rem 0;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #4CAF50;
+        }
+
+        .dropdown-item.logout {
+            border-top: 1px solid #eee;
+            margin-top: 0.5rem;
+            color: #ff4757;
+        }
+
+        .dropdown-item.logout:hover {
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-content {
+            padding: 2rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            padding: 0 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            margin: 0.5rem 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            transform: translateX(5px);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
+            color: #2196F3;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-icon {
+            width: 20px;
+            margin-right: 1rem;
+            text-align: center;
+        }
+
+        .nav-text {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 80px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .welcome-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .welcome-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Content Area */
+        .content-area {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .search-container {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-navbar {
+                padding: 1rem;
+            }
+
+            .welcome-header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-header {
+                padding: 1.5rem;
+            }
+
+            .welcome-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .content-area {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Mobile Search */
+        .mobile-search {
+            display: none;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+
+        .mobile-search.active {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="navbar-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+                        <div class="logo-container">
+             <div class="logo-img">
+    <img src="{% static 'images/logo.png.jpg' %}" alt="SuchiGo Logo"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="fallback-icon" style="display: none;">
+        <i class="fas fa-recycle"></i>
+    </div>
+                 </div>
+                            <div class="logo-text">SuchiGo</div>
+                            </div>
+
+
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search customers, collectors, or data...">
+            </div>
+        </div>
+
+        <div class="navbar-right">
+            <button class="notification-btn" onclick="toggleMobileSearch()">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="notification-btn">
+                <i class="fas fa-bell"></i>
+                <div class="notification-badge">3</div>
+            </button>
+            <div class="profile-dropdown" onclick="toggleProfileDropdown()">
+                <div class="profile-trigger">
+                    <div class="profile-avatar">{{ user.first_name.0 }}{{ user.last_name.0 }}</div>
+                    <div class="profile-info">
+                        <div class="profile-name">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="profile-role">Administrator</div>
+                    </div>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </div>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        My Profile
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-question-circle"></i>
+                        Help & Support
+                    </a>
+                    <a href="{% url 'authentication:logout' %}" class="dropdown-item logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Search -->
+    <div class="mobile-search" id="mobileSearch">
+        <div class="search-container" style="margin: 0; width: 100%;">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search customers, collectors, or data..." style="width: 100%;">
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <!-- Main Navigation -->
+            <div class="nav-section">
+                <div class="nav-title">Main Menu</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showContent('dashboard')">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </div>
+<!--                <div class="nav-item">-->
+<!--                    <a href="{% url 'super_admin_dashboard:view_customer_waste_info' %}" class="nav-link" onclick="showContent('waste-info')">-->
+<!--                        <i class="fas fa-file-alt nav-icon"></i>-->
+<!--                        <span class="nav-text">Waste Information</span>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--                <div class="nav-item">-->
+<!--                    <a href="{% url 'super_admin_dashboard:view_collected_data' %}" class="nav-link" onclick="showContent('collected-data')">-->
+<!--                        <i class="fas fa-database nav-icon"></i>-->
+<!--                        <span class="nav-text">Collected Data</span>-->
+<!--                    </a>-->
+<!--                </div>-->
+            </div>
+
+            <!-- Management Section -->
+
+<!--            <div class="nav-section">-->
+<!--                <div class="nav-title">Management</div>-->
+<!--                <div class="nav-item">-->
+<!--&lt;!&ndash;                    <a href="{% url 'super_admin_dashboard:users_list' %}" class="nav-link" onclick="showContent('customer-mgmt')">&ndash;&gt;-->
+<!--                        <i class="fas fa-users nav-icon"></i>-->
+<!--                        <span class="nav-text">Users Management</span>-->
+<!--&lt;!&ndash;                    </a>&ndash;&gt;-->
+<!--                </div>-->
+<!--                <div class="nav-item">-->
+<!--&lt;!&ndash;                    <a href="{% url 'super_admin_dashboard:view_customers' %}" class="nav-link" onclick="showContent('customer-mgmt')">&ndash;&gt;-->
+<!--                        <i class="fas fa-users nav-icon"></i>-->
+<!--                        <span class="nav-text">Customer Management</span>-->
+<!--&lt;!&ndash;                    </a>&ndash;&gt;-->
+<!--                </div>-->
+<!--                <div class="nav-item">-->
+<!--&lt;!&ndash;                    <a href="{% url 'super_admin_dashboard:view_collectors' %}" class="nav-link" onclick="showContent('collector-mgmt')">&ndash;&gt;-->
+<!--                        <i class="fas fa-truck nav-icon"></i>-->
+<!--                        <span class="nav-text">Waste Collector Management</span>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--                <div class="nav-item">-->
+<!--                    <a href="{% url 'super_admin_dashboard:view_super_admin' %}" class="nav-link" onclick="showContent('admin-mgmt')">-->
+<!--                        <i class="fas fa-user-shield nav-icon"></i>-->
+<!--                        <span class="nav-text">Admin Management</span>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <!-- Profile Section -->
+            <div class="nav-section">
+                <div class="nav-title">Account</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showContent('admin-profile')">
+                        <i class="fas fa-user-cog nav-icon"></i>
+                        <span class="nav-text">Admin Profile</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'authentication:logout' %}" class="nav-link" onclick="logout()">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <h1>Welcome Back, {{ user.first_name }} {{ user.last_name }}!</h1>
+            <p>Manage your waste collection system efficiently with SuchiGo</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value">{{ total_customers }}</div>
+                <div class="stat-label">Active Customers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-value">{{ total_collectors }}</div>
+                <div class="stat-label">Waste Collectors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <div class="stat-value">{{ monthly_collections }}</div>
+                <div class="stat-label">Collections This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="stat-value">{{ total_waste_collected }}</div>
+                <div class="stat-label">Waste Collected</div>
+            </div>
+        </div>
+
+        <!-- Dynamic Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <h2 class="content-title" id="contentTitle">Dashboard Overview</h2>
+            </div>
+
+            <div id="contentBody">
+                <div id="dashboard-content">
+                    <h3 style="margin-bottom: 1rem; color: #333;">System Status</h3>
+                    <p style="margin-bottom: 2rem; color: #666;">All systems are running smoothly. Monitor the overall health of your waste management system.</p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05)); border-radius: 15px; border-left: 4px solid #4CAF50;">
+                            <strong style="color: #333;">Collection Rate</strong><br>
+                            <span style="font-size: 2rem; color: #4CAF50; font-weight: bold;">{{ collection_rate }}%</span>
+                        </div>
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05)); border-radius: 15px; border-left: 4px solid #2196F3;">
+                            <strong style="color: #333;">Customer Satisfaction</strong><br>
+                            <span style="font-size: 2rem; color: #2196F3; font-weight: bold;">{{ customer_satisfaction }}/5</span>
+                        </div>
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05)); border-radius: 15px; border-left: 4px solid #FFC107;">
+                            <strong style="color: #333;">Recycling Rate</strong><br>
+                            <span style="font-size: 2rem; color: #FFC107; font-weight: bold;">{{ recycling_rate }}%</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 3rem;">
+                        <h4 style="margin-bottom: 1rem; color: #333;">Quick Actions</h4>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href="#" class="btn"><i class="fas fa-route"></i> Manage Routes</a>
+                            <a href="#" class="btn"><i class="fas fa-chart-bar"></i> View Reports</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+
+            if (window.innerWidth > 768) {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // Profile dropdown toggle
+        function toggleProfileDropdown() {
+            const dropdown = document.querySelector('.profile-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Mobile search toggle
+        function toggleMobileSearch() {
+            const mobileSearch = document.getElementById('mobileSearch');
+            mobileSearch.classList.toggle('active');
+        }
+
+        // Navigation handling
+        function showContent(contentType) {
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Add active class to clicked nav link
+            event.target.closest('.nav-link').classList.add('active');
+
+            // Update content title
+            const contentTitle = document.getElementById('contentTitle');
+            const titleMap = {
+                'dashboard': 'Dashboard Overview',
+                'waste-info': 'Waste Information',
+                'collected-data': 'Collected Data',
+                'customer-mgmt': 'Customer Management',
+                'collector-mgmt': 'Waste Collector Management',
+                'admin-mgmt': 'Admin Management',
+                'admin-profile': 'Admin Profile'
+            };
+
+            contentTitle.textContent = titleMap[contentType] || 'Dashboard Overview';
+
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const profileDropdown = document.querySelector('.profile-dropdown');
+            if (!profileDropdown.contains(event.target)) {
+                profileDropdown.classList.remove('active');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Add logout logic here
+                alert('Logout functionality would be implemented here');
+            }
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInputs = document.querySelectorAll('.search-input');
+            searchInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    // Add search functionality here
+                    console.log('Searching for:', this.value);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
