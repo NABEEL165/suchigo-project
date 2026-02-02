@@ -28,13 +28,19 @@ class WasteCollection(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Booking and scheduled dates
-    booking_date = models.DateTimeField(auto_now_add=True)  # When the order was placed
+    from django.utils import timezone
+    booking_date = models.DateTimeField(default=timezone.now)  # When the order was placed
     scheduled_date = models.DateField(null=True, blank=True)  # When the collection is scheduled
 
     def save(self, *args, **kwargs):
+        # Set default rate if not provided
         if not self.rate_per_kg:
             self.rate_per_kg = Decimal('50.00')
-        self.total_amount = self.kg * self.rate_per_kg
+        
+        # Calculate total amount if not set
+        if self.kg and (not self.total_amount or self.total_amount == 0):
+            self.total_amount = self.kg * self.rate_per_kg
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
