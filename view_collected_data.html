@@ -373,6 +373,37 @@
             background: linear-gradient(135deg, #f0f0f0 0%, #e1f5fe 100%);
         }
 
+        .actions-column {
+            width: 150px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
         /* Mobile Card Styles */
         .card {
             background: white;
@@ -803,9 +834,10 @@
                             <th>📅 Booking Date</th>
                             <th>🕕 Collection Time</th>
                             <th>🕒 Collected At</th>
+                            <th>Actions</th>
                         </tr>
                         {% for item in all_data %}
-                        <tr>
+                        <tr id="row-{{ item.id }}">
                             <td>{{ item.customer.username }}</td>
                             <td>{% if item.localbody %}{{ item.localbody }}{% else %}<span
                                     style="color: #6c757d; font-style: italic;">Not assigned</span>{% endif %}</td>
@@ -842,6 +874,10 @@
                                 {% endif %}
                             </td>
                             <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                            <td class="actions-column">
+                                <button class="action-btn edit-btn" onclick="editRecord({{ item.id }})"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="action-btn delete-btn" onclick="deleteRecord({{ item.id }})"><i class="fas fa-trash"></i> Delete</button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -851,7 +887,7 @@
             <!-- Mobile Card View -->
             <div class="mobile-cards">
                 {% for item in all_data %}
-                <div class="card">
+                <div class="card" id="card-{{ item.id }}">
                     <div class="card-header">
                         <span>👤 {{ item.collector.username }}</span>
                         <span>{{ item.created_at|date:"M d, Y" }}</span>
@@ -932,6 +968,13 @@
                             <div class="card-label">🕒 Collected At</div>
                             <div class="card-value">{{ item.created_at|date:"Y-m-d H:i" }}</div>
                         </div>
+                        <div class="card-row">
+                            <div class="card-label">Actions</div>
+                            <div class="card-value">
+                                <button class="action-btn edit-btn" onclick="editRecord({{ item.id }})"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="action-btn delete-btn" onclick="deleteRecord({{ item.id }})"><i class="fas fa-trash"></i> Delete</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -941,9 +984,83 @@
             </p>
             {% endif %}
 
+            <!-- CRUD Modal -->
+            <div id="crudModal"
+                style="display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);"
+                onclick="closeCrudModal(event)">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; max-height: 90%; width: 600px; background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <h3 id="modalTitle">Edit Waste Collection Record</h3>
+                    <form id="crudForm">
+                        {% csrf_token %}
+                        <div style="margin-bottom: 15px;">
+                            <label>Customer:</label>
+                            <input type="text" name="customer" id="customer" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;" placeholder="Customer username">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Local Body:</label>
+                            <input type="text" name="localbody" id="localbody" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;" placeholder="Local body name">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Ward:</label>
+                            <input type="text" name="ward" id="ward" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Location:</label>
+                            <input type="text" name="location" id="location" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Number of Bags:</label>
+                            <input type="number" name="number_of_bags" id="number_of_bags" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Building No:</label>
+                            <input type="text" name="building_no" id="building_no" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Street Name:</label>
+                            <input type="text" name="street_name" id="street_name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Weight (KG):</label>
+                            <input type="number" step="0.01" name="kg" id="kg" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Scheduled Date:</label>
+                            <input type="date" name="scheduled_date" id="scheduled_date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Collection Time:</label>
+                            <input type="time" name="collection_time" id="collection_time" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-top: 20px; display: flex; gap: 10px;">
+                            <button type="submit" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Save</button>
+                            <button type="button" onclick="closeCrudModal()" style="background: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+                        </div>
+                    </form>
+                    <div style="position: absolute; top: 10px; right: 10px; color: white; font-size: 30px; cursor: pointer; background: rgba(0,0,0,0.5); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"
+                        onclick="closeCrudModal()">×</div>
+                </div>
+            </div>
+
+            <!-- Confirmation Modal -->
+            <div id="confirmModal"
+                style="display: none; position: fixed; z-index: 10002; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);"
+                onclick="closeConfirmModal(event)">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; max-height: 90%; width: 400px; background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <h3 id="confirmTitle">Confirm Action</h3>
+                    <p id="confirmText">Are you sure you want to perform this action?</p>
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button id="confirmYesBtn" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Yes</button>
+                        <button type="button" onclick="closeConfirmModal()" style="background: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">No</button>
+                    </div>
+                    <div style="position: absolute; top: 10px; right: 10px; color: white; font-size: 30px; cursor: pointer; background: rgba(0,0,0,0.5); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"
+                        onclick="closeConfirmModal()">×</div>
+                </div>
+            </div>
+
             <!--            <a href="{% url 'super_admin_dashboard:super_admin_dashboard' %}" class="btn-secondary">-->
             <!--                ◀️ Back to Dashboard-->
-            <!--            </a>-->
+            <!--            </a-->
         </div>
     </div>
 
@@ -1077,6 +1194,145 @@
             document.getElementById('imageModal').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+
+        // CRUD Functions
+        function editRecord(id) {
+            // Get the row data
+            const row = document.getElementById(`row-${id}`);
+            if (!row) return;
+
+            // Extract data from the row
+            const cells = row.querySelectorAll('td');
+            const customer = cells[0].textContent;
+            const localbody = cells[1].textContent.replace('Not assigned', '').trim();
+            const ward = cells[2].textContent;
+            const location = cells[3].textContent;
+            const numberOfBags = cells[4].textContent;
+            const kg = cells[5].textContent;
+            const scheduledDate = cells[6].textContent.replace('Not scheduled', '').trim();
+            const totalAmount = cells[7].textContent.replace('₹', '').trim();
+            const collector = cells[8].textContent.replace('👤 ', '').replace('👤', '').trim();
+            const buildingNo = cells[9].textContent;
+            const streetName = cells[10].textContent;
+            const collectionTime = cells[13].textContent.replace('Not recorded', '').trim(); // This is now the second-to-last cell
+
+            // Populate the modal form
+            document.getElementById('customer').value = customer;
+            document.getElementById('localbody').value = localbody;
+            document.getElementById('ward').value = ward;
+            document.getElementById('location').value = location;
+            document.getElementById('number_of_bags').value = numberOfBags;
+            document.getElementById('building_no').value = buildingNo;
+            document.getElementById('street_name').value = streetName;
+            document.getElementById('kg').value = kg;
+            document.getElementById('scheduled_date').value = scheduledDate.includes('-') ? scheduledDate.split(' ')[0] : '';
+            document.getElementById('collection_time').value = collectionTime.includes(':') ? collectionTime : '';
+
+            // Store the ID for update
+            document.getElementById('crudForm').dataset.recordId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Waste Collection Record';
+
+            // Show the modal
+            document.getElementById('crudModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function deleteRecord(id) {
+            // Store the ID for deletion
+            window.currentDeleteId = id;
+            
+            // Update confirmation message
+            document.getElementById('confirmText').textContent = 'Are you sure you want to delete this waste collection record?';
+            document.getElementById('confirmTitle').textContent = 'Confirm Deletion';
+            
+            // Show confirmation modal
+            document.getElementById('confirmModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCrudModal(event) {
+            if (event && event.target.id !== 'crudModal') return;
+            document.getElementById('crudModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeConfirmModal(event) {
+            if (event && event.target.id !== 'confirmModal') return;
+            document.getElementById('confirmModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('crudForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const recordId = form.dataset.recordId;
+                    
+                    // Make AJAX request to update the record
+                    fetch(`/admin/collected-data/${recordId}/update/`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Record updated successfully!');
+                            location.reload(); // Reload the page to show updated data
+                        } else {
+                            alert('Error updating record: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while updating the record');
+                    });
+                });
+            }
+            
+            // Handle confirm deletion
+            document.getElementById('confirmYesBtn')?.addEventListener('click', function() {
+                if (window.currentDeleteId) {
+                    fetch(`/admin/collected-data/${window.currentDeleteId}/delete/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the row from the table
+                            const row = document.getElementById(`row-${window.currentDeleteId}`);
+                            if (row) row.remove();
+                            
+                            const card = document.getElementById(`card-${window.currentDeleteId}`);
+                            if (card) card.remove();
+                            
+                            // Update stats
+                            calculateStats();
+                            
+                            alert('Record deleted successfully!');
+                        } else {
+                            alert('Error deleting record: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while deleting the record');
+                    });
+                    
+                    // Close modal
+                    closeConfirmModal();
+                }
+            });
+        });
     </script>
 </body>
 
