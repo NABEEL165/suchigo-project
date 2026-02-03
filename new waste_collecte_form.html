@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Waste Entry - SuchiGo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #e1f3f8 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            margin-top: 100px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo-container {
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-image {
+            width: 120px;
+            height: auto;
+            max-height: 80px;
+            object-fit: contain;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: white;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: #4CAF50;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            color: #333;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Auto-filled field highlighting */
+        input.auto-filled,
+        select.auto-filled,
+        textarea.auto-filled {
+            background: linear-gradient(135deg, #e8f5e8, #f0f9ff);
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+        }
+
+        /* Billing Information */
+        .billing-info {
+            background: linear-gradient(135deg, #f8fffe 0%, #f0f9ff 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid rgba(76, 175, 80, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .billing-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .billing-row:last-child {
+            border-bottom: none;
+        }
+
+        .billing-label {
+            font-weight: 600;
+            color: #2196F3;
+        }
+
+        .billing-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            color: #4CAF50;
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Camera Section */
+        .camera-section {
+            background: linear-gradient(135deg, #f8fffe 0%, #f0f9ff 100%);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px dashed rgba(76, 175, 80, 0.3);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .camera-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #video {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            height: auto;
+            border: 2px solid rgba(76, 175, 80, 0.1);
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        #preview {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #4CAF50;
+        }
+
+        .capture-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .capture-btn:hover {
+            background: linear-gradient(135deg, #45a049 0%, #1976d2 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .camera-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2196F3;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #45a049 0%, #1976d2 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(156, 163, 175, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(156, 163, 175, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            gap: 0.5rem;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #45a049 0%, #1976d2 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: linear-gradient(135deg, #e8f5e8 0%, #e1f3f8 100%);
+            color: #4CAF50;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid rgba(76, 175, 80, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .photo-captured {
+            background: linear-gradient(135deg, #e8f5e8 0%, #e1f3f8 100%);
+            border: 2px solid rgba(76, 175, 80, 0.2);
+            color: #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+
+            .camera-container {
+                gap: 15px;
+            }
+
+            #video {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary,
+            .btn-success {
+                width: 100%;
+                justify-content: center;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .logo-image {
+                width: 100px;
+                max-height: 60px;
+            }
+        }
+
+        /* Hidden data container */
+        #localbody-rates-data {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="header">
+                <div class="page-title"> Waste Collection Entry Form </div>
+                <p class="subtitle">Document your waste for sustainable management</p>
+                <div class="header-buttons">
+                    <a href="{% url 'waste_collector:waste_collector_dashboard' %}" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+
+            <!-- Share Options -->
+            <div style="margin: 15px 0; text-align: right;">
+                <button class="btn-secondary" onclick="sharePage()">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+                <button class="btn-secondary" onclick="showAbout()" style="margin-left: 10px;">
+                    <i class="fas fa-info-circle"></i> About
+                </button>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if messages %}
+                {% for message in messages %}
+                <div
+                    style="background: #e8f5e8; color: #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c8e6c9;">
+                    <i class="fas fa-check-circle"></i> {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                {% if form.non_field_errors %}
+                <div
+                    style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffcdd2;">
+                    <strong>Form Errors:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="form-section">
+                    <div class="section-title">📝 Waste Information</div>
+                    <p>
+                        <label for="{{ form.customer.id_for_label }}">Customer:</label>
+                        {{ form.customer }}
+                        {% if form.customer.errors %}
+                    <div style="color: #c62828; font-size: 0.85rem; margin-top: 5px;">
+                        {% for error in form.customer.errors %}
+                        <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if customer_waste_info %}
+                    <small style="color: #4CAF50; display: block; margin-top: 5px;">
+                        <i class="fas fa-user"></i> {{ customer_waste_info.full_name }}
+                        ({{ customer_waste_info.user.contact_number }})
+                    </small>
+                    {% endif %}
+                    </p>
+                    <p>
+                        <label for="{{ form.localbody.id_for_label }}">Local Body:</label>
+                        {{ form.localbody }}
+                        {% if form.localbody.errors %}
+                    <div style="color: #c62828; font-size: 0.85rem; margin-top: 5px;">
+                        {% for error in form.localbody.errors %}
+                        <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if customer_waste_info and customer_waste_info.localbody %}
+                    <small style="color: #2196F3; display: block; margin-top: 5px;">
+                        <i class="fas fa-landmark"></i> Auto-filled from customer profile
+                    </small>
+                    {% endif %}
+                    </p>
+                    <p>
+                        <label for="{{ form.ward.id_for_label }}">Ward:</label>
+                        {{ form.ward }}
+                        {% if customer_waste_info and customer_waste_info.ward %}
+                        <small style="color: #2196F3; display: block; margin-top: 5px;">
+                            <i class="fas fa-home"></i> Ward {{ customer_waste_info.ward }} (auto-filled)
+                        </small>
+                        {% endif %}
+                    </p>
+                    <p>
+                        <label for="{{ form.location.id_for_label }}">Location:</label>
+                        {{ form.location }}
+                        {% if customer_waste_info and customer_waste_info.pickup_address %}
+                        <small style="color: #FF9800; display: block; margin-top: 5px;">
+                            <i class="fas fa-map-marker-alt"></i> {{ customer_waste_info.pickup_address }} (auto-filled)
+                        </small>
+                        {% endif %}
+                    </p>
+                    <p>
+                        <label for="{{ form.number_of_bags.id_for_label }}">Number of Bags:</label>
+                        {{ form.number_of_bags }}
+                        {% if form.number_of_bags.errors %}
+                    <div style="color: #c62828; font-size: 0.85rem; margin-top: 5px;">
+                        {% for error in form.number_of_bags.errors %}
+                        <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if request.GET.number_of_bags %}
+                    <small style="color: #4CAF50; display: block; margin-top: 5px;">
+                        <i class="fas fa-shopping-bag"></i> Pre-filled from assignment: {{ request.GET.number_of_bags }}
+                        bag(s)
+                    </small>
+                    <script>
+                        // Auto-fill number of bags when page loads
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const bagsValue = "{{ request.GET.number_of_bags }}";
+                            const bagsField = document.querySelector('input[name="number_of_bags"]');
+                            if (bagsValue && bagsField && !bagsField.value) {
+                                bagsField.value = bagsValue;
+                                bagsField.classList.add('auto-filled');
+                                // Trigger input event to update weight calculation
+                                bagsField.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        });
+                    </script>
+                    {% elif customer_waste_info and customer_waste_info.number_of_bags %}
+                    <small style="color: #4CAF50; display: block; margin-top: 5px;">
+                        <i class="fas fa-shopping-bag"></i> Customer has {{ customer_waste_info.number_of_bags }} bag(s)
+                        (auto-filled)
+                    </small>
+                    <script>
+                        // Auto-fill number of bags from customer info
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const bagsValue = "{{ customer_waste_info.number_of_bags }}";
+                            const bagsField = document.querySelector('input[name="number_of_bags"]');
+                            if (bagsValue && bagsField && !bagsField.value) {
+                                bagsField.value = bagsValue;
+                                bagsField.classList.add('auto-filled');
+                                // Trigger input event to update weight calculation
+                                bagsField.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        });
+                    </script>
+                    {% endif %}
+                    </p>
+                    <p>
+                        <label for="{{ form.building_no.id_for_label }}">Building Number:</label>
+                        {{ form.building_no }}
+                        {% if form.building_no.errors %}
+                    <div style="color: #c62828; font-size: 0.85rem; margin-top: 5px;">
+                        {% for error in form.building_no.errors %}
+                        <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    </p>
+                    <p>
+                        <label for="{{ form.street_name.id_for_label }}">Street Name:</label>
+                        {{ form.street_name }}
+                        {% if form.street_name.errors %}
+                    <div style="color: #c62828; font-size: 0.85rem; margin-top: 5px;">
+                        {% for error in form.street_name.errors %}
+                        <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    </p>
+                    <p>
+                        <label for="{{ form.kg.id_for_label }}">Weight (KG):</label>
+                        {{ form.kg }}
+                        {% if form.kg.errors %}
+                    <div style="color: #c62828; font-size: 0.85rem; margin-top: 5px;">
+                        {% for error in form.kg.errors %}
+                        <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if request.GET.number_of_bags %}
+                    <small style="color: #9C27B0; display: block; margin-top: 5px;">
+                        <i class="fas fa-weight"></i> Based on {{ request.GET.number_of_bags }} bags (adjust as needed)
+                    </small>
+                    <script>
+                        // Auto-calculate weight based on bags when page loads
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const bagsValue = "{{ request.GET.number_of_bags }}";
+                            const kgField = document.querySelector('input[name="kg"]');
+                            if (bagsValue && kgField && !kgField.value) {
+                                // Assume 5kg per bag as default
+                                const calculatedWeight = bagsValue * 5;
+                                kgField.value = calculatedWeight;
+                                kgField.classList.add('auto-filled');
+                                // Trigger input event to update billing
+                                kgField.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        });
+                    </script>
+                    {% elif customer_waste_info and customer_waste_info.number_of_bags %}
+                    <small style="color: #9C27B0; display: block; margin-top: 5px;">
+                        <i class="fas fa-shopping-bag"></i> Based on {{ customer_waste_info.number_of_bags }} bags
+                        (adjust as needed)
+                    </small>
+                    {% endif %}
+                    </p>
+                    <p>
+                        <label for="{{ form.scheduled_date.id_for_label }}">Scheduled Date:</label>
+                        {{ form.scheduled_date }}
+                        <small>If this collection is scheduled, select the date here</small>
+                    </p>
+
+                </div>
+
+                Billing Information Section
+                <div class="form-section">
+                    <div class="section-title">💰 Billing Information</div>
+                    <div class="billing-info">
+                        <div class="billing-row">
+                            <span class="billing-label">Local Body:</span>
+                            <span class="billing-value" id="localbody-name" name="localbody-display">-</span>
+                        </div>
+                        <div class="billing-row">
+                            <span class="billing-label">Rate Per KG:</span>
+                            <span class="billing-value" id="rate-per-kg" name="rate-display">₹50.00</span>
+                        </div>
+                        <div class="billing-row">
+                            <span class="billing-label">Weight (KG):</span>
+                            <span class="billing-value" id="weight-value" name="weight-display">0.00 KG</span>
+                        </div>
+                        <div class="total-amount">
+                            Total Amount: <span id="total-amount" name="total-amount-display">₹0.00</span>
+                        </div>
+                        <div class="billing-row">
+                            <span class="billing-label">Customer Wallet Balance:</span>
+                            <span class="billing-value" id="wallet-balance" name="wallet-balance-display">₹0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">📸 Photo Documentation</div>
+
+                    <div class="camera-section">
+                        <div class="camera-status">
+                            <div class="status-indicator"></div>
+                            Live Camera Feed
+                        </div>
+
+                        <div class="camera-container">
+                            <video id="video" width="320" height="240" autoplay></video>
+
+                            <button type="button" class="capture-btn" onclick="capturePhoto()">
+                                📸 Capture Photo
+                            </button>
+
+                            <canvas id="canvas" width="320" height="240"></canvas>
+
+                            <img id="preview" style="display:none;" />
+                            <input type="hidden" name="photo_data" id="photo_data" autocomplete="off">
+
+                            <div class="photo-captured" id="photo-success">
+                                ✅ Photo captured successfully! Ready to save.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Waste Entry
+                    </button>
+
+                    <a href="#" class="btn-success" id="add-wallet-btn"
+                        data-customer-waste-info-id="{{ customer_waste_info.id|default:0 }}">
+                        <i class="fas fa-credit-card"></i> Add Wallet
+                    </a>
+
+                    <a href="{% url 'waste_collector:waste_collector_dashboard' %}" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    Hidden data container for local body rates
+    <div id="localbody-rates-data" name="localbody-rates-container">
+        {% if localbody_rates %}
+        {{ localbody_rates|json_script:"localbody-rates-json" }}
+        {% endif %}
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const preview = document.getElementById('preview');
+        const photoSuccess = document.getElementById('photo-success');
+        const captureBtn = document.querySelector('.capture-btn');
+        const cameraStatus = document.querySelector('.camera-status');
+
+        // Billing elements
+        const localbodyName = document.getElementById('localbody-name');
+        const ratePerKg = document.getElementById('rate-per-kg');
+        const weightValue = document.getElementById('weight-value');
+        const totalAmount = document.getElementById('total-amount');
+        const walletBalance = document.getElementById('wallet-balance');
+        const kgInput = document.querySelector('input[name="kg"]');
+        const bagsInput = document.querySelector('input[name="number_of_bags"]');
+        const localbodySelect = document.querySelector('select[name="localbody"]');
+        const customerSelect = document.querySelector('select[name="customer"]');
+
+        // Local body rates data (passed from the server)
+        let localbodyRates = {};
+
+        // Parse local body rates from JSON
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                const ratesElement = document.getElementById('localbody-rates-json');
+                if (ratesElement) {
+                    localbodyRates = JSON.parse(ratesElement.textContent);
+                }
+            } catch (e) {
+                console.error('Error parsing local body rates:', e);
+            }
+        });
+
+        // Initialize billing information
+        function updateBillingInfo() {
+            // Update local body name
+            if (localbodySelect && localbodySelect.options[localbodySelect.selectedIndex]) {
+                localbodyName.textContent = localbodySelect.options[localbodySelect.selectedIndex].text || '-';
+            }
+
+            // Update rate per kg based on selected local body
+            if (localbodySelect && localbodySelect.value) {
+                const localbodyId = localbodySelect.value;
+                const rate = localbodyRates[localbodyId] || 50.00;
+                ratePerKg.textContent = '₹' + rate.toFixed(2);
+            }
+
+            // Update weight value
+            if (kgInput) {
+                const weight = parseFloat(kgInput.value) || 0;
+                weightValue.textContent = weight.toFixed(2) + ' KG';
+
+                // Calculate total amount
+                const rate = parseFloat(ratePerKg.textContent.replace('₹', '')) || 50.00;
+                const total = weight * rate;
+                totalAmount.textContent = '₹' + total.toFixed(2);
+            }
+        }
+
+        // Add event listeners for real-time updates
+        if (kgInput) {
+            kgInput.addEventListener('input', updateBillingInfo);
+        }
+
+        if (bagsInput) {
+            bagsInput.addEventListener('input', function () {
+                // Auto-calculate weight based on bags (5kg per bag)
+                const bags = parseInt(bagsInput.value) || 0;
+                const calculatedWeight = bags * 5;
+                if (kgInput && !kgInput.value) {
+                    kgInput.value = calculatedWeight;
+                    kgInput.classList.add('auto-filled');
+                    updateBillingInfo();
+                }
+            });
+        }
+
+        if (localbodySelect) {
+            localbodySelect.addEventListener('change', updateBillingInfo);
+        }
+
+        if (customerSelect) {
+            customerSelect.addEventListener('change', function () {
+                // In a real implementation, this would fetch the actual wallet balance
+                // For now, we'll use a random value for demonstration
+                const balance = (Math.random() * 5000).toFixed(2);
+                walletBalance.textContent = '₹' + balance;
+            });
+        }
+
+        // Initialize billing info on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Highlight auto-filled fields
+            highlightAutofilledFields();
+
+            // Delay to ensure rates are loaded
+            setTimeout(function () {
+                updateBillingInfo();
+
+                // Initialize wallet balance
+                if (customerSelect && customerSelect.options[customerSelect.selectedIndex]) {
+                    const balance = (Math.random() * 5000).toFixed(2);
+                    walletBalance.textContent = '₹' + balance;
+                }
+            }, 100);
+        });
+
+        // Function to highlight auto-filled fields
+        function highlightAutofilledFields() {
+            // Check if we have customer waste info
+            const urlParams = new URLSearchParams(window.location.search);
+            const customerId = urlParams.get('customer_waste_info_id');
+
+            if (customerId) {
+                // Add visual indication to auto-filled fields
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    if (input.value && input.value.trim() !== '') {
+                        // Add the auto-filled class for consistent styling
+                        input.classList.add('auto-filled');
+                    }
+                });
+
+                // Auto-fill completed
+            }
+        }
+
+        // Removed auto-fill notification function
+
+        // CSS animations for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Check for camera access
+        navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: "environment" } }
+        })
+            .then(stream => {
+                video.srcObject = stream;
+                cameraStatus.textContent = '✅ Rear camera active.';
+                if (captureBtn) {
+                    captureBtn.style.display = 'inline-block';
+                }
+            })
+            .catch(err => {
+                console.error('Camera access error:', err);
+                cameraStatus.innerHTML =
+                    '<span style="color: red;">❌ Camera access denied. Mobile rear camera is required.</span>';
+
+                if (captureBtn) {
+                    captureBtn.style.display = 'none';  // Hide capture button
+                }
+
+                // Optional: display custom message for desktop users
+                if (window.innerWidth > 768) {
+                    const errorBox = document.createElement('div');
+                    errorBox.style.color = 'red';
+                    errorBox.style.marginTop = '10px';
+                    errorBox.innerHTML = '⚠️ This feature is only supported on mobile devices with a rear camera.';
+                    cameraStatus.appendChild(errorBox);
+                }
+            });
+
+        function capturePhoto() {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataURL = canvas.toDataURL('image/png');
+            document.getElementById('photo_data').value = dataURL;
+            preview.src = dataURL;
+            preview.style.display = 'block';
+            preview.style.animation = 'fadeIn 0.4s ease-in-out';
+
+            photoSuccess.style.display = 'flex';
+
+            // Update button
+            if (captureBtn) {
+                captureBtn.innerHTML = '<i class="fas fa-check"></i> Photo Captured – Retake?';
+                captureBtn.style.background = '#333';
+            }
+        }
+
+        // Share functionality
+        function sharePage() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SuchiGo - Waste Collection Entry',
+                    text: 'Capture and document waste collection entries',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                alert('Sharing is not supported in your browser. Copy the URL: ' + window.location.href);
+            }
+        }
+
+        // About functionality
+        function showAbout() {
+            alert('SuchiGo Waste Management System\n\nThis page allows you to capture and document waste collection entries with photos for sustainable waste management.');
+        }
+
+        // Add Wallet button functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const addWalletBtn = document.getElementById('add-wallet-btn');
+
+            // Check if we have customer_waste_info from the context
+            const customerWasteInfoId = addWalletBtn ? addWalletBtn.getAttribute('data-customer-waste-info-id') : null;
+
+            // Update wallet button based on selected customer
+            function updateWalletButton() {
+                if (customerSelect && customerSelect.value && addWalletBtn) {
+                    // Get the selected customer's user ID
+                    const customerId = customerSelect.value;
+
+                    // Get the data-waste-info-id attribute if it exists
+                    const selectedOption = customerSelect.options[customerSelect.selectedIndex];
+                    const wasteInfoId = selectedOption.getAttribute('data-waste-info-id');
+
+                    if (wasteInfoId) {
+                        // Update the href with the actual waste_info_id
+                        addWalletBtn.href = `{% url 'payments:initiate_payment' 999999 %}`.replace('999999', wasteInfoId);
+                        addWalletBtn.style.opacity = '1';
+                        addWalletBtn.style.pointerEvents = 'auto';
+                        addWalletBtn.onclick = null; // Remove any previous onclick handlers
+                    } else {
+                        // Always go to initiate payment page, even without valid customer
+                        addWalletBtn.href = '{% url "payments:initiate_payment" 1 %}';
+                        addWalletBtn.style.opacity = '1';
+                        addWalletBtn.style.pointerEvents = 'auto';
+                        addWalletBtn.onclick = null;
+                    }
+                } else if (addWalletBtn) {
+                    // Check if we have customer_waste_info from context
+                    if (customerWasteInfoId && customerWasteInfoId !== '0') {
+                        // Use the customer waste info ID directly
+                        addWalletBtn.href = `{% url 'payments:initiate_payment' 999999 %}`.replace('999999', customerWasteInfoId);
+                        addWalletBtn.style.opacity = '1';
+                        addWalletBtn.style.pointerEvents = 'auto';
+                        addWalletBtn.onclick = null; // Remove any previous onclick handlers
+                    } else {
+                        // Always go to initiate payment page, even without valid customer
+                        addWalletBtn.href = '{% url "payments:initiate_payment" 1 %}';
+                        addWalletBtn.style.opacity = '1';
+                        addWalletBtn.style.pointerEvents = 'auto';
+                        addWalletBtn.onclick = null;
+                    }
+                }
+            }
+
+            // Add event listener for customer selection changes
+            if (customerSelect) {
+                customerSelect.addEventListener('change', updateWalletButton);
+            }
+
+            // Initialize wallet button state on page load
+            updateWalletButton();
+        });
+    </script>
+
+</body>
+
+</html>
