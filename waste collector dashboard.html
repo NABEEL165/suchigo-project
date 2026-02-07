@@ -1,13 +1,14 @@
-
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuchiGo - Waste Collector Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -25,8 +26,8 @@
         .navbar {
             background: linear-gradient(135deg, #2e8b57 0%, #1c6d42 100%);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             padding: 0.8rem 1rem;
             position: fixed;
             top: 0;
@@ -82,7 +83,7 @@
 
         .brand-tagline {
             font-size: 0.7rem;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             font-weight: 400;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -99,8 +100,8 @@
         }
 
         .search-input {
-            background: rgba(255,255,255,0.15);
-            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 25px;
             color: white;
             padding: 0.6rem 1rem 0.6rem 2.5rem;
@@ -109,11 +110,11 @@
         }
 
         .search-input::placeholder {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .search-input:focus {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.25);
             border-color: #4ade80;
             box-shadow: 0 0 0 0.2rem rgba(74, 222, 128, 0.25);
             outline: none;
@@ -124,7 +125,7 @@
             left: 0.8rem;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .navbar-nav {
@@ -139,8 +140,8 @@
         }
 
         .nav-icon-btn {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             color: white;
             width: 40px;
@@ -154,7 +155,7 @@
         }
 
         .nav-icon-btn:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-color: #4ade80;
             transform: translateY(-2px);
         }
@@ -176,9 +177,17 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .profile-dropdown {
@@ -186,8 +195,8 @@
         }
 
         .profile-btn {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -199,7 +208,7 @@
         }
 
         .profile-btn:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-color: #4ade80;
         }
 
@@ -207,7 +216,7 @@
             background: white;
             border: none;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             margin-top: 0.5rem;
             min-width: 200px;
         }
@@ -233,7 +242,7 @@
             position: fixed;
             top: 70px;
             left: 0;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
             z-index: 1025;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
@@ -246,7 +255,7 @@
 
         .sidebar-header {
             padding: 1.5rem;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             background: linear-gradient(135deg, #2e8b57 0%, #22d3ee 100%);
             color: white;
             position: relative;
@@ -260,7 +269,7 @@
             right: -20px;
             width: 100px;
             height: 200px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50px;
             transform: rotate(45deg);
         }
@@ -304,7 +313,8 @@
             position: relative;
         }
 
-        .menu-item:hover, .menu-item.active {
+        .menu-item:hover,
+        .menu-item.active {
             background: linear-gradient(135deg, #e8f8f2 0%, #e0f4f1 100%);
             color: #2e8b57;
             border-left-color: #4ade80;
@@ -336,7 +346,7 @@
             font-weight: 600;
             position: absolute;
             bottom: 0;
-            width:86%;
+            width: 86%;
         }
 
         .logout-item:hover {
@@ -364,8 +374,8 @@
         }
 
         .sidebar-toggle {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             color: white;
             border-radius: 8px;
             padding: 0.5rem 0.8rem;
@@ -375,7 +385,7 @@
         }
 
         .sidebar-toggle:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-color: #4ade80;
         }
 
@@ -385,7 +395,7 @@
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -429,7 +439,7 @@
             border-radius: 15px;
             padding: 1.5rem;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             border-left: 5px solid;
             position: relative;
@@ -449,13 +459,24 @@
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .stat-card.total { border-left-color: #4ade80; }
-        .stat-card.today { border-left-color: #22d3ee; }
-        .stat-card.weight { border-left-color: #2e8b57; }
-        .stat-card.revenue { border-left-color: #10b981; }
+        .stat-card.total {
+            border-left-color: #4ade80;
+        }
+
+        .stat-card.today {
+            border-left-color: #22d3ee;
+        }
+
+        .stat-card.weight {
+            border-left-color: #2e8b57;
+        }
+
+        .stat-card.revenue {
+            border-left-color: #10b981;
+        }
 
         .stat-icon {
             font-size: 2.5rem;
@@ -497,40 +518,58 @@
 
         .action-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 15px;
             padding: 1.5rem;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
-            border: 2px solid transparent;
+            border-left: 5px solid;
             position: relative;
             overflow: hidden;
-            cursor: pointer;
+            display: block;
+            height: 100%;
         }
 
         .action-card::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #4ade80, #22d3ee);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1));
+            border-radius: 0 0 0 50px;
         }
 
         .action-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            color: inherit;
-            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .action-card:hover::before {
-            transform: scaleX(1);
+        .action-card.add {
+            border-left-color: #4ade80;
+        }
+
+        .action-card.view {
+            border-left-color: #22d3ee;
+        }
+
+        .action-card.assigned {
+            border-left-color: #2e8b57;
+        }
+
+        .action-card.orders {
+            border-left-color: #10b981;
+        }
+
+        .action-card.reports {
+            border-left-color: #f59e0b;
+        }
+
+        .action-card.analytics {
+            border-left-color: #8b5cf6;
         }
 
         .action-icon {
@@ -558,7 +597,7 @@
             background: white;
             border-radius: 15px;
             padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -606,7 +645,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1020;
             opacity: 0;
             visibility: hidden;
@@ -624,7 +663,7 @@
             py: 5;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -767,6 +806,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
@@ -790,7 +830,8 @@
             <div class="navbar-search d-none d-lg-block">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Search collections, customers..." id="globalSearch">
+                    <input type="text" class="search-input" placeholder="Search collections, customers..."
+                        id="globalSearch">
                 </div>
             </div>
 
@@ -798,7 +839,8 @@
             <div class="navbar-nav">
                 <!-- Notifications -->
                 <div class="nav-item">
-                    <div class="nav-icon-btn" onclick="toggleNotifications()" data-bs-toggle="tooltip" title="Notifications">
+                    <div class="nav-icon-btn" onclick="toggleNotifications()" data-bs-toggle="tooltip"
+                        title="Notifications">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
                     </div>
@@ -858,57 +900,50 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-<!--                <a href="#" class="menu-item">-->
-<!--                    <i class="fas fa-plus-circle"></i>-->
-<!--                    <span>Add Collection</span>-->
-<!--                </a>-->
+                <!--                <a href="#" class="menu-item">-->
+                <!--                    <i class="fas fa-plus-circle"></i>-->
+                <!--                    <span>Add Collection</span>-->
+                <!--                </a>-->
                 <a href="{% url 'waste_collector:waste_collect_list' %}" class="menu-item">
                     <i class="fas fa-list"></i>
                     <span>View Records</span>
                 </a>
+
                 <a href="{% url 'waste_collector:assigned_customers' %}" class="menu-item">
                     <i class="fas fa-tasks"></i>
                     <span>Assigned Waste</span>
                     <span class="menu-badge">5</span>
                 </a>
+                <a href="{% url 'waste_collector:localbody_orders' %}" class="menu-item">
+                    <i class="fas fa-building"></i>
+                    <span>Local Body Orders</span>
+                </a>
             </div>
 
             <!-- Management -->
             <div class="menu-section">
-<!--                <div class="menu-section-title">Management</div>-->
-<!--                <a href="#" class="menu-item">-->
-<!--                    <i class="fas fa-users"></i>-->
-<!--                    <span>Customers</span>-->
-<!--                </a>-->
-<!--                <a href="#" class="menu-item">-->
-<!--                    <i class="fas fa-route"></i>-->
-<!--                    <span>Routes</span>-->
-<!--                </a>-->
-<!--                <a href="#" class="menu-item">-->
-<!--                    <i class="fas fa-calendar-alt"></i>-->
-<!--                    <span>Schedule</span>-->
-<!--                </a>-->
-<!--                <a href="#" class="menu-item">-->
-<!--                    <i class="fas fa-map-marked-alt"></i>-->
-<!--                    <span>Area Management</span>-->
-<!--                </a>-->
+                <div class="menu-section-title">Management</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Waste Pickup Record (Previous & upcoming)</span>
+                </a>
             </div>
 
             <!-- Reports & Analytics -->
             <div class="menu-section">
-<!--                <div class="menu-section-title">Reports</div>-->
-<!--                <a href="#" class="menu-item">-->
-<!--                    <i class="fas fa-chart-bar"></i>-->
-<!--                    <span>Analytics</span>-->
-<!--                </a>-->
-<!--                <a href="#" class="menu-item">-->
-<!--                    <i class="fas fa-file-alt"></i>-->
-<!--                    <span>Reports</span>-->
-<!--                </a>-->
-<!--                <a href="#" class="menu-item">-->
-<!--                    <i class="fas fa-download"></i>-->
-<!--                    <span>Export Data</span>-->
-<!--                </a>-->
+                <div class="menu-section-title">Reports & Analytics</div>
+                <a href="{% url 'waste_collector:billing_dashboard' %}" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="javascript:void(0)" onclick="generateReports()" class="menu-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="javascript:void(0)" onclick="generateReports()" class="menu-item">
+                    <i class="fas fa-download"></i>
+                    <span>Export Data</span>
+                </a>
             </div>
 
             <!-- Settings -->
@@ -943,7 +978,14 @@
         <!-- Welcome Section -->
         <div class="welcome-section">
             <h1 class="welcome-title">Welcome back, {{ request.user.first_name }}! 👋</h1>
-            <p class="welcome-subtitle">Track, manage, and complete your assigned waste collections with ease and accuracy.</p>
+            <p class="welcome-subtitle">Track, manage, and complete your assigned waste collections with ease and
+                accuracy.</p>
+            {% if next_pickup_date %}
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-calendar-check"></i> Next Pickup Date: <strong>{{ next_pickup_date|date:"F j, Y"
+                    }}</strong>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Statistics Section -->
@@ -972,8 +1014,9 @@
                         <div class="stat-icon">
                             <i class="fas fa-weight-hanging"></i>
                         </div>
-                        <div class="stat-number" id="totalWeight">{{ total_weight|default:"0" }}</div>
-                        <div class="stat-label">Total KG Collected</div>
+                        <div class="stat-number" id="totalWeight">{{ total_weight|floatformat:2|default:"0.00" }} KG
+                        </div>
+                        <div class="stat-label">Total Weight Collected</div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-3">
@@ -981,54 +1024,63 @@
                         <div class="stat-icon">
                             <i class="fas fa-rupee-sign"></i>
                         </div>
-                        <div class="stat-number" id="totalRevenue">₹{{ total_revenue|default:"0" }}</div>
+                        <div class="stat-number" id="totalRevenue">₹{{ total_revenue|floatformat:2|default:"0.00" }}
+                        </div>
                         <div class="stat-label">Total Revenue</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Actions Section -->
         <div class="quick-actions">
             <h3 class="section-title">
                 <i class="fas fa-bolt"></i> Quick Actions
             </h3>
             <div class="row">
-<!--                <div class="col-lg-3 col-md-6 mb-3">-->
-<!--                    <div class="action-card" onclick="addCollection()">-->
-<!--                        <div class="action-icon">-->
-<!--                            <i class="fas fa-plus-circle"></i>-->
-<!--                        </div>-->
-<!--                        <div class="action-title">Add Collection</div>-->
-<!--                        <div class="action-description">Record new waste collection</div>-->
-<!--                    </div>-->
-<!--                </div>-->
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="action-card" onclick="viewRecords()">
+                <div class="col-lg col-md-4 col-sm-6 mb-3">
+                    <a href="{% url 'waste_collector:waste_collect_list' %}" class="action-card view">
                         <div class="action-icon">
-                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-list-ul"></i>
                         </div>
                         <div class="action-title">View Records</div>
-                        <div class="action-description">Browse all collections</div>
-                    </div>
+                        <div class="action-description">All collection data</div>
+                    </a>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="action-card" onclick="assignedWaste()">
+                <div class="col-lg col-md-4 col-sm-6 mb-3">
+                    <a href="{% url 'waste_collector:assigned_customers' %}" class="action-card assigned">
                         <div class="action-icon">
                             <i class="fas fa-tasks"></i>
                         </div>
                         <div class="action-title">Assigned Waste</div>
-                        <div class="action-description">View assigned waste collections</div>
+                        <div class="action-description">View assignments</div>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-sm-6 mb-3">
+                    <a href="{% url 'waste_collector:localbody_orders' %}" class="action-card orders">
+                        <div class="action-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="action-title">Local Body</div>
+                        <div class="action-description">Orders & requests</div>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-sm-6 mb-3">
+                    <div class="action-card reports" onclick="generateReports()">
+                        <div class="action-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <div class="action-title">Reports</div>
+                        <div class="action-description">Export CSV data</div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="action-card" onclick="generateReports()">
+                <div class="col-lg col-md-4 col-sm-6 mb-3">
+                    <a href="{% url 'waste_collector:billing_dashboard' %}" class="action-card analytics">
                         <div class="action-icon">
-                            <i class="fas fa-chart-bar"></i>
+                            <i class="fas fa-chart-line"></i>
                         </div>
-                        <div class="action-title">Generate Reports</div>
-                        <div class="action-description">View analytics & reports</div>
-                    </div>
+                        <div class="action-title">Analytics</div>
+                        <div class="action-description">View performance</div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -1040,24 +1092,169 @@
                     <i class="fas fa-clock"></i> Recent Activity
                 </h4>
                 <div>
-                    <button class="btn btn-outline-success btn-sm" onclick="refreshData()">
+                    <button class="btn btn-outline-success btn-sm" onclick="refreshData(event)">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
                 </div>
             </div>
+
+            {% if recent_activities %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> #</th>
+                            <th><i class="fas fa-user"></i> Customer</th>
+                            <th><i class="fas fa-building"></i> Local Body</th>
+                            <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                            <th><i class="fas fa-weight-hanging"></i> Weight (KG)</th>
+                            <th><i class="fas fa-rupee-sign"></i> Amount</th>
+                            <th><i class="fas fa-calendar-alt"></i> Date & Time</th>
+                            <th><i class="fas fa-credit-card"></i> Payment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in recent_activities %}
+                        <tr>
+                            <td><strong>{{ forloop.counter }}</strong></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle bg-success text-white me-2"
+                                        style="width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem;">
+                                        {{ activity.customer.first_name|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">{{ activity.customer.first_name }} {{
+                                            activity.customer.last_name }}</div>
+                                        <small class="text-muted">{{ activity.customer.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info text-dark">
+                                    {{ activity.localbody.name|default:"N/A" }}
+                                </span>
+                            </td>
+                            <td>
+                                <div>
+                                    <i class="fas fa-map-pin text-danger"></i>
+                                    <small>{{ activity.location|truncatewords:5 }}</small>
+                                </div>
+                                <small class="text-muted">Ward: {{ activity.ward }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-weight-hanging"></i> {{ activity.kg|floatformat:2 }} KG
+                                </span>
+                            </td>
+                            <td>
+                                <strong class="text-success">₹{{ activity.total_amount|floatformat:2 }}</strong>
+                            </td>
+                            <td>
+                                <div>
+                                    <i class="fas fa-calendar"></i> {{ activity.created_at|date:"M d, Y" }}
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> {{ activity.created_at|time:"h:i A" }}
+                                </small>
+                            </td>
+                            <td>
+                                {% if activity.payment_method == 'cash_on_delivery' %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-money-bill-wave"></i> Cash
+                                </span>
+                                {% elif activity.payment_method == 'upi' %}
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-mobile-alt"></i> UPI
+                                </span>
+                                {% elif activity.payment_method == 'credit_card' %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-credit-card"></i> Card
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-question"></i> N/A
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="{% url 'waste_collector:waste_collect_list' %}" class="btn btn-outline-success">
+                    <i class="fas fa-list"></i> View All Collections
+                </a>
+            </div>
+            {% else %}
             <div class="empty-state text-center py-5">
                 <i class="fas fa-clipboard-list fa-3x text-muted mb-3 empty-icon"></i>
                 <h5 class="text-muted mb-2">No Recent Activity</h5>
-                <p class="text-muted">No recent activity to display. Start a new waste assignment to see your data here</p>
-<!--                <button class="btn btn-success mt-3" onclick="addCollection()">-->
-<!--                    <i class="fas fa-plus-circle"></i> Add First Collection-->
-<!--                </button>-->
+                <p class="text-muted">No recent activity to display. Start a new waste assignment to see your data here
+                </p>
             </div>
+            {% endif %}
         </div>
     </div>
 
 
-     {% endblock %}
+    <!-- Report Generation Modal -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0"
+                    style="background: linear-gradient(135deg, #2e8b57 0%, #1c6d42 100%); border-radius: 20px 20px 0 0; padding: 1.5rem;">
+                    <h5 class="modal-title text-white fw-bold" id="reportModalLabel">
+                        <i class="fas fa-file-export me-2"></i> Generate Collection Report
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-4">Select a date range to export your waste collection records as a CSV
+                        file.</p>
+
+                    <form id="reportForm" action="{% url 'waste_collector:generate_report' %}" method="GET">
+                        <div class="mb-3">
+                            <label class="form-label fw-600">From Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-calendar-alt text-success"></i>
+                                </span>
+                                <input type="date" name="start_date" class="form-control border-start-0 ps-0" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-600">To Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-calendar-alt text-success"></i>
+                                </span>
+                                <input type="date" name="end_date" class="form-control border-start-0 ps-0" required>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="format" value="csv">
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success p-3 fw-bold"
+                                style="border-radius: 12px; background: linear-gradient(135deg, #2e8b57 0%, #1c6d42 100%);">
+                                <i class="fas fa-download me-2"></i> Download CSV Report
+                            </button>
+                            <button type="button" class="btn btn-light p-3 fw-600" data-bs-dismiss="modal"
+                                style="border-radius: 12px;">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -1082,7 +1279,7 @@
         }
 
         // Global search functionality
-        document.getElementById('globalSearch').addEventListener('input', function(e) {
+        document.getElementById('globalSearch').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             // Implement search logic here
             console.log('Searching for:', searchTerm);
@@ -1094,30 +1291,20 @@
             alert('You have 3 new notifications:\n\n• New waste collection assigned\n• Route optimization completed\n• Monthly report available');
         }
 
+
+
         // Quick action functions
-        function addCollection() {
-            // Navigate to add collection page
-            window.location.href = "{% url 'waste_collector:waste_collect_create' %}";
-        }
-
-        function viewRecords() {
-            // Navigate to records page
-            window.location.href = "{% url 'waste_collector:waste_collect_list' %}";
-        }
-
-        function assignedWaste() {
-            // Navigate to assigned waste page
-            window.location.href = "{% url 'waste_collector:assigned_customers' %}";
-        }
-
         function generateReports() {
-            // Navigate to reports page
-            alert('Reports functionality - implement as needed');
+            // Show report generation modal
+            const reportModal = new bootstrap.Modal(document.getElementById('reportModal'));
+            reportModal.show();
         }
 
-        function refreshData() {
+        function refreshData(e) {
             // Add loading animation
-            const refreshBtn = event.target.closest('button');
+            const refreshBtn = (e && e.target) ? e.target.closest('button') : null;
+            if (!refreshBtn) return;
+
             const originalContent = refreshBtn.innerHTML;
             refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
             refreshBtn.disabled = true;
@@ -1128,7 +1315,8 @@
                 refreshBtn.disabled = false;
                 // You can add actual data refresh logic here
                 console.log('Data refreshed');
-            }, 2000);
+                window.location.reload(); // Actually refresh the page
+            }, 1500);
         }
 
         function logout() {
@@ -1138,14 +1326,14 @@
         }
 
         // Handle responsive behavior
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             if (window.innerWidth <= 992) {
                 document.getElementById('mainContent').classList.remove('sidebar-open');
             }
         });
 
         // Initialize tooltips
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -1166,8 +1354,95 @@
             });
         });
 
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
+        // Initialize Performance Chart
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartCanvas = document.getElementById('performanceChart');
+            if (!chartCanvas) return;
+
+            const ctx = chartCanvas.getContext('2d');
+            const chartDays = {{ chart_days| safe
+        }};
+        const chartCounts = {{ chart_counts| safe }};
+        const chartWeights = {{ chart_weights| safe }};
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartDays,
+                datasets: [{
+                    label: 'Collections',
+                    data: chartCounts,
+                    backgroundColor: 'rgba(46, 139, 87, 0.8)',
+                    borderColor: '#2e8b57',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Weight (KG)',
+                    data: chartWeights,
+                    type: 'line',
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#22d3ee',
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'No. of Collections'
+                        },
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Weight (KG)'
+                        },
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+        });  // Add keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
             // Ctrl/Cmd + K to focus search
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
@@ -1184,9 +1459,5 @@
         });
     </script>
 </body>
+
 </html>
-
-
-
-
-
