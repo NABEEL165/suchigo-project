@@ -1,0 +1,769 @@
+
+<!doctype html>
+{% load static %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin Calendar</title>
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e8f5e8 0%, #e1f3f8 100%);
+      min-height: 100vh;
+
+    }
+    .navbar {
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .navbar-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #666, #999);
+      padding: 4px;
+      transition: transform 0.3s ease;
+    }
+
+    .navbar-logo:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #ffffff, #999999);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .navbar-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .navbar-links a {
+      color: #cccccc;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .navbar-links a::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #666, #999);
+      transition: width 0.3s ease;
+    }
+
+    .navbar-links a:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .navbar-links a:hover::before {
+      width: 80%;
+    }
+
+    .navbar-links a.active {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .navbar-links a.active::before {
+      width: 80%;
+    }
+
+    /* Mobile Menu Toggle */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .menu-toggle span {
+      width: 25px;
+      height: 3px;
+      background: #ffffff;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .menu-toggle {
+        display: flex;
+        order: 3;
+      }
+
+      .navbar-left {
+        flex: 1;
+      }
+
+      .navbar-links {
+        flex-direction: column;
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        gap: 0;
+        order: 4;
+        background: rgba(0, 0, 0, 0.95);
+        margin: 1rem -1rem -1rem;
+        padding: 0 1rem;
+        border-radius: 0 0 12px 12px;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+      }
+
+      .navbar-links.active {
+        max-height: 300px;
+        padding: 1rem;
+        border-top: 1px solid #333;
+      }
+
+      .navbar-links li {
+        width: 100%;
+      }
+
+      .navbar-links a {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .navbar-links li:last-child a {
+        border-bottom: none;
+      }
+
+      .logo-text {
+        font-size: 1.25rem;
+      }
+
+      .navbar-logo {
+        width: 35px;
+        height: 35px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo-text {
+        font-size: 1.1rem;
+      }
+
+      .navbar-logo {
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1.5" fill="white" opacity="0.1"/><circle cx="60" cy="80" r="1" fill="white" opacity="0.1"/></svg>');
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 2;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .filters {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      border: 1px solid #e9ecef;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .filter-group {
+      position: relative;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.95rem;
+    }
+
+    .filter-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 16px;
+      background: white;
+      transition: all 0.3s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 12px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    .filter-group select:focus {
+      outline: none;
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+
+    .calendar-container {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border: 1px solid #e9ecef;
+    }
+
+    #calendar {
+      max-width: 100%;
+    }
+
+    /* FullCalendar Customizations */
+    .fc {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .fc-header-toolbar {
+      margin-bottom: 1.5em;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .fc-button-group .fc-button {
+      background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin: 0 2px;
+    }
+
+    .fc-button-group .fc-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .fc-button-group .fc-button:not(:disabled).fc-button-active {
+      background: linear-gradient(135deg, #2196F3 0%, #4CAF50 100%);
+    }
+
+    .fc-daygrid-day {
+      transition: all 0.3s ease;
+    }
+
+    .fc-daygrid-day:hover {
+      background-color: #f0f8ff;
+    }
+
+    .fc-day-today {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(33, 150, 243, 0.1) 100%) !important;
+    }
+
+    .fc-event {
+      border: none;
+      background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+      border-radius: 6px;
+      padding: 2px 5px;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .fc-event:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      body {
+        padding: 5px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .header .subtitle {
+        font-size: 1rem;
+      }
+
+      .content {
+        padding: 15px;
+      }
+
+      .filters {
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .filter-group select {
+        padding: 14px 16px;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+
+      .calendar-container {
+        padding: 10px;
+      }
+
+      .fc-header-toolbar {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 10px;
+      }
+
+      .fc-toolbar-chunk {
+        margin: 5px 0;
+      }
+
+      .fc-button-group .fc-button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+
+      .fc-daygrid-day-number {
+        font-size: 0.9rem;
+      }
+
+      .fc-col-header-cell {
+        padding: 8px 4px;
+      }
+
+      .fc-daygrid-day-frame {
+        min-height: 40px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .fc-header-toolbar {
+        padding: 8px;
+      }
+
+      .fc-button-group .fc-button {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        margin: 0 1px;
+      }
+
+      .fc-daygrid-day-frame {
+        min-height: 35px;
+      }
+
+      .fc-event {
+        font-size: 0.75rem;
+        padding: 1px 3px;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #4CAF50;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Success/Error Messages */
+    .message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+    }
+
+    .message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .message.success {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    }
+
+    .message.error {
+      background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    }
+
+    /* Enhanced Calendar View Options */
+    .fc-dayGridMonth-view .fc-daygrid-day {
+      min-height: 80px;
+    }
+
+    @media (max-width: 768px) {
+      .fc-dayGridMonth-view .fc-daygrid-day {
+        min-height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-left">
+      <img src="{% static 'images/logo.png.jpg' %}" alt="SuchiGo Logo" class="navbar-logo">
+      <div class="logo-text">SuchiGo</div>
+    </div>
+    <div class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <ul class="navbar-links" id="navbarLinks">
+      <li><a href="{% url 'super_admin_dashboard:super_admin_dashboard' %}"  data-page="home">Home</a></li>
+      <li><a href="{% url 'super_admin_dashboard:calendar' %}" class="active"  data-page="Calendar Management">Calendar Management</a></li>
+      <li><a href="{% url 'authentication:logout' %}" data-page="logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <h1>📅 Assign Calendar Dates for Local Bodies</h1>
+      <div class="subtitle">Manage collection schedules and assign dates to local waste management bodies</div>
+    </div>
+
+
+    <div class="content">
+      <!-- Selectors -->
+      <div class="filters">
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="state">🏛️ State</label>
+            <select id="state">
+              <option value="">-- Select State --</option>
+              {% for s in states %}
+                <option value="{{ s.id }}">{{ s.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="district">🏙️ District</label>
+            <select id="district">
+              <option value="">-- Select District --</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="localbody">🏘️ Local Body</label>
+            <select id="localbody">
+              <option value="">-- Select Local Body --</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="calendar-container">
+        <div id="calendar"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+    const navbarLinks = document.getElementById('navbarLinks');
+
+    menuToggle.addEventListener('click', () => {
+      menuToggle.classList.toggle('active');
+      navbarLinks.classList.toggle('active');
+    });
+
+    // Close mobile menu when window is resized to desktop view
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        navbarLinks.classList.remove('active');
+        menuToggle.classList.remove('active');
+      }
+    });
+
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var currentLocalBody = null;
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,dayGridWeek'
+    },
+    height: 'auto',
+    selectable: true,
+    editable: true,
+    selectMirror: true,
+    dayMaxEvents: true,
+    weekends: true,
+    eventClick: function(info) {
+      if (confirm("Delete this date?")) {
+        $.post("{% url 'super_admin_dashboard:delete_calendar_date' 0 %}".replace("0", info.event.id), {
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+        }, function() {
+          info.event.remove();
+          showMessage('Date deleted successfully!', 'success');
+        }).fail(function() {
+          showMessage('Failed to delete date!', 'error');
+        });
+      }
+    },
+    select: function(selection) {
+      if (!currentLocalBody) {
+        showMessage("Please select a Local Body first!", 'error');
+        return;
+      }
+      let start = selection.startStr;
+      let end = selection.endStr; // FullCalendar end is exclusive
+      end = new Date(end);
+      end.setDate(end.getDate() - 1);
+      end = end.toISOString().split("T")[0];
+
+      $.post("{% url 'super_admin_dashboard:create_calendar_date' 0 %}".replace("0", currentLocalBody), {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        start: start,
+        end: end
+      }, function(data) {
+        data.created.forEach(function(ev) {
+          calendar.addEvent({ id: ev.id, title: "Assigned", start: ev.date, color: "green" });
+        });
+        showMessage('Dates assigned successfully!', 'success');
+      }).fail(function() {
+        showMessage('Failed to assign dates!', 'error');
+      });
+    },
+    eventDrop: function(info) {
+      $.post("{% url 'super_admin_dashboard:update_calendar_date' 0 %}".replace("0", info.event.id), {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        new_date: info.event.startStr
+      }, function() {
+        showMessage('Date updated successfully!', 'success');
+      }).fail(function(resp) {
+        showMessage("Update failed: " + (resp.responseJSON?.message || 'Unknown error'), 'error');
+        info.revert();
+      });
+    }
+  });
+  calendar.render();
+
+  // Message display function
+  function showMessage(text, type) {
+    const message = document.createElement('div');
+    message.className = `message ${type}`;
+    message.textContent = text;
+    document.body.appendChild(message);
+
+    setTimeout(() => message.classList.add('show'), 100);
+    setTimeout(() => {
+      message.classList.remove('show');
+      setTimeout(() => document.body.removeChild(message), 300);
+    }, 3000);
+  }
+
+  // Load districts when state selected
+  $("#state").change(function() {
+    var stateId = $(this).val();
+    $("#district").empty().append('<option value="">-- Select District --</option>');
+    $("#localbody").empty().append('<option value="">-- Select Local Body --</option>');
+    if (stateId) {
+      $.get("{% url 'super_admin_dashboard:load_districts' 0 %}".replace("0", stateId), function(data) {
+        data.forEach(function(d) {
+          $("#district").append('<option value="'+d.id+'">'+d.name+'</option>');
+        });
+      }).fail(function() {
+        showMessage('Failed to load districts!', 'error');
+      });
+    }
+    calendar.removeAllEvents();
+    currentLocalBody = null;
+  });
+
+  // Load localbodies when district selected
+  $("#district").change(function() {
+    var districtId = $(this).val();
+    $("#localbody").empty().append('<option value="">-- Select Local Body --</option>');
+    if (districtId) {
+      $.get("{% url 'super_admin_dashboard:load_localbodies' 0 %}".replace("0", districtId), function(data) {
+        data.forEach(function(lb) {
+          $("#localbody").append('<option value="'+lb.id+'">'+lb.name+' ('+lb.body_type+')</option>');
+        });
+      }).fail(function() {
+        showMessage('Failed to load local bodies!', 'error');
+      });
+    }
+    calendar.removeAllEvents();
+    currentLocalBody = null;
+  });
+
+  // Load events when localbody selected
+  $("#localbody").change(function() {
+    currentLocalBody = $(this).val();
+    calendar.removeAllEvents();
+    if (currentLocalBody) {
+      $.get("{% url 'super_admin_dashboard:get_calendar_dates' 0 %}".replace("0", currentLocalBody), function(events) {
+        events.forEach(function(ev) {
+          calendar.addEvent(ev);
+        });
+        showMessage('Calendar loaded successfully!', 'success');
+      }).fail(function() {
+        showMessage('Failed to load calendar events!', 'error');
+      });
+    }
+  });
+});
+</script>
+</body>
+</html>
