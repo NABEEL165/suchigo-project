@@ -1,9 +1,7 @@
 
-
-
 {% extends 'customer_dashboard.html' %}
 {% load static %}
-{% block title %}Waste profile Detail{% endblock %}
+{% block title %}Waste Profile List{% endblock %}
 
 {% block content %}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -21,78 +19,200 @@
             color: #333;
         }
 
+
         .container {
             max-width: 1200px;
             margin: 2rem auto;
             padding: 0 1rem;
         }
 
-        .profile-card {
+        .page-header {
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
-            border: 1px solid rgba(76, 175, 80, 0.1);
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
-            color: white;
             padding: 2rem;
+            margin-bottom: 2rem;
             text-align: center;
             position: relative;
-            display:flex;
-            flex-direction:column;
+            overflow: hidden;
         }
 
-        .card-header::before {
+        .page-header::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
-        }
-
-        .card-header h2 {
-            font-size: 2rem;
-<!--            margin-bottom: 0.5rem;-->
-            position: relative;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(33, 150, 243, 0.05) 100%);
             z-index: 1;
         }
 
-        .card-header .subtitle {
-            opacity: 0.9;
-            font-size: 1rem;
+        .page-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
-        .card-content {
-            padding: 2rem;
+        .create-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            position: relative;
+            z-index: 2;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        .create-btn:hover {
+            background: linear-gradient(135deg, #45a049 0%, #5cb85c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
         }
 
-        .info-item {
+        .profiles-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Desktop Table View */
+        .table-container {
+            overflow-x: auto;
+            display: block;
+        }
+
+        .profiles-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .profiles-table th {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            position: relative;
+        }
+
+        .profiles-table th:first-child {
+            border-radius: 0;
+        }
+
+        .profiles-table th:last-child {
+            border-radius: 0;
+        }
+
+        .profiles-table td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid #f0f9ff;
+            vertical-align: middle;
+        }
+
+        .profiles-table tr:hover {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(33, 150, 243, 0.05) 100%);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: linear-gradient(135deg, #1976D2 0%, #1E88E5 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #F57C00 0%, #FF9800 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #f44336 0%, #ef5350 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #d32f2f 0%, #e53935 100%);
+            transform: translateY(-1px);
+        }
+
+        /* Mobile Card View */
+        .mobile-cards {
+            display: none;
+            padding: 1rem;
+        }
+
+        .profile-card {
             background: linear-gradient(135deg, #f8fffe 0%, #f0f9ff 100%);
-            border: 2px solid transparent;
-            background-clip: padding-box;
             border-radius: 15px;
             padding: 1.5rem;
-            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
             position: relative;
             overflow: hidden;
         }
 
-        .info-item::before {
+        .profile-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -106,110 +226,70 @@
             margin: -2px;
         }
 
-        .info-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .card-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        .card-info {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .info-label {
             font-weight: 600;
-            color: #4CAF50;
+            color: #666;
             font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            min-width: 80px;
         }
 
         .info-value {
-            font-size: 1.1rem;
             color: #333;
             font-weight: 500;
-            word-break: break-word;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
-            color: white;
-            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
-        }
-
-        .pickup-info {
-            background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-left: 4px solid #4CAF50;
-        }
-
-        .actions {
+        .card-actions {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             justify-content: center;
             flex-wrap: wrap;
-            padding-top: 2rem;
-            border-top: 2px solid #f0f9ff;
         }
 
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            min-width: 150px;
-            justify-content: center;
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
-            color: white;
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #ccc;
         }
 
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #45a049 0%, #5cb85c 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: #4CAF50;
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #f44336 0%, #ef5350 100%);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #d32f2f 0%, #e53935 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
-        }
-
-        .icon-user { color: #4CAF50; }
-        .icon-phone { color: #2196F3; }
-        .icon-location { color: #FF9800; }
-        .icon-tag { color: #9C27B0; }
-        .icon-calendar { color: #F44336; }
-        .icon-trash { color: #607D8B; }
-        .icon-status { color: #4CAF50; }
-
-        /* Mobile Responsiveness */
+        /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
                 padding: 0 0.5rem;
@@ -228,50 +308,49 @@
                 padding: 0 0.5rem;
             }
 
-            .card-header {
+            .page-header {
                 padding: 1.5rem;
+                margin-bottom: 1rem;
             }
 
-            .card-header h2 {
-                font-size: 1.5rem;
+            .page-header h1 {
+                font-size: 2rem;
             }
 
-            .card-content {
-                padding: 1rem;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .info-item {
-                padding: 1rem;
-            }
-
-            .actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .btn {
+            .create-btn {
                 padding: 0.75rem 1.5rem;
                 font-size: 0.9rem;
+            }
+
+            .table-container {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
             }
         }
 
         @media (max-width: 480px) {
-            .card-header h2 {
-                font-size: 1.25rem;
+            .page-header h1 {
+                font-size: 1.75rem;
             }
 
-            .info-value {
-                font-size: 1rem;
+            .create-btn {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.85rem;
             }
 
-            .btn {
-                padding: 0.75rem 1rem;
-                min-width: 120px;
+            .profile-card {
+                padding: 1rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                justify-content: center;
             }
         }
 
@@ -290,155 +369,131 @@
 
 
     <div class="container">
-        <div class="profile-card fade-in">
-            <div class="card-header">
-                <h2><i class="fas fa-user-circle"></i> Waste Profile Details</h2>
-                <div class="subtitle">Complete waste management profile information</div>
+        <div class="page-header fade-in">
+            <h1><i class="fas fa-recycle"></i> My Waste Profiles</h1>
+            <a href="{% url 'customer:waste_profile_create' %}" class="create-btn">
+                <i class="fas fa-plus"></i>
+                Create New Profile
+            </a>
+        </div>
+
+        <div class="profiles-container fade-in">
+            <!-- Desktop Table View -->
+            <div class="table-container">
+                <table class="profiles-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-user"></i> Full Name</th>
+                            <th><i class="fas fa-building"></i> Local Body</th>
+                            <th><i class="fas fa-map-marker-alt"></i> Address</th>
+                            <th><i class="fas fa-calendar"></i> Pickup Dates</th>
+                            <th><i class="fas fa-info-circle"></i> Status</th>
+                            <th><i class="fas fa-cogs"></i> Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in profiles %}
+                        <tr>
+                            <td>{{ p.full_name }}</td>
+                            <td>{{ p.localbody }}</td>
+                            <td>{{ p.pickup_address }}</td>
+                            <td>
+                                {% if p.customerpickupdate_set.all %}
+                                    <ul style="list-style-type: none; padding: 0; margin: 0;">
+                                        {% for pickup in p.customerpickupdate_set.all|slice:":2" %}
+                                        <li>{{ pickup.localbody_calendar.date|date:"M j, Y" }}</li>
+                                        {% endfor %}
+                                        {% if p.customerpickupdate_set.count > 2 %}
+                                        <li>+{{ p.customerpickupdate_set.count|add:"-2" }} more</li>
+                                        {% endif %}
+                                    </ul>
+                                {% else %}
+                                    <span style="color: #FF9800;">Not Selected</span>
+                                {% endif %}
+                            </td>
+                            <td><span class="status-badge">{{ p.status }}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'customer:waste_profile_detail' p.id %}" class="action-btn btn-view">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="{% url 'customer:waste_profile_update' p.id %}" class="action-btn btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="{% url 'customer:waste_profile_delete' p.id %}" class="action-btn btn-delete">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No Profiles Found</h3>
+                                <p>Create your first waste profile to get started!</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
-            <div class="card-content">
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-user icon-user"></i>
-                            Full Name
-                        </div>
-                        <div class="info-value">{{ info.full_name }}</div>
+            <!-- Mobile Card View -->
+            <div class="mobile-cards">
+                {% for p in profiles %}
+                <div class="profile-card">
+                    <div class="card-header">
+                        <div class="card-name">{{ p.full_name }}</div>
+                        <span class="status-badge">{{ p.status }}</span>
                     </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-phone icon-phone"></i>
-                            Primary Number
-                        </div>
-                        <div class="info-value">{{ info.user.contact_number }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-mobile-alt icon-phone"></i>
-                            Secondary Number
-                        </div>
-                        <div class="info-value">{{ info.secondary_number }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-map-marker-alt icon-location"></i>
-                            Pickup Address
-                        </div>
-                        <div class="info-value">{{ info.pickup_address }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-landmark icon-location"></i>
-                            Landmark
-                        </div>
-                        <div class="info-value">{{ info.landmark }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-map icon-location"></i>
-                            State
-                        </div>
-                        <div class="info-value">{{ info.state }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-city icon-location"></i>
-                            District
-                        </div>
-                        <div class="info-value">{{ info.district }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
+                    <div class="card-info">
+                        <div class="info-row">
                             <i class="fas fa-building icon-location"></i>
-                            Local Body
+                            <span class="info-label">Local Body:</span>
+                            <span class="info-value">{{ p.localbody }}</span>
                         </div>
-                        <div class="info-value">{{ info.localbody.name }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-home icon-location"></i>
-                            Ward
+                        <div class="info-row">
+                            <i class="fas fa-map-marker-alt icon-location"></i>
+                            <span class="info-label">Address:</span>
+                            <span class="info-value">{{ p.pickup_address }}</span>
                         </div>
-                        <div class="info-value">{{ info.ward }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-shopping-bag icon-tag"></i>
-                            Number of Bags
-                        </div>
-                        <div class="info-value">{{ info.number_of_bags }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-trash-alt icon-trash"></i>
-                            Waste Type
-                        </div>
-                        <div class="info-value">{{ info.waste_type }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-mail-bulk icon-location"></i>
-                            Pincode
-                        </div>
-                        <div class="info-value">{{ info.pincode }}</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-info-circle icon-status"></i>
-                            Status
-                        </div>
-                        <div class="info-value">
-                            <span class="status-badge">{{ info.get_status_display }}</span>
+                        <div class="info-row">
+                            <i class="fas fa-calendar icon-calendar"></i>
+                            <span class="info-label">Pickup Dates:</span>
+                            <span class="info-value">
+                                {% if p.customerpickupdate_set.all %}
+                                    {% for pickup in p.customerpickupdate_set.all|slice:":1" %}
+                                        {{ pickup.localbody_calendar.date|date:"M j, Y" }}
+                                    {% endfor %}
+                                    {% if p.customerpickupdate_set.count > 1 %}
+                                        (+{{ p.customerpickupdate_set.count|add:"-1" }} more)
+                                    {% endif %}
+                                {% else %}
+                                    Not Selected
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
-
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-calendar-plus icon-calendar"></i>
-                            Created At
-                        </div>
-                        <div class="info-value">{{ info.created_at }}</div>
+                    <div class="card-actions">
+                        <a href="{% url 'customer:waste_profile_detail' p.id %}" class="action-btn btn-view">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        <a href="{% url 'customer:waste_profile_update' p.id %}" class="action-btn btn-edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'customer:waste_profile_delete' p.id %}" class="action-btn btn-delete">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
                     </div>
                 </div>
-
-                <div class="pickup-info">
-                    <div class="info-label">
-                        <i class="fas fa-calendar-check icon-calendar"></i>
-                        Pickup Date
-                    </div>
-                    <div class="info-value">
-                        {% with pickup=info.customerpickupdate_set.first %}
-                            {% if pickup %}
-                                {{ pickup.localbody_calendar.date }} (ID: {{ pickup.localbody_calendar.id }})
-                            {% else %}
-                                <span style="color: #FF9800; font-weight: 600;">Not Selected</span>
-                            {% endif %}
-                        {% endwith %}
-                    </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No Profiles Found</h3>
+                    <p>Create your first waste profile to get started!</p>
                 </div>
-
-                <div class="actions">
-                    <a href="{% url 'customer:waste_profile_update' info.id %}" class="btn btn-primary">
-                        <i class="fas fa-edit"></i>
-                        Edit Profile
-                    </a>
-                    <a href="{% url 'customer:waste_profile_delete' info.id %}" class="btn btn-danger">
-                        <i class="fas fa-trash"></i>
-                        Delete Profile
-                    </a>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -447,12 +502,18 @@
         // Add smooth scroll behavior and loading animations
         document.addEventListener('DOMContentLoaded', function() {
             // Add loading animation to elements
-            const elements = document.querySelectorAll('.info-item');
-            elements.forEach((el, index) => {
-                el.style.animationDelay = `${index * 0.1}s`;
-                el.classList.add('fade-in');
+            const cards = document.querySelectorAll('.profile-card');
+            const rows = document.querySelectorAll('.profiles-table tbody tr');
+
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+
+            rows.forEach((row, index) => {
+                row.style.animationDelay = `${index * 0.05}s`;
+                row.classList.add('fade-in');
             });
         });
     </script>
-</body>
 {% endblock %}
