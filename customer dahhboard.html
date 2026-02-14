@@ -1,7 +1,7 @@
-
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +33,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 1rem;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
 
@@ -56,7 +56,7 @@
         }
 
         .menu-toggle:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .logo {
@@ -95,7 +95,7 @@
             padding: 0.75rem 1rem 0.75rem 3rem;
             border: none;
             border-radius: 25px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             color: white;
             font-size: 0.9rem;
             outline: none;
@@ -104,11 +104,11 @@
         }
 
         .search-input::placeholder {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .search-input:focus {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
             transform: scale(1.02);
         }
 
@@ -117,7 +117,7 @@
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             font-size: 1.1rem;
         }
 
@@ -128,7 +128,7 @@
             right: 0;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
             margin-top: 0.5rem;
             max-height: 300px;
             overflow-y: auto;
@@ -222,7 +222,7 @@
             justify-content: center;
             border-radius: 8px;
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .guideline-content h5 {
@@ -244,7 +244,7 @@
 
         .notification-bell {
             position: relative;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
             padding: 0.75rem;
@@ -254,7 +254,7 @@
         }
 
         .notification-bell:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
             transform: scale(1.05);
         }
 
@@ -284,19 +284,19 @@
         }
 
         .user-profile:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            border: 2px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             font-size: 0.9rem;
         }
 
@@ -316,7 +316,7 @@
         }
 
         .logout-btn {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
             padding: 0.5rem 1rem;
@@ -331,7 +331,7 @@
         }
 
         .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Sidebar */
@@ -342,7 +342,7 @@
             width: 280px;
             height: calc(100vh - 70px);
             background: white;
-            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             transition: transform 0.3s ease;
             z-index: 999;
@@ -396,7 +396,7 @@
 
         .nav-item:hover,
         .nav-item.active {
-            background: linear-gradient(90deg, rgba(76,175,80,0.1), transparent);
+            background: linear-gradient(90deg, rgba(76, 175, 80, 0.1), transparent);
             border-left-color: #4CAF50;
             color: #4CAF50;
         }
@@ -432,13 +432,20 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             animation: float 6s ease-in-out infinite;
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
         }
 
         .welcome-content {
@@ -470,7 +477,7 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 25px;
             font-size: 0.9rem;
             font-weight: 500;
@@ -490,14 +497,14 @@
             background: white;
             border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
 
         .card-header {
@@ -517,10 +524,25 @@
             font-size: 1.5rem;
         }
 
-        .icon-green { background: linear-gradient(135deg, #e8f5e8, #c8e6c9); color: #4CAF50; }
-        .icon-blue { background: linear-gradient(135deg, #e3f2fd, #bbdefb); color: #2196F3; }
-        .icon-orange { background: linear-gradient(135deg, #fff3e0, #ffcc02); color: #ff9800; }
-        .icon-purple { background: linear-gradient(135deg, #f3e5f5, #e1bee7); color: #9c27b0; }
+        .icon-green {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            color: #4CAF50;
+        }
+
+        .icon-blue {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #2196F3;
+        }
+
+        .icon-orange {
+            background: linear-gradient(135deg, #fff3e0, #ffcc02);
+            color: #ff9800;
+        }
+
+        .icon-purple {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            color: #9c27b0;
+        }
 
         .card-title {
             font-size: 1.2rem;
@@ -569,7 +591,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         /* Chat Widget */
@@ -589,7 +611,7 @@
             border: none;
             cursor: pointer;
             font-size: 1.5rem;
-            box-shadow: 0 4px 20px rgba(76,175,80,0.3);
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -598,7 +620,7 @@
 
         .chat-toggle:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(76,175,80,0.4);
+            box-shadow: 0 6px 25px rgba(76, 175, 80, 0.4);
         }
 
         /* Notification Dropdown */
@@ -609,7 +631,7 @@
             width: 350px;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
             display: none;
             z-index: 1001;
             margin-top: 0.5rem;
@@ -680,7 +702,7 @@
             width: 250px;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
             display: none;
             z-index: 1001;
             margin-top: 0.5rem;
@@ -717,7 +739,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 998;
             display: none;
             opacity: 0;
@@ -823,12 +845,12 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .action-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         .action-button.secondary {
@@ -1092,154 +1114,195 @@
 
 
         /* Scene Container */
-.animation-scene {
-    position: relative;
-    width: 150%;
-    height: 200px;
-    background: #a0d8ef; /* Sky Blue */
-    overflow: hidden;
-}
+        .animation-scene {
+            position: relative;
+            width: 150%;
+            height: 200px;
+            background: #a0d8ef;
+            /* Sky Blue */
+            overflow: hidden;
+        }
 
-/* Moving Road */
-.road-surface {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 50px;
-    background: #333;
-}
-.road-lines {
-    width: 200%;
-    height: 4px;
-    border-top: 2px dashed rgba(255,255,255,0.5);
-    position: absolute;
-    top: 50%;
-    animation: roadMove 1s linear infinite;
-}
+        /* Moving Road */
+        .road-surface {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background: #333;
+        }
 
-/* Truck Styling */
-.truck-wrap {
-    position: absolute;
-    bottom: 15px;
-    left: 10%;
-    width: 180px;
-    height: 80px;
-    z-index: 10;
-    animation: truckShake 0.15s infinite alternate;
-}
+        .road-lines {
+            width: 200%;
+            height: 4px;
+            border-top: 2px dashed rgba(255, 255, 255, 0.5);
+            position: absolute;
+            top: 50%;
+            animation: roadMove 1s linear infinite;
+        }
 
-.truck-cabin {
-    position: absolute;
-    right: 0;
-    bottom: 20px;
-    width: 50px;
-    height: 50px;
-    background: #2e7d32; /* Deep Green */
-    border-radius: 5px 15px 5px 5px;
-}
-.window {
-    position: absolute;
-    top: 8px;
-    right: 5px;
-    width: 25px;
-    height: 20px;
-    background: #e1f5fe;
-    border-radius: 2px 8px 2px 2px;
-}
-.light {
-    position: absolute;
-    bottom: 10px;
-    right: -2px;
-    width: 8px;
-    height: 5px;
-    background: #ffeb3b;
-    box-shadow: 5px 0 10px #ffeb3b;
-}
+        /* Truck Styling */
+        .truck-wrap {
+            position: absolute;
+            bottom: 15px;
+            left: 10%;
+            width: 180px;
+            height: 80px;
+            z-index: 10;
+            animation: truckShake 0.15s infinite alternate;
+        }
 
-.truck-container {
-    position: absolute;
-    left: 0;
-    bottom: 20px;
-    width: 125px;
-    height: 65px;
-    background: #388e3c;
-    border-radius: 5px;
-    border-right: 3px solid #1b5e20;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
+        .truck-cabin {
+            position: absolute;
+            right: 0;
+            bottom: 20px;
+            width: 50px;
+            height: 50px;
+            background: #2e7d32;
+            /* Deep Green */
+            border-radius: 5px 15px 5px 5px;
+        }
 
-/* Detailed Rotating Wheels */
-.wheel {
-    position: absolute;
-    bottom: 0;
-    width: 32px;
-    height: 32px;
-    background: #111;
-    border-radius: 50%;
-    border: 3px solid #222;
-    animation: rotateWheel 0.5s linear infinite;
-}
-.rim {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 60%;
-    height: 2px;
-    background: #666;
-    transform: translate(-50%, -50%);
-}
-.rim::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: #666;
-    transform: rotate(90deg);
-}
+        .window {
+            position: absolute;
+            top: 8px;
+            right: 5px;
+            width: 25px;
+            height: 20px;
+            background: #e1f5fe;
+            border-radius: 2px 8px 2px 2px;
+        }
 
-.wheel-1 { left: 15px; }
-.wheel-2 { left: 55px; }
-.wheel-3 { right: 10px; }
+        .light {
+            position: absolute;
+            bottom: 10px;
+            right: -2px;
+            width: 8px;
+            height: 5px;
+            background: #ffeb3b;
+            box-shadow: 5px 0 10px #ffeb3b;
+        }
 
-/* Navigation Styling */
-.nav-holder {
-    display: flex;
-    justify-content: space-around;
-    padding: 15px 5px;
-    background: #fff;
-}
-.nav-item {
-    text-decoration: none;
-    color: #777;
-    text-align: center;
-    font-size: 12px;
-    flex: 1;
-}
-.nav-item i { font-size: 18px; display: block; margin-bottom: 4px; }
-.nav-item.active { color: #2e7d32; }
+        .truck-container {
+            position: absolute;
+            left: 0;
+            bottom: 20px;
+            width: 125px;
+            height: 65px;
+            background: #388e3c;
+            border-radius: 5px;
+            border-right: 3px solid #1b5e20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
 
-/* Keyframes */
-@keyframes roadMove {
-    from { transform: translateX(0); }
-    to { transform: translateX(-60px); }
-}
-@keyframes rotateWheel {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-@keyframes truckShake {
-    from { transform: translateY(0); }
-    to { transform: translateY(-2px); }
-}
+        /* Detailed Rotating Wheels */
+        .wheel {
+            position: absolute;
+            bottom: 0;
+            width: 32px;
+            height: 32px;
+            background: #111;
+            border-radius: 50%;
+            border: 3px solid #222;
+            animation: rotateWheel 0.5s linear infinite;
+        }
 
+        .rim {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            height: 2px;
+            background: #666;
+            transform: translate(-50%, -50%);
+        }
+
+        .rim::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #666;
+            transform: rotate(90deg);
+        }
+
+        .wheel-1 {
+            left: 15px;
+        }
+
+        .wheel-2 {
+            left: 55px;
+        }
+
+        .wheel-3 {
+            right: 10px;
+        }
+
+        /* Navigation Styling */
+        .nav-holder {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 5px;
+            background: #fff;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #777;
+            text-align: center;
+            font-size: 12px;
+            flex: 1;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active {
+            color: #2e7d32;
+        }
+
+        /* Keyframes */
+        @keyframes roadMove {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-60px);
+            }
+        }
+
+        @keyframes rotateWheel {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes truckShake {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-2px);
+            }
+        }
     </style>
 </head>
+
 <body>
     <!-- Sidebar Overlay for Mobile -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
@@ -1263,14 +1326,8 @@
         <div class="navbar-center">
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
-                <input
-                    type="text"
-                    class="search-input"
-                    placeholder="Search schedules, bills, services..."
-                    onkeyup="handleSearch(this.value)"
-                    onfocus="showSearchResults()"
-                    id="searchInput"
-                >
+                <input type="text" class="search-input" placeholder="Search schedules, bills, services..."
+                    onkeyup="handleSearch(this.value)" onfocus="showSearchResults()" id="searchInput">
                 <div class="search-results" id="searchResults">
                     <a href="#" class="search-result-item">
                         <div class="search-result-icon icon-green"><i class="fas fa-calendar-alt"></i></div>
@@ -1311,7 +1368,8 @@
                             <div class="notification-icon icon-green"><i class="fas fa-calendar-alt"></i></div>
                             <div class="notification-content">
                                 <div class="notification-title">Pickup Reminder</div>
-                                <div class="notification-text">Your waste collection is scheduled for tomorrow at 8:00 AM</div>
+                                <div class="notification-text">Your waste collection is scheduled for tomorrow at 8:00
+                                    AM</div>
                                 <div class="notification-time">2 hours ago</div>
                             </div>
                         </div>
@@ -1338,7 +1396,8 @@
             <!-- User Profile -->
             <div style="position: relative;">
                 <div class="user-profile" onclick="toggleUserDropdown()">
-                    <div class="user-avatar">{{ request.user.first_name.0|default:request.user.username.0 }}{{ request.user.last_name.0|default:request.user.username.1 }}</div>
+                    <div class="user-avatar">{{ request.user.first_name.0|default:request.user.username.0 }}{{
+                        request.user.last_name.0|default:request.user.username.1 }}</div>
                     <div class="user-info">
                         <div class="user-name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
                         <div class="user-email">{{ request.user.email }}</div>
@@ -1346,7 +1405,9 @@
                 </div>
                 <div class="user-dropdown" id="userDropdown">
                     <div class="user-dropdown-header">
-                        <div class="user-avatar" style="margin: 0 auto 0.5rem;">{{ request.user.first_name.0|default:request.user.username.0 }}{{ request.user.last_name.0|default:request.user.username.1 }}</div>
+                        <div class="user-avatar" style="margin: 0 auto 0.5rem;">{{
+                            request.user.first_name.0|default:request.user.username.0 }}{{
+                            request.user.last_name.0|default:request.user.username.1 }}</div>
                         <div style="font-weight: 600;">{{ request.user.first_name }} {{ request.user.last_name }}</div>
                         <div style="font-size: 0.8rem; color: #666;">Premium Member</div>
                     </div>
@@ -1354,8 +1415,9 @@
                         <a href="#" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
                         <a href="#" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
                         <a href="#" class="dropdown-item"><i class="fas fa-map-marker-alt"></i> Manage Addresses</a>
-                        <a href="#" class="dropdown-item"><i class="fas fa-credit-card"></i> Billing</a>
-                        <a href="{% url 'authentication:logout' %}" class="dropdown-item" style="color: #f44336;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+                        <a href="{% url 'authentication:logout' %}" class="dropdown-item" style="color: #f44336;"><i
+                                class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </div>
             </div>
@@ -1387,10 +1449,10 @@
                     <span class="nav-icon"><i class="fas fa-exclamation-circle"></i></span>
                     Report Issue
                 </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon"><i class="fas fa-credit-card"></i></span>
-                    Billing
-                </a>
+                <!--<a href="#" class="nav-item">-->
+                <!--    <span class="nav-icon"><i class="fas fa-credit-card"></i></span>-->
+                <!--    Billing-->
+                <!--</a>-->
             </div>
             <div class="nav-section">
                 <div class="nav-section-title">Services</div>
@@ -1409,7 +1471,8 @@
                     <span class="nav-icon"><i class="fas fa-cog"></i></span>
                     Settings
                 </a>
-                <a href="{% url 'authentication:logout' %}" class="nav-item" style="position: absolute; bottom: 0; color: #f44336; margin-top: 1rem; border-top: 1px solid #e0e0e0; padding-top: 1rem;">
+                <a href="{% url 'authentication:logout' %}" class="nav-item"
+                    style="position: absolute; bottom: 0; color: #f44336; margin-top: 1rem; border-top: 1px solid #e0e0e0; padding-top: 1rem;">
                     <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
                     Logout
                 </a>
@@ -1435,204 +1498,226 @@
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
             <!-- Pickup Schedule -->
+            <!-- Pickup Schedule -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon icon-green"><i class="fas fa-calendar-alt"></i></div>
-                    <h3 class="card-title">Conformed pickup Date</h3>
+                    <h3 class="card-title">Confirmed Pickup Date</h3>
                 </div>
                 <div class="card-content">
+                    {% if upcoming_pickup %}
                     <div style="margin-bottom: 1rem;">
-                        <div style="font-size: 1.2rem; font-weight: 600; color: #4CAF50; margin-bottom: 0.5rem;">Tomorrow, 8:00 AM</div>
-                        <div style="color: #666;">Household & Recycling Collection</div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #4CAF50; margin-bottom: 0.5rem;">
+                            {{ upcoming_pickup.localbody_calendar.date|date:"F d, l" }}
+                        </div>
+                        <div style="color: #666;">
+                            Type: {{ upcoming_pickup.waste_info.waste_type|default:"General Waste" }}
+                        </div>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-primary"><i class="fas fa-edit"></i> Reschedule</a>
-                        <a href="#" class="btn btn-outline"><i class="fas fa-times"></i> Cancel</a>
+                        <a href="{% url 'customer:waste_profile_update' upcoming_pickup.waste_info.id %}"
+                            class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Reschedule
+                        </a>
+                        <a href="{% url 'customer:waste_profile_delete' upcoming_pickup.waste_info.id %}"
+                            class="btn btn-outline">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                    {% else %}
+                    <div style="text-align: center; padding: 1rem;">
+                        <p style="color: #666; margin-bottom: 1rem;">No upcoming pickups scheduled.</p>
+                        <a href="{% url 'customer:waste_profile_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Schedule Now
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+
+            <div class="card" style="overflow: hidden; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div class="card-header">
+                    <div class="card-icon icon-blue"><i class="fas fa-truck-loading"></i></div>
+                    <h3 class="card-title">Book Now</h3>
+                </div>
+
+                <div class="card-content" style="padding: 0;">
+                    <div class="animation-scene">
+                        <div class="sky">
+                            <div class="cloud cloud-1"></div>
+                            <div class="cloud cloud-2"></div>
+                        </div>
+
+                        <div class="road-surface">
+                            <div class="road-lines"></div>
+                        </div>
+
+                        <div class="truck-wrap">
+                            <div class="truck-cabin">
+                                <div class="window"></div>
+                                <div class="light"></div>
+                            </div>
+                            <div class="truck-container">
+                                <div class="truck-logo">
+                                    <img src="{% static 'images/logo.png.jpg' %}" alt="Logo"
+                                        style="height: 40px; border-radius: 50%; border: 2px solid white;">
+                                </div>
+                                <div class="waste-lines"></div>
+                            </div>
+                            <div class="wheel wheel-1">
+                                <div class="rim"></div>
+                            </div>
+                            <div class="wheel wheel-2">
+                                <div class="rim"></div>
+                            </div>
+                            <div class="wheel wheel-3">
+                                <div class="rim"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nav-holder" style="gap: 15px; padding: 20px;">
+                        <a href="{% url 'customer:waste_profile_create' %}" class="btn btn-primary"
+                            style="flex: 1; margin: 0; justify-content: center;">
+                            <i class="fas fa-plus-circle"></i> Book
+                        </a>
+                        <a href="{% url 'customer:waste_profile_list' %}" class="btn btn-primary"
+                            style="flex: 1; margin: 0; justify-content: center;">
+                            <i class="fas fa-history"></i> Records
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-        <!--    <div class="card">-->
-        <!--        <div class="card-header">-->
-        <!--            <div class="card-icon icon-blue"><i class="fas fa-bolt"></i></div>-->
-        <!--            <h3 class="card-title">Book Now</h3>-->
-        <!--        </div>-->
-        <!--        <div class="card-content">-->
-        <!--            <div class="btn-group">-->
-        <!--                <a href="{% url 'customer:customer_dashboard' %}" class="btn btn-primary"><i class="fas fa-home"></i> Back to Home</a>-->
-        <!--                <a href="{% url 'customer:waste_profile_create' %}" class="btn btn-primary"><i class="fas fa-box"></i> Book Pickup</a>-->
-        <!--                <a href="{% url 'customer:waste_profile_list' %}" class="btn btn-tertiary"><i class="fas fa-list"></i> Waste Pickup Records</a>-->
-        <!--                <a href="#" class="btn btn-secondary" onclick="openAboutUsModal()"><i class="fas fa-info-circle"></i> About Us</a>-->
-        <!--                <a href="#" class="btn btn-secondary" onclick="shareServices()"><i class="fas fa-share-alt"></i> Share Services</a>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--    </div>-->
-        <!--</div>-->
-       <div class="card" style="overflow: hidden; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-    <div class="card-header">
-        <div class="card-icon icon-blue"><i class="fas fa-truck-loading"></i></div>
-        <h3 class="card-title">Book Now</h3>
-    </div>
+            <!-- Waste Guidelines Section -->
+            <div id="waste-guidelines" class="card" style="display: none;">
+                <div class="card-header">
+                    <div class="card-icon icon-green"><i class="fas fa-recycle"></i></div>
+                    <h3 class="card-title">Waste Handling Guidelines</h3>
+                </div>
+                <div class="card-content">
+                    <div class="guideline-section">
+                        <h4><i class="fas fa-sort"></i> Segregation Guidelines</h4>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-leaf" style="color: #4CAF50;"></i>
+                            </div>
+                            <div class="guideline-content">
+                                <h5>Organic Waste</h5>
+                                <p>Food scraps, vegetable peels, coffee grounds, and garden waste should be placed in
+                                    green bins. Keep them separate from other waste types.</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-recycle" style="color: #2196F3;"></i>
+                            </div>
+                            <div class="guideline-content">
+                                <h5>Recyclable Waste</h5>
+                                <p>Paper, plastic, glass, and metal items should be clean and dry before placing in blue
+                                    bins. Remove any food residue from containers.</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-trash-alt" style="color: #FF9800;"></i>
+                            </div>
+                            <div class="guideline-content">
+                                <h5>Non-Recyclable Waste</h5>
+                                <p>Items that cannot be recycled, such as dirty plastics, ceramics, and sanitary waste,
+                                    should go in grey bins.</p>
+                            </div>
+                        </div>
+                    </div>
 
-    <div class="card-content" style="padding: 0;">
-        <div class="animation-scene">
-            <div class="sky">
-                <div class="cloud cloud-1"></div>
-                <div class="cloud cloud-2"></div>
+                    <div class="guideline-section">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Hazardous Waste</h4>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-battery-full" style="color: #F44336;"></i>
+                            </div>
+                            <div class="guideline-content">
+                                <h5>Electronic Waste</h5>
+                                <p>Batteries, electronic devices, and light bulbs should be disposed of at designated
+                                    collection centers. Do not mix with regular waste.</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-flask" style="color: #9C27B0;"></i>
+                            </div>
+                            <div class="guideline-content">
+                                <h5>Chemical Waste</h5>
+                                <p>Paints, solvents, pesticides, and cleaning chemicals should be kept separate and
+                                    disposed of according to local regulations.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="guideline-section">
+                        <h4><i class="fas fa-clock"></i> Collection Best Practices</h4>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-calendar-check" style="color: #009688;"></i>
+                            </div>
+                            <div class="guideline-content">
+                                <h5>Timing</h5>
+                                <p>Place your bins at the curb by 7:00 AM on your scheduled collection day. Ensure they
+                                    are easily accessible to collection crews.</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-info-circle" style="color: #607D8B;"></i>
+                            </div>
+                            <div class="guideline-content">
+                                <h5>Preparation</h5>
+                                <p>Keep bins clean and ensure lids are closed. Do not overfill bins as this can cause
+                                    spillage during collection.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Back to Dashboard Button -->
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button class="btn btn-primary" onclick="showDashboard()">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="road-surface">
-                <div class="road-lines"></div>
-            </div>
+            <!-- Add JavaScript to handle navigation -->
+            <script>
+                // Function to show waste guidelines section
+                function showWasteGuidelines() {
+                    // Hide other sections
+                    document.querySelector('.dashboard-grid').style.display = 'none';
+                    // Show waste guidelines
+                    document.getElementById('waste-guidelines').style.display = 'block';
+                }
 
-            <div class="truck-wrap">
-                <div class="truck-cabin">
-                    <div class="window"></div>
-                    <div class="light"></div>
-                </div>
-                <div class="truck-container">
-                    <div class="logo">Book</div>
-                    <div class="waste-lines"></div>
-                </div>
-                <div class="wheel wheel-1">
-                    <div class="rim"></div>
-                </div>
-                <div class="wheel wheel-2">
-                    <div class="rim"></div>
-                </div>
-                <div class="wheel wheel-3">
-                    <div class="rim"></div>
-                </div>
-            </div>
-        </div>
+                // Function to go back to dashboard
+                function showDashboard() {
+                    // Show dashboard
+                    document.querySelector('.dashboard-grid').style.display = 'grid';
+                    // Hide waste guidelines
+                    document.getElementById('waste-guidelines').style.display = 'none';
+                }
+            </script>
 
-        <div class="nav-holder">
-            <a href="{% url 'customer:customer_dashboard' %}" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
-            <a href="{% url 'customer:waste_profile_create' %}" class="nav-item active"><i class="fas fa-plus-circle"></i><span>Book</span></a>
-            <a href="{% url 'customer:waste_profile_list' %}" class="nav-item"><i class="fas fa-history"></i><span>Records</span></a>
-        </div>
-    </div>
-</div>
-
-        <!-- Waste Guidelines Section -->
-        <div id="waste-guidelines" class="card" style="display: none;">
-            <div class="card-header">
-                <div class="card-icon icon-green"><i class="fas fa-recycle"></i></div>
-                <h3 class="card-title">Waste Handling Guidelines</h3>
-            </div>
-            <div class="card-content">
-                <div class="guideline-section">
-                    <h4><i class="fas fa-sort"></i> Segregation Guidelines</h4>
-                    <div class="guideline-item">
-                        <div class="guideline-icon">
-                            <i class="fas fa-leaf" style="color: #4CAF50;"></i>
-                        </div>
-                        <div class="guideline-content">
-                            <h5>Organic Waste</h5>
-                            <p>Food scraps, vegetable peels, coffee grounds, and garden waste should be placed in green bins. Keep them separate from other waste types.</p>
-                        </div>
-                    </div>
-                    <div class="guideline-item">
-                        <div class="guideline-icon">
-                            <i class="fas fa-recycle" style="color: #2196F3;"></i>
-                        </div>
-                        <div class="guideline-content">
-                            <h5>Recyclable Waste</h5>
-                            <p>Paper, plastic, glass, and metal items should be clean and dry before placing in blue bins. Remove any food residue from containers.</p>
-                        </div>
-                    </div>
-                    <div class="guideline-item">
-                        <div class="guideline-icon">
-                            <i class="fas fa-trash-alt" style="color: #FF9800;"></i>
-                        </div>
-                        <div class="guideline-content">
-                            <h5>Non-Recyclable Waste</h5>
-                            <p>Items that cannot be recycled, such as dirty plastics, ceramics, and sanitary waste, should go in grey bins.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="guideline-section">
-                    <h4><i class="fas fa-exclamation-triangle"></i> Hazardous Waste</h4>
-                    <div class="guideline-item">
-                        <div class="guideline-icon">
-                            <i class="fas fa-battery-full" style="color: #F44336;"></i>
-                        </div>
-                        <div class="guideline-content">
-                            <h5>Electronic Waste</h5>
-                            <p>Batteries, electronic devices, and light bulbs should be disposed of at designated collection centers. Do not mix with regular waste.</p>
-                        </div>
-                    </div>
-                    <div class="guideline-item">
-                        <div class="guideline-icon">
-                            <i class="fas fa-flask" style="color: #9C27B0;"></i>
-                        </div>
-                        <div class="guideline-content">
-                            <h5>Chemical Waste</h5>
-                            <p>Paints, solvents, pesticides, and cleaning chemicals should be kept separate and disposed of according to local regulations.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="guideline-section">
-                    <h4><i class="fas fa-clock"></i> Collection Best Practices</h4>
-                    <div class="guideline-item">
-                        <div class="guideline-icon">
-                            <i class="fas fa-calendar-check" style="color: #009688;"></i>
-                        </div>
-                        <div class="guideline-content">
-                            <h5>Timing</h5>
-                            <p>Place your bins at the curb by 7:00 AM on your scheduled collection day. Ensure they are easily accessible to collection crews.</p>
-                        </div>
-                    </div>
-                    <div class="guideline-item">
-                        <div class="guideline-icon">
-                            <i class="fas fa-info-circle" style="color: #607D8B;"></i>
-                        </div>
-                        <div class="guideline-content">
-                            <h5>Preparation</h5>
-                            <p>Keep bins clean and ensure lids are closed. Do not overfill bins as this can cause spillage during collection.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Back to Dashboard Button -->
-                <div style="margin-top: 2rem; text-align: center;">
-                    <button class="btn btn-primary" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back to Dashboard
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add JavaScript to handle navigation -->
-        <script>
-            // Function to show waste guidelines section
-            function showWasteGuidelines() {
-                // Hide other sections
-                document.querySelector('.dashboard-grid').style.display = 'none';
-                // Show waste guidelines
-                document.getElementById('waste-guidelines').style.display = 'block';
-            }
-
-            // Function to go back to dashboard
-            function showDashboard() {
-                // Show dashboard
-                document.querySelector('.dashboard-grid').style.display = 'grid';
-                // Hide waste guidelines
-                document.getElementById('waste-guidelines').style.display = 'none';
-            }
-        </script>
-
-        {% endblock %}
+            {% endblock %}
     </main>
 
     <!-- About Us Modal -->
-    <div id="aboutUsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1002;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 15px; max-width: 500px; text-align: center;">
+    <div id="aboutUsModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1002;">
+        <div
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 15px; max-width: 500px; text-align: center;">
             <h2>About SuchiGo</h2>
-            <p>SuchiGo is a comprehensive waste management platform designed to streamline collection, recycling, and sustainability efforts for communities and businesses.</p>
+            <p>SuchiGo is a comprehensive waste management platform designed to streamline collection, recycling, and
+                sustainability efforts for communities and businesses.</p>
             <button onclick="closeAboutUsModal()" class="btn btn-primary">Close</button>
         </div>
     </div>
@@ -1735,7 +1820,7 @@
         }
 
         // Close dropdowns and modal when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const notificationBell = document.querySelector('.notification-bell');
             const userProfile = document.querySelector('.user-profile');
             const searchContainer = document.querySelector('.search-container');
@@ -1759,7 +1844,7 @@
         });
 
         // Handle window resize
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             if (window.innerWidth > 768) {
@@ -1769,12 +1854,12 @@
         });
 
         // Handle search input events
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('searchInput');
             const searchResults = document.getElementById('searchResults');
             if (searchInput) {
                 searchInput.addEventListener('blur', hideSearchResults);
-                searchInput.addEventListener('keydown', function(e) {
+                searchInput.addEventListener('keydown', function (e) {
                     if (e.key === 'Escape') {
                         this.blur();
                         searchResults.style.display = 'none';
@@ -1792,7 +1877,7 @@
             // Handle search result clicks
             const searchResultItems = document.querySelectorAll('.search-result-item');
             searchResultItems.forEach(item => {
-                item.addEventListener('click', function(e) {
+                item.addEventListener('click', function (e) {
                     e.preventDefault();
                     const title = this.querySelector('.search-result-title').textContent;
                     if (searchInput) {
@@ -1807,7 +1892,7 @@
 
             // Smooth scrolling for internal links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
+                anchor.addEventListener('click', function (e) {
                     e.preventDefault();
                     const target = document.querySelector(this.getAttribute('href'));
                     if (target) {
@@ -1820,4 +1905,5 @@
         });
     </script>
 </body>
+
 </html>
