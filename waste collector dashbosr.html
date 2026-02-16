@@ -686,6 +686,140 @@
             background-clip: text;
         }
 
+        /* Analytics Section */
+        .analytics-section {
+            margin-bottom: 2rem;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .analytics-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8fffe 0%, #ffffff 100%);
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2e8b57;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-select-sm {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            background: white;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #4ade80, #22d3ee);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .metric-content {
+            flex: 1;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2e8b57;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .metric-change.positive {
+            color: #10b981;
+        }
+
+        .metric-change.negative {
+            color: #ef4444;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 992px) {
             .navbar-search {
@@ -1090,6 +1224,65 @@
             </div>
         </div>
 
+        <!-- Chart Section -->
+        <div class="chart-container">
+            <h4 class="section-title">
+                <i class="fas fa-chart-bar"></i> Performance Analytics
+            </h4>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div style="height: 400px; position: relative;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div style="height: 400px; position: relative;">
+                        <canvas id="wasteTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Section -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card total">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-number" id="avgDailyCollections">0</div>
+                    <div class="stat-label">Avg Daily Collections</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card today">
+                    <div class="stat-icon">
+                        <i class="fas fa-weight"></i>
+                    </div>
+                    <div class="stat-number" id="avgWeightPerCollection">0 KG</div>
+                    <div class="stat-label">Avg Weight per Collection</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card weight">
+                    <div class="stat-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stat-number" id="avgRevenuePerCollection">₹0</div>
+                    <div class="stat-label">Avg Revenue per Collection</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card revenue">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-number" id="efficiencyRate">95%</div>
+                    <div class="stat-label">Collection Efficiency</div>
+                </div>
+            </div>
+        </div>
+
         <div class="quick-actions">
             <h3 class="section-title">
                 <i class="fas fa-bolt"></i> Quick Actions
@@ -1426,94 +1619,164 @@
             });
         });
 
-        // Initialize Performance Chart
+        // Initialize Analytics Charts
         document.addEventListener('DOMContentLoaded', function () {
-            const chartCanvas = document.getElementById('performanceChart');
-            if (!chartCanvas) return;
+            // Performance Chart
+            const performanceCanvas = document.getElementById('performanceChart');
+            if (performanceCanvas) {
+                const ctx = performanceCanvas.getContext('2d');
+                
+                // Sample data for demonstration
+                const chartDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                const chartCounts = [12, 19, 15, 25, 22, 30, 28];
+                const chartWeights = [45, 52, 38, 65, 48, 72, 58];
 
-            const ctx = chartCanvas.getContext('2d');
-            const chartDays = {{ chart_days| safe
-        }};
-        const chartCounts = {{ chart_counts| safe }};
-        const chartWeights = {{ chart_weights| safe }};
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: chartDays,
-                datasets: [{
-                    label: 'Collections',
-                    data: chartCounts,
-                    backgroundColor: 'rgba(46, 139, 87, 0.8)',
-                    borderColor: '#2e8b57',
-                    borderWidth: 1,
-                    borderRadius: 5,
-                    yAxisID: 'y'
-                }, {
-                    label: 'Weight (KG)',
-                    data: chartWeights,
-                    type: 'line',
-                    borderColor: '#22d3ee',
-                    backgroundColor: 'rgba(34, 211, 238, 0.1)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#22d3ee',
-                    yAxisID: 'y1'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'No. of Collections'
-                        },
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        }
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: chartDays,
+                        datasets: [{
+                            label: 'Collections',
+                            data: chartCounts,
+                            backgroundColor: 'rgba(46, 139, 87, 0.8)',
+                            borderColor: '#2e8b57',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Weight (KG)',
+                            data: chartWeights,
+                            type: 'line',
+                            borderColor: '#22d3ee',
+                            backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#22d3ee',
+                            yAxisID: 'y1'
+                        }]
                     },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        title: {
-                            display: true,
-                            text: 'Weight (KG)'
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
                         },
-                        beginAtZero: true,
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'No. of Collections'
+                                },
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Weight (KG)'
+                                },
+                                beginAtZero: true,
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            }
                         }
                     }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20
-                        }
-                    }
-                }
+                });
             }
+
+            // Waste Type Distribution Chart
+            const wasteTypeCanvas = document.getElementById('wasteTypeChart');
+            if (wasteTypeCanvas) {
+                const ctx = wasteTypeCanvas.getContext('2d');
+                
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Organic Waste', 'Plastic', 'Paper', 'Metal', 'Glass', 'E-Waste'],
+                        datasets: [{
+                            data: [35, 25, 20, 10, 7, 3],
+                            backgroundColor: [
+                                '#4ade80',
+                                '#22d3ee',
+                                '#2e8b57',
+                                '#10b981',
+                                '#06b6d4',
+                                '#0891b2'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Calculate and display metrics
+            updateAnalyticsMetrics();
         });
-        });  // Add keyboard shortcuts
+
+        function updateAnalyticsMetrics() {
+            // Sample calculations - replace with actual data
+            const totalCollections = parseInt("{{ total_collections|default:'0' }}") || 150;
+            const totalWeight = parseFloat("{{ total_weight|default:'0' }}") || 850;
+            const totalRevenue = parseFloat("{{ total_revenue|default:'0' }}") || 12500;
+            
+            // Calculate averages
+            const avgDaily = (totalCollections / 30).toFixed(1);
+            const avgWeight = (totalWeight / totalCollections).toFixed(1);
+            const avgRevenue = (totalRevenue / totalCollections).toFixed(0);
+            
+            // Update display
+            document.getElementById('avgDailyCollections').textContent = avgDaily;
+            document.getElementById('avgWeightPerCollection').textContent = avgWeight + ' KG';
+            document.getElementById('avgRevenuePerCollection').textContent = '₹' + avgRevenue;
+        }
+
+        // Period filter functionality
+        document.getElementById('periodFilter')?.addEventListener('change', function(e) {
+            const period = e.target.value;
+            // Reload page with new period
+            window.location.href = "{% url 'waste_collector:waste_collector_dashboard' %}?period=" + period;
+        });
+
+        // Add keyboard shortcuts
         document.addEventListener('keydown', function (e) {
             // Ctrl/Cmd + K to focus search
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
