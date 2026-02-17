@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuchiGo - Waste Collector Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8f8f2 0%, #e0f4f1 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: linear-gradient(135deg, #2e8b57 0%, #1c6d42 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 0.8rem 1rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+        }
+
+        .logo-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            padding: 2px;
+        }
+
+        .logo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: -2px;
+        }
+
+        .brand-tagline {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .navbar-search {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: white;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #4ade80;
+            box-shadow: 0 0 0 0.2rem rgba(74, 222, 128, 0.25);
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-icon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4ade80;
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4ade80;
+        }
+
+        .dropdown-menu {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 0.5rem;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.8rem 1.2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, #e8f8f2 0%, #e0f4f1 100%);
+            color: #2e8b57;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fffe 100%);
+            width: 280px;
+            height: calc(100vh - 70px);
+            position: fixed;
+            top: 70px;
+            left: 0;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 1025;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #2e8b57 0%, #22d3ee 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20px;
+            width: 100px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            transform: rotate(45deg);
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-section-title {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: linear-gradient(135deg, #e8f8f2 0%, #e0f4f1 100%);
+            color: #2e8b57;
+            border-left-color: #4ade80;
+            transform: translateX(5px);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .menu-badge {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        .logout-item {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white !important;
+            margin: 1rem;
+            border-radius: 8px;
+            border-left: none !important;
+            text-align: center;
+            font-weight: 600;
+            position: absolute;
+            bottom: 0;
+            width: 86%;
+        }
+
+        .logout-item:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .navbar-nav .dropdown-menu {
+            position: absolute;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 0;
+            margin-top: 70px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - 70px);
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 280px;
+        }
+
+        .sidebar-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4ade80;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1));
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .welcome-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Statistics Cards */
+        .stats-section {
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1));
+            border-radius: 0 0 0 50px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card.total {
+            border-left-color: #4ade80;
+        }
+
+        .stat-card.today {
+            border-left-color: #22d3ee;
+        }
+
+        .stat-card.weight {
+            border-left-color: #2e8b57;
+        }
+
+        .stat-card.revenue {
+            border-left-color: #10b981;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2e8b57;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2e8b57;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border-left: 5px solid;
+            position: relative;
+            overflow: hidden;
+            display: block;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1));
+            border-radius: 0 0 0 50px;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-card.add {
+            border-left-color: #4ade80;
+        }
+
+        .action-card.view {
+            border-left-color: #22d3ee;
+        }
+
+        .action-card.assigned {
+            border-left-color: #2e8b57;
+        }
+
+        .action-card.orders {
+            border-left-color: #10b981;
+        }
+
+        .action-card.reports {
+            border-left-color: #f59e0b;
+        }
+
+        .action-card.analytics {
+            border-left-color: #8b5cf6;
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2e8b57;
+        }
+
+        .action-description {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .table-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #2e8b57 0%, #0891b2 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-success {
+            border-color: #4ade80;
+            color: #4ade80;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-success:hover {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            border-color: #4ade80;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1020;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            py: 5;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .empty-state::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+        }
+
+        .empty-icon {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Analytics Section */
+        .analytics-section {
+            margin-bottom: 2rem;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .analytics-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8fffe 0%, #ffffff 100%);
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2e8b57;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-select-sm {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            background: white;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #4ade80, #22d3ee);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .metric-content {
+            flex: 1;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2e8b57;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .metric-change.positive {
+            color: #10b981;
+        }
+
+        .metric-change.negative {
+            color: #ef4444;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .navbar-search {
+                display: none;
+            }
+
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .brand-name {
+                font-size: 1.4rem;
+            }
+
+            .brand-tagline {
+                font-size: 0.6rem;
+            }
+
+            .welcome-title {
+                font-size: 1.8rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+
+            .welcome-section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-nav {
+                gap: 0.8rem;
+            }
+
+            .nav-icon-btn {
+                width: 38px;
+                height: 38px;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.2rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .stat-number {
+                font-size: 1.4rem;
+            }
+
+            .stat-icon {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .action-card {
+                padding: 1rem;
+                margin-bottom: 0.8rem;
+                min-height: 140px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .action-icon {
+                font-size: 1.8rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .action-title {
+                font-size: 0.9rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .action-description {
+                font-size: 0.75rem;
+                display: none;
+                /* Hide description on mobile to save space */
+            }
+
+            .logo-container {
+                width: 40px;
+                height: 40px;
+            }
+
+            .welcome-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .welcome-subtitle {
+                font-size: 0.9rem;
+                text-align: center;
+            }
+
+            .welcome-section {
+                padding: 1.5rem 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .brand-text {
+                display: none;
+            }
+
+            .welcome-title {
+                font-size: 1.4rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .main-content {
+                padding: 0.8rem;
+            }
+
+            .welcome-section {
+                margin-bottom: 1.5rem;
+                border-radius: 15px;
+            }
+
+            .stats-section {
+                margin-bottom: 1rem;
+            }
+
+            .quick-actions {
+                margin-bottom: 1.5rem;
+            }
+
+            .table-container {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+
+            .table th,
+            .table td {
+                font-size: 0.8rem;
+                padding: 0.6rem 0.4rem;
+            }
+
+            .avatar-circle {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 0.8rem !important;
+            }
+        }
+
+        /* Support for very small devices */
+        @media (max-width: 380px) {
+            .stat-number {
+                font-size: 1.2rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .action-title {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Impact Metric Box Styles */
+        .impact-metric-box {
+            background: linear-gradient(135deg, #f8fffe 0%, #ffffff 100%);
+            border: 1px solid rgba(46, 139, 87, 0.1);
+            border-radius: 8px;
+            padding: 0.8rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .impact-metric-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.15);
+            border-color: rgba(46, 139, 87, 0.3);
+        }
+
+        .metric-value-small {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2e8b57;
+            margin-bottom: 0.2rem;
+            line-height: 1.2;
+        }
+
+        .metric-label-small {
+            font-size: 0.75rem;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        /* Monthly Stat Box Styles */
+        .monthly-stat-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
+            border: 1px solid rgba(46, 139, 87, 0.1);
+            border-radius: 8px;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .monthly-stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.15);
+            border-color: rgba(46, 139, 87, 0.3);
+        }
+
+        .stat-icon-small {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .stat-content-small {
+            flex: 1;
+        }
+
+        .stat-number-small {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2e8b57;
+            margin-bottom: 0.2rem;
+            line-height: 1.2;
+        }
+
+        .stat-label-small {
+            font-size: 0.7rem;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#">
+                    <div class="logo-container">
+                        <img src="{% static 'images/logo.png.jpg' %}" alt="SuchiGo Logo" class="logo-image">
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">SuchiGo</span>
+                        <span class="brand-tagline">Schedule. Collect. Sustain</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="navbar-search d-none d-lg-block">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search collections, customers..."
+                        id="globalSearch">
+                </div>
+            </div>
+
+            <!-- Right side nav items -->
+            <div class="navbar-nav">
+                <!-- Notifications -->
+                <div class="nav-item">
+                    <div class="nav-icon-btn" onclick="toggleNotifications()" data-bs-toggle="tooltip"
+                        title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
+
+                <!-- Profile Dropdown -->
+                <div class="nav-item profile-dropdown">
+                    <div class="dropdown">
+                        <div class="profile-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user-circle"></i>
+                                    My Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cog"></i>
+                                    Settings
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-question-circle"></i>
+                                    Help & Support
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'authentication:logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title">
+                <i class="fas fa-tachometer-alt"></i> Dashboard Menu
+            </h5>
+        </div>
+
+        <div class="sidebar-menu">
+            <!-- Main Navigation -->
+            <div class="menu-section">
+                <div class="menu-section-title">Main</div>
+                <a href="{% url 'waste_collector:waste_collector_dashboard' %}" class="menu-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <!--                <a href="#" class="menu-item">-->
+                <!--                    <i class="fas fa-plus-circle"></i>-->
+                <!--                    <span>Add Collection</span>-->
+                <!--                </a>-->
+                <a href="{% url 'waste_collector:waste_collect_list' %}" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span>View Records</span>
+                </a>
+
+                <a href="{% url 'waste_collector:assigned_customers' %}" class="menu-item">
+                    <i class="fas fa-tasks"></i>
+                    <span>Assigned Waste</span>
+                    <span class="menu-badge">5</span>
+                </a>
+                <a href="{% url 'waste_collector:localbody_orders' %}" class="menu-item">
+                    <i class="fas fa-building"></i>
+                    <span>Local Body Orders</span>
+                </a>
+            </div>
+
+            <!-- Management -->
+            <div class="menu-section">
+                <div class="menu-section-title">Management</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Waste Pickup Record (Previous & upcoming)</span>
+                </a>
+            </div>
+
+            <!-- Reports & Analytics -->
+            <div class="menu-section">
+                <div class="menu-section-title">Reports & Analytics</div>
+                <a href="{% url 'waste_collector:billing_dashboard' %}" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="javascript:void(0)" onclick="generateReports()" class="menu-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="javascript:void(0)" onclick="generateReports()" class="menu-item">
+                    <i class="fas fa-download"></i>
+                    <span>Export Data</span>
+                </a>
+            </div>
+
+            <!-- Settings -->
+            <div class="menu-section">
+                <div class="menu-section-title">Settings</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help</span>
+                </a>
+            </div>
+
+            <!-- Logout -->
+            <a href="{% url 'authentication:logout' %}" class="menu-item logout-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Main Content -->
+    {% block content %}
+
+
+    <div class="main-content" id="mainContent">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome back, {{ request.user.first_name }}! 👋</h1>
+            <p class="welcome-subtitle">Track, manage, and complete your assigned waste collections with ease and
+                accuracy.</p>
+            {% if next_pickup_date %}
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-calendar-check"></i> Next Pickup Date: <strong>{{ next_pickup_date|date:"F j, Y"
+                    }}</strong>
+            </div>
+            {% endif %}
+        </div>
+        <!-- Impact Chart Section from Billing Dashboard -->
+        <div class="chart-container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="section-title">
+                    <i class="fas fa-chart-bar"></i> This Month's Impact
+                </h4>
+                <div class="localbody-filter">
+                    <label for="localBodyFilter" class="me-2">Local Body:</label>
+                    <select id="localBodyFilter" class="form-select" style="width: auto; display: inline-block;">
+                        <option value="all" selected>All Local Bodies</option>
+                        {% for localbody in collector_localbodies %}
+                            <option value="{{ localbody.id }}">{{ localbody.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <canvas id="impactChart" height="100"></canvas>
+        </div>
+
+       
+        <!-- Statistics Section -->
+        <div class="stats-section">
+            <div class="row g-3">
+                <div class="col-lg-3 col-6">
+                    <div class="stat-card total">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-number" id="totalCollections">{{ total_collections|default:"0" }}</div>
+                        <div class="stat-label">Total Collections</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="stat-card today">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-number" id="todayCollections">{{ today_collections|default:"0" }}</div>
+                        <div class="stat-label">Today's Collections</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="stat-card weight">
+                        <div class="stat-icon">
+                            <i class="fas fa-weight-hanging"></i>
+                        </div>
+                        <div class="stat-number" id="totalWeight">{{ total_weight|floatformat:2|default:"0.00" }} KG
+                        </div>
+                        <div class="stat-label">Total Weight</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="stat-card revenue">
+                        <div class="stat-icon">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="stat-number" id="totalRevenue">₹{{ total_revenue|floatformat:2|default:"0.00" }}
+                        </div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <div class="quick-actions">
+            <h3 class="section-title">
+                <i class="fas fa-bolt"></i> Quick Actions
+            </h3>
+            <div class="row g-3">
+                <div class="col-lg col-md-4 col-6">
+                    <a href="{% url 'waste_collector:waste_collect_list' %}" class="action-card view">
+                        <div class="action-icon">
+                            <i class="fas fa-list-ul"></i>
+                        </div>
+                        <div class="action-title">View Records</div>
+                        <div class="action-description">All collection data</div>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-6">
+                    <a href="{% url 'waste_collector:assigned_customers' %}" class="action-card assigned">
+                        <div class="action-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="action-title">Assigned Waste</div>
+                        <div class="action-description">View assignments</div>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-6">
+                    <a href="{% url 'waste_collector:localbody_orders' %}" class="action-card orders">
+                        <div class="action-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="action-title">Local Body</div>
+                        <div class="action-description">Orders & requests</div>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-6">
+                    <div class="action-card reports" data-bs-toggle="modal" data-bs-target="#reportModal">
+                        <div class="action-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <div class="action-title">Reports</div>
+                        <div class="action-description">Export CSV data</div>
+                    </div>
+                </div>
+                <div class="col-lg col-md-4 col-6 mx-auto">
+                    <a href="{% url 'waste_collector:billing_dashboard' %}" class="action-card analytics">
+                        <div class="action-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="action-title">Analytics</div>
+                        <div class="action-description">View performance</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+
+    <!-- Report Generation Modal -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0"
+                    style="background: linear-gradient(135deg, #2e8b57 0%, #1c6d42 100%); border-radius: 20px 20px 0 0; padding: 1.5rem;">
+                    <h5 class="modal-title text-white fw-bold" id="reportModalLabel">
+                        <i class="fas fa-file-export me-2"></i> Generate Collection Report
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-4">Select a date range to export your waste collection records as a CSV
+                        file.</p>
+
+                    <form id="reportForm" action="{% url 'waste_collector:generate_report' %}" method="GET">
+                        <div class="mb-3">
+                            <label class="form-label fw-600">From Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-calendar-alt text-success"></i>
+                                </span>
+                                <input type="date" name="start_date" class="form-control border-start-0 ps-0" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-600">To Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-calendar-alt text-success"></i>
+                                </span>
+                                <input type="date" name="end_date" class="form-control border-start-0 ps-0" required>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="format" value="csv">
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success p-3 fw-bold"
+                                style="border-radius: 12px; background: linear-gradient(135deg, #2e8b57 0%, #1c6d42 100%);">
+                                <i class="fas fa-download me-2"></i> Download CSV Report
+                            </button>
+                            <button type="button" class="btn btn-light p-3 fw-600" data-bs-dismiss="modal"
+                                style="border-radius: 12px;">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        // Sidebar functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+
+            if (window.innerWidth > 992) {
+                mainContent.classList.toggle('sidebar-open');
+            }
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.getElementById('mainContent').classList.remove('sidebar-open');
+        }
+
+        // Global search functionality
+        document.getElementById('globalSearch').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Implement search logic here
+            console.log('Searching for:', searchTerm);
+        });
+
+        // Notification functionality
+        function toggleNotifications() {
+            // Implement notification dropdown/modal here
+            alert('You have 3 new notifications:\n\n• New waste collection assigned\n• Route optimization completed\n• Monthly report available');
+        }
+
+
+
+        // Quick action functions: Handle report modal date pre-filling
+        document.getElementById('reportModal').addEventListener('show.bs.modal', function () {
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+            const formatDate = (date) => {
+                let d = new Date(date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
+
+                return [year, month, day].join('-');
+            }
+
+            this.querySelector('input[name="start_date"]').value = formatDate(firstDay);
+            this.querySelector('input[name="end_date"]').value = formatDate(lastDay);
+        });
+
+        function refreshData(e) {
+            // Add loading animation
+            const refreshBtn = (e && e.target) ? e.target.closest('button') : null;
+            if (!refreshBtn) return;
+
+            const originalContent = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            refreshBtn.disabled = true;
+
+            // Simulate data refresh
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalContent;
+                refreshBtn.disabled = false;
+                // You can add actual data refresh logic here
+                console.log('Data refreshed');
+                window.location.reload(); // Actually refresh the page
+            }, 1500);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout from SuchiGo?')) {
+                window.location.href = "{% url 'authentication:logout' %}";
+            }
+        }
+
+        // Handle responsive behavior
+        window.addEventListener('resize', function () {
+            if (window.innerWidth <= 992) {
+                document.getElementById('mainContent').classList.remove('sidebar-open');
+            }
+        });
+
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Add smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize Analytics Charts
+        document.addEventListener('DOMContentLoaded', function () {
+
+
+            // Performance Chart
+            const performanceCanvas = document.getElementById('performanceChart');
+            if (performanceCanvas) {
+                const ctx = performanceCanvas.getContext('2d');
+
+                // Sample data for demonstration
+                const chartDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                const chartCounts = [12, 19, 15, 25, 22, 30, 28];
+                const chartWeights = [45, 52, 38, 65, 48, 72, 58];
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: chartDays,
+                        datasets: [{
+                            label: 'Collections',
+                            data: chartCounts,
+                            backgroundColor: 'rgba(46, 139, 87, 0.8)',
+                            borderColor: '#2e8b57',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Weight (KG)',
+                            data: chartWeights,
+                            type: 'line',
+                            borderColor: '#22d3ee',
+                            backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#22d3ee',
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'No. of Collections'
+                                },
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Weight (KG)'
+                                },
+                                beginAtZero: true,
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            }
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Weight (KG)'
+                        },
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+
+            // Total Impact Gauge Chart
+            const totalImpactCanvas = document.getElementById('totalImpactGauge');
+            if (totalImpactCanvas) {
+                const ctx = totalImpactCanvas.getContext('2d');
+                
+                // Calculate progress percentage (based on monthly target)
+                const totalWeight = parseFloat("{{ total_weight|default:'0' }}") || 850;
+                const monthlyTarget = 1000; // 1 ton monthly target
+                const progressPercentage = Math.min((totalWeight / monthlyTarget) * 100, 100);
+                
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [progressPercentage, 100 - progressPercentage],
+                            backgroundColor: [
+                                'rgba(46, 139, 87, 0.8)',
+                                'rgba(200, 200, 200, 0.2)'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        circumference: 360,
+                        rotation: 0,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        }
+                    }
+                });
+            }
+                            {
+                                label: 'Weight Collected (KG)',
+                                data: weights,
+                                backgroundColor: 'rgba(74, 222, 128, 0.7)',
+                                borderColor: 'rgba(74, 222, 128, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Earnings (₹)',
+                                data: revenues,
+                                backgroundColor: 'rgba(34, 211, 238, 0.7)',
+                                borderColor: 'rgba(34, 211, 238, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Calculate and display metrics
+            updateAnalyticsMetrics();
+        });
+
+        function updateAnalyticsMetrics() {
+            // Sample calculations - replace with actual data
+            const totalCollections = parseInt("{{ total_collections|default:'0' }}") || 150;
+            const totalWeight = parseFloat("{{ total_weight|default:'0' }}") || 850;
+            const totalRevenue = parseFloat("{{ total_revenue|default:'0' }}") || 12500;
+
+            // Calculate averages
+            const avgDaily = (totalCollections / 30).toFixed(1);
+            const avgWeight = (totalWeight / totalCollections).toFixed(1);
+            const avgRevenue = (totalRevenue / totalCollections).toFixed(0);
+
+            // Update display
+            document.getElementById('avgDailyCollections').textContent = avgDaily;
+            document.getElementById('avgWeightPerCollection').textContent = avgWeight + ' KG';
+            document.getElementById('avgRevenuePerCollection').textContent = '₹' + avgRevenue;
+        }
+
+        // Local Body Filter functionality
+        document.getElementById('localBodyFilter')?.addEventListener('change', function(e) {
+            const localBodyId = e.target.value;
+            updateChartsByLocalBody(localBodyId);
+        });
+
+        // Function to update charts based on selected local body
+        function updateChartsByLocalBody(localBodyId) {
+            let labels = window.originalImpactData.labels;
+            let weights = window.originalImpactData.weights;
+            let revenues = window.originalImpactData.revenues;
+            
+            // If a specific local body is selected, filter the data
+            if (localBodyId !== 'all') {
+                // Find the index of the selected local body in the original data
+                const selectedIndex = window.originalImpactData.labels.indexOf(
+                    document.querySelector(`#localBodyFilter option[value="${localBodyId}"]`).textContent
+                );
+                
+                if (selectedIndex !== -1) {
+                    // Only show data for the selected local body
+                    labels = [window.originalImpactData.labels[selectedIndex]];
+                    weights = [window.originalImpactData.weights[selectedIndex]];
+                    revenues = [window.originalImpactData.revenues[selectedIndex]];
+                } else {
+                    // If local body not found in original data, clear the chart
+                    labels = [];
+                    weights = [];
+                    revenues = [];
+                }
+            }
+            
+            // Update impact bar chart
+            if (window.impactChart) {
+                window.impactChart.data.labels = labels;
+                window.impactChart.data.datasets[0].data = weights;
+                window.impactChart.data.datasets[1].data = revenues;
+                window.impactChart.update();
+            }
+            
+            // Calculate and update summary stats based on filtered data
+            const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+            const totalRevenue = revenues.reduce((sum, revenue) => sum + revenue, 0);
+            const totalCollections = window.serverChartData.reduce((sum, item) => {
+                if (localBodyId === 'all' || 
+                    document.querySelector(`#localBodyFilter option[value="${localBodyId}"]`).textContent === item.localbody) {
+                    return sum + item.count;
+                }
+                return sum;
+            }, 0);
+            
+            // Update the summary cards
+            document.getElementById('totalCollectionsImpact').textContent = totalCollections;
+            document.getElementById('totalWeightImpact').textContent = totalWeight.toFixed(2) + ' KG';
+            
+            // Recalculate environmental impact based on filtered weight
+            const co2Removed = (totalWeight * 0.92).toFixed(2);
+            const treesEquivalent = Math.round(totalWeight * 0.08);
+            
+            document.getElementById('co2Saved').textContent = co2Removed + ' Tons';
+            document.getElementById('treesEquivalent').textContent = treesEquivalent.toLocaleString();
+        }
+
+        // Period filter functionality
+        document.getElementById('periodFilter')?.addEventListener('change', function(e) {
+            const period = e.target.value;
+            // Reload page with new period
+            window.location.href = "{% url 'waste_collector:waste_collector_dashboard' %}?period=" + period;
+        });
+
+        // Function to update impact metrics
+        function updateImpactMetrics() {
+            // Get data from Django template or calculate from existing data
+            const totalWeight = parseFloat("{{ total_weight|default:'0' }}") || 850;
+            const todayWeight = parseFloat("{{ today_weight|default:'0' }}") || 45;
+            const thisMonthWeight = parseFloat("{{ this_month_weight|default:'0' }}") || 320;
+            const lastMonthWeight = parseFloat("{{ last_month_weight|default:'0' }}") || 285;
+            
+            // Calculate total waste in tons
+            const totalWasteTons = (totalWeight / 1000).toFixed(1);
+            
+            // Calculate this month waste in tons
+            const thisMonthWasteTons = (thisMonthWeight / 1000).toFixed(1);
+            
+            // Calculate today's collection in KG
+            const todayCollectionKg = todayWeight.toFixed(1);
+            
+            // Calculate previous month comparison percentage
+            let comparisonPercent = 0;
+            if (lastMonthWeight > 0) {
+                comparisonPercent = ((thisMonthWeight - lastMonthWeight) / lastMonthWeight * 100).toFixed(0);
+            }
+            
+            // Update DOM elements
+            const totalWasteElement = document.querySelector('.impact-metric-box .metric-value-small');
+            const thisMonthElement = document.getElementById('thisMonthWaste');
+            const todayElement = document.getElementById('todayWaste');
+            const comparisonElement = document.getElementById('monthlyComparison');
+            
+            if (totalWasteElement) {
+                totalWasteElement.textContent = totalWasteTons + ' T';
+            }
+            
+            if (thisMonthElement) {
+                thisMonthElement.textContent = thisMonthWasteTons + ' T';
+            }
+            
+            if (todayElement) {
+                todayElement.textContent = todayCollectionKg + ' KG';
+            }
+            
+            if (comparisonElement) {
+                const comparisonText = comparisonPercent >= 0 ? `+${comparisonPercent}%` : `${comparisonPercent}%`;
+                comparisonElement.textContent = comparisonText;
+                comparisonElement.className = comparisonPercent >= 0 ? 'metric-value-small text-success' : 'metric-value-small text-danger';
+            }
+
+            // Monthly Trend Chart
+            const monthlyTrendCanvas = document.getElementById('monthlyTrendChart');
+            if (monthlyTrendCanvas) {
+                const ctx = monthlyTrendCanvas.getContext('2d');
+                
+                // Sample data for monthly trend
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                const wasteData = [120, 145, 165, 178, 195, 210];
+                const targetData = [140, 150, 160, 170, 180, 190];
+                const efficiencyData = [85, 88, 92, 87, 94, 91];
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Waste Collected (Tons)',
+                            data: wasteData,
+                            borderColor: '#2e8b57',
+                            backgroundColor: 'rgba(46, 139, 87, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#2e8b57',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        }, {
+                            label: 'Target (Tons)',
+                            data: targetData,
+                            borderColor: '#22d3ee',
+                            backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#22d3ee',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        }, {
+                            label: 'Efficiency (%)',
+                            data: efficiencyData,
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#f59e0b',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Tons'
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            y1: {
+                                beginAtZero: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Efficiency %'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                },
+                                min: 0,
+                                max: 100
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                titleColor: '#2e8b57',
+                                bodyColor: '#333',
+                                borderColor: 'rgba(46, 139, 87, 0.2)',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                padding: 12
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize Impact Analytics Charts
+        function initializeImpactCharts() {
+            // Monthly Impact Chart
+            const monthlyImpactCanvas = document.getElementById('monthlyImpactChart');
+            if (monthlyImpactCanvas) {
+                const ctx = monthlyImpactCanvas.getContext('2d');
+                
+                // Sample data for monthly impact
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                const wasteData = [120, 145, 165, 178, 195, 210];
+                const recyclingData = [45, 52, 58, 65, 72, 78];
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Waste Collected (Tons)',
+                            data: wasteData,
+                            backgroundColor: 'rgba(46, 139, 87, 0.8)',
+                            borderColor: '#2e8b57',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Recycled (Tons)',
+                            data: recyclingData,
+                            backgroundColor: 'rgba(34, 211, 238, 0.8)',
+                            borderColor: '#22d3ee',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            yAxisID: 'y'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Tons'
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Total Impact Gauge Chart
+            const totalImpactCanvas = document.getElementById('totalImpactGauge');
+            if (totalImpactCanvas) {
+                const ctx = totalImpactCanvas.getContext('2d');
+                
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [75, 25],
+                            backgroundColor: [
+                                'rgba(46, 139, 87, 0.8)',
+                                'rgba(200, 200, 200, 0.2)'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        circumference: 180,
+                        rotation: 270,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        }
+                    }
+                });
+
+                // Add center text
+                const centerX = totalImpactCanvas.width / 2;
+                const centerY = totalImpactCanvas.height / 2;
+                ctx.font = 'bold 24px Arial';
+                ctx.fillStyle = '#2e8b57';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('75%', centerX, centerY);
+            }
+        }
+
+        // Initialize impact charts when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeImpactCharts();
+        });
+
+        // Handle monthly impact filter
+        document.getElementById('monthlyImpactFilter')?.addEventListener('change', function(e) {
+            const months = parseInt(e.target.value);
+            // Update chart data based on selected months
+            console.log('Loading data for last', months, 'months');
+            // Here you would typically make an API call to get updated data
+            initializeImpactCharts(); // Reinitialize with new data
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.getElementById('globalSearch');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+
+            // Escape to close sidebar
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+    </script>
+
+    <!-- Hidden script to pass chart data from Django template -->
+    <script>
+        window.serverChartData = [
+            {% for data in chart_data %}
+            {
+                localbody: '{{ data.localbody|escapejs }}',
+                weight: {{ data.weight }},
+                revenue: {{ data.revenue }}
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+    </script>
+</body>
+
+</html>
+
