@@ -1,0 +1,2467 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuchiGo Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .logo-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .logo-img .fallback-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+
+        .search-container {
+            position: relative;
+            margin-left: 2rem;
+        }
+
+        .search-input {
+            width: 350px;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 25px;
+            background: rgba(248, 249, 250, 0.8);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #4CAF50;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .profile-trigger:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .profile-role {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .dropdown-arrow {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 1rem 0;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #4CAF50;
+        }
+
+        .dropdown-item.logout {
+            border-top: 1px solid #eee;
+            margin-top: 0.5rem;
+            color: #ff4757;
+        }
+
+        .dropdown-item.logout:hover {
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-content {
+            padding: 2rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            padding: 0 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            margin: 0.5rem 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            transform: translateX(5px);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
+            color: #2196F3;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-icon {
+            width: 20px;
+            margin-right: 1rem;
+            text-align: center;
+        }
+
+        .nav-text {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 80px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .welcome-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .welcome-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Content Area */
+        .content-area {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .search-container {
+                display: none;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-navbar {
+                padding: 1rem;
+            }
+
+            .welcome-header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-header {
+                padding: 1.5rem;
+            }
+
+            .welcome-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .content-area {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Mobile Search */
+        .mobile-search {
+            display: none;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+
+        .mobile-search.active {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Report Button Styles */
+        .report-btn {
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .report-btn:hover {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-color: #2196F3;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+        }
+
+        .report-btn i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-badge[data-status="Pending"] {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge[data-status="In Progress"] {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-badge[data-status="Completed"] {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge[data-status="Collected"] {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    {% csrf_token %}
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="navbar-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+                        <div class="logo-container">
+             <div class="logo-img">
+    <img src="{% static 'images/logo.png.jpg' %}" alt="SuchiGo Logo"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="fallback-icon" style="display: none;">
+        <i class="fas fa-recycle"></i>
+    </div>
+                 </div>
+                            <div class="logo-text">SuchiGo</div>
+                            </div>
+
+
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search customers, collectors, or data...">
+            </div>
+        </div>
+
+        <div class="navbar-right">
+            <button class="notification-btn" onclick="toggleMobileSearch()">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="notification-btn">
+                <i class="fas fa-bell"></i>
+                <div class="notification-badge">3</div>
+            </button>
+            <div class="profile-dropdown" onclick="toggleProfileDropdown()">
+                <div class="profile-trigger">
+                    <div class="profile-avatar">{{ user.first_name.0 }}{{ user.last_name.0 }}</div>
+                    <div class="profile-info">
+                        <div class="profile-name">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="profile-role">Administrator</div>
+                    </div>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </div>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        My Profile
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-question-circle"></i>
+                        Help & Support
+                    </a>
+                    <a href="{% url 'authentication:logout' %}" class="dropdown-item logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Search -->
+    <div class="mobile-search" id="mobileSearch">
+        <div class="search-container" style="margin: 0; width: 100%;">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search customers, collectors, or data..." style="width: 100%;">
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <!-- Main Navigation -->
+            <div class="nav-section">
+                <div class="nav-title">Main Menu</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showContent('dashboard')">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showContent('order')">
+                        <i class="fas fa-list nav-icon"></i>
+                        <span class="nav-text">Order</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Order Management -->
+            <div class="nav-section">
+                <div class="nav-title">Order Management</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showContent('report-making')">
+                        <i class="fas fa-file-alt nav-icon"></i>
+                        <span class="nav-text">Report Making</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showContent('control-orders')">
+                        <i class="fas fa-tasks nav-icon"></i>
+                        <span class="nav-text">Control All Order</span>
+                    </a>
+                </div>
+<!--                <div class="nav-item">-->
+<!--                    <a href="{% url 'super_admin_dashboard:view_customer_waste_info' %}" class="nav-link" onclick="showContent('waste-info')">-->
+<!--                        <i class="fas fa-file-alt nav-icon"></i>-->
+<!--                        <span class="nav-text">Waste Information</span>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--                <div class="nav-item">-->
+<!--                    <a href="{% url 'super_admin_dashboard:view_collected_data' %}" class="nav-link" onclick="showContent('collected-data')">-->
+<!--                        <i class="fas fa-database nav-icon"></i>-->
+<!--                        <span class="nav-text">Collected Data</span>-->
+<!--                    </a>-->
+<!--                </div>-->
+            </div>
+
+            <!-- Management Section -->
+
+<!--            <div class="nav-section">-->
+<!--                <div class="nav-title">Management</div>-->
+<!--                <div class="nav-item">-->
+<!--&lt;!&ndash;                    <a href="{% url 'super_admin_dashboard:users_list' %}" class="nav-link" onclick="showContent('customer-mgmt')">&ndash;&gt;-->
+<!--                        <i class="fas fa-users nav-icon"></i>-->
+<!--                        <span class="nav-text">Users Management</span>-->
+<!--&lt;!&ndash;                    </a>&ndash;&gt;-->
+<!--                </div>-->
+<!--                <div class="nav-item">-->
+<!--&lt;!&ndash;                    <a href="{% url 'super_admin_dashboard:view_customers' %}" class="nav-link" onclick="showContent('customer-mgmt')">&ndash;&gt;-->
+<!--                        <i class="fas fa-users nav-icon"></i>-->
+<!--                        <span class="nav-text">Customer Management</span>-->
+<!--&lt;!&ndash;                    </a>&ndash;&gt;-->
+<!--                </div>-->
+<!--                <div class="nav-item">-->
+<!--&lt;!&ndash;                    <a href="{% url 'super_admin_dashboard:view_collectors' %}" class="nav-link" onclick="showContent('collector-mgmt')">&ndash;&gt;-->
+<!--                        <i class="fas fa-truck nav-icon"></i>-->
+<!--                        <span class="nav-text">Waste Collector Management</span>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--                <div class="nav-item">-->
+<!--                    <a href="{% url 'super_admin_dashboard:view_super_admin' %}" class="nav-link" onclick="showContent('admin-mgmt')">-->
+<!--                        <i class="fas fa-user-shield nav-icon"></i>-->
+<!--                        <span class="nav-text">Admin Management</span>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <!-- Profile Section -->
+            <div class="nav-section">
+                <div class="nav-title">Account</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showContent('admin-profile')">
+                        <i class="fas fa-user-cog nav-icon"></i>
+                        <span class="nav-text">Admin Profile</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'authentication:logout' %}" class="nav-link" onclick="logout()">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <h1>Welcome Back, {{ user.first_name }} {{ user.last_name }}!</h1>
+            <p>Manage your waste collection system efficiently with SuchiGo</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value">{{ total_customers }}</div>
+                <div class="stat-label">Active Customers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-value">{{ total_collectors }}</div>
+                <div class="stat-label">Waste Collectors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <div class="stat-value">{{ monthly_collections }}</div>
+                <div class="stat-label">Collections This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="stat-value">{{ total_waste_collected }}</div>
+                <div class="stat-label">Waste Collected</div>
+            </div>
+        </div>
+
+        <!-- Dynamic Content Area -->
+        <div class="content-area">
+            <!-- Messages -->
+            {% if messages %}
+            <div style="margin-bottom: 1rem;">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="padding: 1rem; margin-bottom: 0.5rem; border-radius: 5px; border: 1px solid #dee2e6; background: #f8f9fa; color: #333;">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="content-header">
+                <h2 class="content-title" id="contentTitle">Dashboard Overview</h2>
+            </div>
+
+            <div id="contentBody">
+                <div id="dashboard-content">
+                    <h3 style="margin-bottom: 1rem; color: #333;">System Status</h3>
+                    <p style="margin-bottom: 2rem; color: #666;">All systems are running smoothly. Monitor the overall health of your waste management system.</p>
+
+                    <!-- Booking and Scheduled Dates Section -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem; color: #333;">Booking & Schedule Information</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05)); border-radius: 15px; border-left: 4px solid #4CAF50;">
+                                <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-calendar-check" style="color: #4CAF50; margin-right: 0.5rem;"></i>
+                                    <strong style="color: #333;">Booking Date</strong>
+                                </div>
+                                <span style="font-size: 1.2rem; color: #4CAF50; font-weight: bold;">{{ booking_date|default:'Not Available' }}</span>
+                            </div>
+                            <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05)); border-radius: 15px; border-left: 4px solid #2196F3;">
+                                <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-calendar-alt" style="color: #2196F3; margin-right: 0.5rem;"></i>
+                                    <strong style="color: #333;">Scheduled Date</strong>
+                                </div>
+                                <span style="font-size: 1.2rem; color: #2196F3; font-weight: bold;">{{ scheduled_date|default:'Not Available' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05)); border-radius: 15px; border-left: 4px solid #4CAF50;">
+                            <strong style="color: #333;">Collection Rate</strong><br>
+                            <span style="font-size: 2rem; color: #4CAF50; font-weight: bold;">{{ collection_rate }}%</span>
+                        </div>
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05)); border-radius: 15px; border-left: 4px solid #2196F3;">
+                            <strong style="color: #333;">Customer Satisfaction</strong><br>
+                            <span style="font-size: 2rem; color: #2196F3; font-weight: bold;">{{ customer_satisfaction }}/5</span>
+                        </div>
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05)); border-radius: 15px; border-left: 4px solid #FFC107;">
+                            <strong style="color: #333;">Recycling Rate</strong><br>
+                            <span style="font-size: 2rem; color: #FFC107; font-weight: bold;">{{ recycling_rate }}%</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 3rem;">
+                        <h4 style="margin-bottom: 1rem; color: #333;">Quick Actions</h4>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href="#" class="btn"><i class="fas fa-route"></i> Manage Routes</a>
+                            <a href="#" class="btn"><i class="fas fa-chart-bar"></i> View Reports</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Content -->
+                <div id="order-content" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: #333;">Order Management</h3>
+                    <p style="margin-bottom: 2rem; color: #666;">Manage and track all waste collection orders in the system.</p>
+                    <div style="background: #f8f9fa; padding: 2rem; border-radius: 15px;">
+                        <h4>Order Overview</h4>
+                        <p>View and manage all customer orders for waste collection services.</p>
+                    </div>
+                </div>
+
+                <!-- Report Making Content -->
+                <div id="report-making-content" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: #333;">Report Making</h3>
+                    <p style="margin-bottom: 2rem; color: #666;">Generate comprehensive reports for waste management operations.</p>
+
+                    <!-- Report Generation Section -->
+                    <div style="background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); padding: 2rem; margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1.5rem; color: #333; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-chart-bar" style="color: #4CAF50;"></i>
+                            Generate Reports
+                        </h4>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                            <!-- Collection Reports -->
+                            <div style="border: 1px solid #eee; border-radius: 10px; padding: 1.5rem;">
+                                <h5 style="margin-bottom: 1rem; color: #333; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-recycle" style="color: #4CAF50;"></i>
+                                    Collection Reports
+                                </h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <button onclick="generateReport('daily_collection')" class="report-btn">
+                                        <i class="fas fa-calendar-day"></i> Daily Collection Report
+                                    </button>
+                                    <button onclick="generateReport('weekly_collection')" class="report-btn">
+                                        <i class="fas fa-calendar-week"></i> Weekly Collection Report
+                                    </button>
+                                    <button onclick="generateReport('monthly_collection')" class="report-btn">
+                                        <i class="fas fa-calendar-alt"></i> Monthly Collection Report
+                                    </button>
+                                    <button onclick="openCustomReportModal('collection')" class="report-btn">
+                                        <i class="fas fa-sliders-h"></i> Custom Collection Report
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Customer Reports -->
+                            <div style="border: 1px solid #eee; border-radius: 10px; padding: 1.5rem;">
+                                <h5 style="margin-bottom: 1rem; color: #333; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-users" style="color: #2196F3;"></i>
+                                    Customer Reports
+                                </h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <button onclick="generateReport('customer_summary')" class="report-btn">
+                                        <i class="fas fa-user-friends"></i> Customer Summary Report
+                                    </button>
+                                    <button onclick="generateReport('active_customers')" class="report-btn">
+                                        <i class="fas fa-user-check"></i> Active Customers Report
+                                    </button>
+                                    <button onclick="generateReport('customer_growth')" class="report-btn">
+                                        <i class="fas fa-chart-line"></i> Customer Growth Report
+                                    </button>
+                                    <button onclick="openCustomReportModal('customer')" class="report-btn">
+                                        <i class="fas fa-sliders-h"></i> Custom Customer Report
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Financial Reports -->
+                            <div style="border: 1px solid #eee; border-radius: 10px; padding: 1.5rem;">
+                                <h5 style="margin-bottom: 1rem; color: #333; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-money-bill-wave" style="color: #FF9800;"></i>
+                                    Financial Reports
+                                </h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <button onclick="generateReport('revenue_summary')" class="report-btn">
+                                        <i class="fas fa-file-invoice-dollar"></i> Revenue Summary Report
+                                    </button>
+                                    <button onclick="generateReport('payment_analysis')" class="report-btn">
+                                        <i class="fas fa-credit-card"></i> Payment Analysis Report
+                                    </button>
+                                    <button onclick="generateReport('outstanding_payments')" class="report-btn">
+                                        <i class="fas fa-exclamation-circle"></i> Outstanding Payments Report
+                                    </button>
+                                    <button onclick="openCustomReportModal('financial')" class="report-btn">
+                                        <i class="fas fa-sliders-h"></i> Custom Financial Report
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Performance Reports -->
+                            <div style="border: 1px solid #eee; border-radius: 10px; padding: 1.5rem;">
+                                <h5 style="margin-bottom: 1rem; color: #333; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-tachometer-alt" style="color: #9C27B0;"></i>
+                                    Performance Reports
+                                </h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <button onclick="generateReport('collector_performance')" class="report-btn">
+                                        <i class="fas fa-truck"></i> Collector Performance Report
+                                    </button>
+                                    <button onclick="generateReport('efficiency_metrics')" class="report-btn">
+                                        <i class="fas fa-percentage"></i> Efficiency Metrics Report
+                                    </button>
+                                    <button onclick="generateReport('service_level')" class="report-btn">
+                                        <i class="fas fa-star"></i> Service Level Report
+                                    </button>
+                                    <button onclick="openCustomReportModal('performance')" class="report-btn">
+                                        <i class="fas fa-sliders-h"></i> Custom Performance Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report History Section -->
+                    <div style="background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); padding: 2rem;">
+                        <h4 style="margin-bottom: 1.5rem; color: #333; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-history" style="color: #607D8B;"></i>
+                            Recent Reports
+                        </h4>
+
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Report Name</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Type</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Generated Date</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Status</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for report in recent_reports %}
+                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                        <td style="padding: 1rem; color: #333;">{{ report.name }}</td>
+                                        <td style="padding: 1rem; color: #333;">{{ report.type }}</td>
+                                        <td style="padding: 1rem; color: #333;">{{ report.generated_date }}</td>
+                                        <td style="padding: 1rem;">
+                                            <span class="status-badge" data-status="{{ report.status }}">
+                                                {{ report.status }}
+                                            </span>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <div style="display: flex; gap: 0.25rem;">
+
+                                                    <a href="{% url 'admin_dashboard:download_report' report.id %}?format=csv" style="padding: 0.5rem; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block;" title="Download CSV">
+                                                        <i class="fas fa-file-csv"></i>
+                                                    </a>
+
+                                                </div>
+
+                                                <form method="post" action="{% url 'admin_dashboard:delete_report' report.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this report?');">
+                                                    {% csrf_token %}
+                                                    <button type="submit" style="padding: 0.5rem; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;" title="Delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% if not recent_reports %}
+                        <div style="text-align: center; padding: 2rem; color: #666;">
+                            <i class="fas fa-file-alt" style="font-size: 3rem; margin-bottom: 1rem; color: #ddd;"></i>
+                            <p>No reports generated yet. Start by creating your first report above.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Control All Order Content -->
+                <div id="control-orders-content" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: #333;">Control All Orders</h3>
+                    <p style="margin-bottom: 2rem; color: #666;">Centralized control panel for managing all waste collection orders.</p>
+
+                    <!-- Order Statistics -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05)); border-radius: 15px; border-left: 4px solid #4CAF50;">
+                            <strong style="color: #333;">Total Orders</strong><br>
+                            <span style="font-size: 2rem; color: #4CAF50; font-weight: bold;">{{ total_orders }}</span>
+                        </div>
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05)); border-radius: 15px; border-left: 4px solid #FFC107;">
+                            <strong style="color: #333;">Pending</strong><br>
+                            <span style="font-size: 2rem; color: #FFC107; font-weight: bold;">{{ pending_orders }}</span>
+                        </div>
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05)); border-radius: 15px; border-left: 4px solid #2196F3;">
+                            <strong style="color: #333;">Confirmed</strong><br>
+                            <span style="font-size: 2rem; color: #2196F3; font-weight: bold;">{{ confirmed_orders }}</span>
+                        </div>
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(156, 39, 176, 0.05)); border-radius: 15px; border-left: 4px solid #9C27B0;">
+                            <strong style="color: #333;">Completed</strong><br>
+                            <span style="font-size: 2rem; color: #9C27B0; font-weight: bold;">{{ completed_orders }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Order Management Table -->
+                    <div style="background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); overflow: hidden;">
+                        <div style="padding: 1.5rem; border-bottom: 1px solid #eee; background: #f8f9fa;">
+                            <h4 style="margin: 0; color: #333;">Order Management</h4>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Order ID</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Customer</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Waste Type</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Bags</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Booking Date</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Scheduled Date</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Status</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #eee; color: #333;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                        <td style="padding: 1rem; color: #333;">#{{ order.id }}</td>
+                                        <td style="padding: 1rem;">
+                                            <div><strong>{{ order.customer_name }}</strong></div>
+                                            <div style="color: #666; font-size: 0.9rem;">{{ order.customer_phone }}</div>
+                                            <div style="color: #666; font-size: 0.9rem;">{{ order.address }}</div>
+                                        </td>
+                                        <td style="padding: 1rem; color: #333;">{{ order.waste_type }}</td>
+                                        <td style="padding: 1rem; color: #333;">{{ order.bags }}</td>
+                                        <td style="padding: 1rem; color: #333;">{{ order.booking_date }}</td>
+                                        <td style="padding: 1rem; color: #333;">{{ order.scheduled_date }}</td>
+                                        <td style="padding: 1rem;">
+                                            <span class="status-badge" data-status="{{ order.status }}">
+                                                {{ order.status }}
+                                            </span>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                                <button onclick="openAssignModal({{ order.id }})" style="padding: 0.5rem 1rem; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">
+                                                    <i class="fas fa-user-plus"></i> Assign
+                                                </button>
+                                                <button onclick="openStatusModal({{ order.id }})" style="padding: 0.5rem 1rem; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">
+                                                    <i class="fas fa-sync"></i> Status
+                                                </button>
+                                                <button onclick="openRescheduleModal({{ order.id }})" style="padding: 0.5rem 1rem; background: #FF9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">
+                                                    <i class="fas fa-calendar-alt"></i> Reschedule
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+
+            if (window.innerWidth > 768) {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // Profile dropdown toggle
+        function toggleProfileDropdown() {
+            const dropdown = document.querySelector('.profile-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Mobile search toggle
+        function toggleMobileSearch() {
+            const mobileSearch = document.getElementById('mobileSearch');
+            mobileSearch.classList.toggle('active');
+        }
+
+        // Navigation handling
+        function showContent(contentType) {
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Add active class to clicked nav link
+            event.target.closest('.nav-link').classList.add('active');
+
+            // Update content title
+            const contentTitle = document.getElementById('contentTitle');
+            const titleMap = {
+                'dashboard': 'Dashboard Overview',
+                'order': 'Order Management',
+                'report-making': 'Report Making',
+                'control-orders': 'Control All Orders',
+                'waste-info': 'Waste Information',
+                'collected-data': 'Collected Data',
+                'customer-mgmt': 'Customer Management',
+                'collector-mgmt': 'Waste Collector Management',
+                'admin-mgmt': 'Admin Management',
+                'admin-profile': 'Admin Profile'
+            };
+
+            contentTitle.textContent = titleMap[contentType] || 'Dashboard Overview';
+
+            // Hide all content sections
+            document.getElementById('dashboard-content').style.display = 'none';
+            document.getElementById('order-content').style.display = 'none';
+            document.getElementById('report-making-content').style.display = 'none';
+            document.getElementById('control-orders-content').style.display = 'none';
+
+            // Show the selected content
+            const contentMap = {
+                'dashboard': 'dashboard-content',
+                'order': 'order-content',
+                'report-making': 'report-making-content',
+                'control-orders': 'control-orders-content'
+            };
+
+            if (contentMap[contentType]) {
+                document.getElementById(contentMap[contentType]).style.display = 'block';
+            } else {
+                document.getElementById('dashboard-content').style.display = 'block';
+            }
+
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const profileDropdown = document.querySelector('.profile-dropdown');
+            if (!profileDropdown.contains(event.target)) {
+                profileDropdown.classList.remove('active');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Add logout logic here
+                alert('Logout functionality would be implemented here');
+            }
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInputs = document.querySelectorAll('.search-input');
+            searchInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    // Add search functionality here
+                    console.log('Searching for:', this.value);
+                });
+            });
+        });
+    </script>
+
+    <!-- Modals -->
+    <!-- Assign Collector Modal -->
+    <div id="assignModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Assign Collector</h3>
+                <span class="close" onclick="closeModal('assignModal')">&times;</span>
+            </div>
+            <form id="assignForm">
+                <input type="hidden" id="assignOrderId" name="order_id">
+                <input type="hidden" name="action" value="assign_collector">
+                <div class="form-group">
+                    <label for="collectorSelect">Select Collector:</label>
+                    <select id="collectorSelect" name="collector_id" required>
+                        <option value="">Choose a collector</option>
+                        {% for collector in collectors %}
+                        <option value="{{ collector.id }}">{{ collector.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" style="background: #6c757d;" onclick="closeModal('assignModal')">Cancel</button>
+                    <button type="submit" class="btn" style="background: #4CAF50;">Assign Collector</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Status Modal -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Order Status</h3>
+                <span class="close" onclick="closeModal('statusModal')">&times;</span>
+            </div>
+            <form id="statusForm">
+                <input type="hidden" id="statusOrderId" name="order_id">
+                <input type="hidden" name="action" value="update_status">
+                <div class="form-group">
+                    <label for="statusSelect">New Status:</label>
+                    <select id="statusSelect" name="status" required>
+                        <option value="">Select status</option>
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="collected">Collected</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" style="background: #6c757d;" onclick="closeModal('statusModal')">Cancel</button>
+                    <button type="submit" class="btn" style="background: #2196F3;">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reschedule Modal -->
+    <div id="rescheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Reschedule Order</h3>
+                <span class="close" onclick="closeModal('rescheduleModal')">&times;</span>
+            </div>
+            <form id="rescheduleForm">
+                <input type="hidden" id="rescheduleOrderId" name="order_id">
+                <input type="hidden" name="action" value="reschedule">
+                <div class="form-group">
+                    <label for="newDate">New Scheduled Date:</label>
+                    <input type="date" id="newDate" name="new_date" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" style="background: #6c757d;" onclick="closeModal('rescheduleModal')">Cancel</button>
+                    <button type="submit" class="btn" style="background: #FF9800;">Reschedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openAssignModal(orderId) {
+            document.getElementById('assignOrderId').value = orderId;
+            document.getElementById('assignModal').style.display = 'block';
+        }
+
+        function openStatusModal(orderId) {
+            document.getElementById('statusOrderId').value = orderId;
+            document.getElementById('statusModal').style.display = 'block';
+        }
+
+        function openRescheduleModal(orderId) {
+            document.getElementById('rescheduleOrderId').value = orderId;
+            document.getElementById('rescheduleModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Form submissions
+        document.getElementById('assignForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Handle assign collector logic
+            const orderId = document.getElementById('assignOrderId').value;
+            const collectorId = document.getElementById('collectorSelect').value;
+
+            if (collectorId) {
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
+                submitBtn.disabled = true;
+
+                // Make AJAX call to assign collector
+                fetch(`/admin-dashboard/manage-order/${orderId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: `action=assign_collector&collector_id=${collectorId}`
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showMessage(`Order ${orderId} assigned to collector successfully!`, 'success');
+                        closeModal('assignModal');
+                        location.reload(); // Refresh the page to show updated data
+                    } else {
+                        showMessage('Error: ' + (data.error || 'Failed to assign collector'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Error: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+            } else {
+                showMessage('Please select a collector', 'error');
+            }
+        });
+
+        document.getElementById('statusForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Handle status update logic
+            const orderId = document.getElementById('statusOrderId').value;
+            const newStatus = document.getElementById('statusSelect').value;
+
+            if (newStatus) {
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+                submitBtn.disabled = true;
+
+                // Make AJAX call to update status
+                fetch(`/admin-dashboard/manage-order/${orderId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: `action=update_status&status=${newStatus}`
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showMessage(`Order ${orderId} status updated to ${newStatus}!`, 'success');
+                        closeModal('statusModal');
+                        location.reload(); // Refresh the page to show updated data
+                    } else {
+                        showMessage('Error: ' + (data.error || 'Failed to update status'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Error: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+            } else {
+                showMessage('Please select a status', 'error');
+            }
+        });
+
+        document.getElementById('rescheduleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Handle reschedule logic
+            const orderId = document.getElementById('rescheduleOrderId').value;
+            const newDate = document.getElementById('newDate').value;
+
+            if (newDate) {
+                // Validate date is not in the past
+                const today = new Date().toISOString().split('T')[0];
+                if (newDate < today) {
+                    showMessage('Please select a future date', 'error');
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Rescheduling...';
+                submitBtn.disabled = true;
+
+                // Make AJAX call to reschedule
+                fetch(`/admin-dashboard/manage-order/${orderId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: `action=reschedule&new_date=${newDate}`
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showMessage(`Order ${orderId} rescheduled to ${newDate}!`, 'success');
+                        closeModal('rescheduleModal');
+                        location.reload(); // Refresh the page to show updated data
+                    } else {
+                        showMessage('Error: ' + (data.error || 'Failed to reschedule'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Error: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+            } else {
+                showMessage('Please select a date', 'error');
+            }
+        });
+
+        // Helper function to get CSRF token
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        // Helper function to build URLs
+        function buildUrl(name, params = {}) {
+            // This is a simplified version - in a real Django environment you'd use the url template tag
+            const urls = {
+                'admin_dashboard:download_report': '/admin-dashboard/download-report/',
+                'admin_dashboard:view_report': '/admin-dashboard/view-report/',
+                'admin_dashboard:delete_report': '/admin-dashboard/delete-report/'
+            };
+
+            let url = urls[name] || '/';
+            // Replace the placeholder with the actual ID
+            if (params.id !== undefined) {
+                url = url.replace('/$', '/' + params.id + '/');
+            } else {
+                // If no ID is provided, we'll append it to the end
+                url += params.id ? params.id + '/' : '';
+            }
+
+            // Add format parameter if present
+            if (params.format) {
+                const separator = url.includes('?') ? '&' : '?';
+                url += separator + 'format=' + params.format;
+            }
+
+            return url;
+        }
+
+        // Show message function
+        function showMessage(message, type = 'info') {
+            // Create message element
+            const messageEl = document.createElement('div');
+            messageEl.className = `message-popup message-${type}`;
+            messageEl.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            // Style the message
+            messageEl.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10001;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                ${type === 'success' ? 'background: #28a745;' : type === 'error' ? 'background: #dc3545;' : 'background: #17a2b8;'}
+            `;
+
+            // Add to document
+            document.body.appendChild(messageEl);
+
+            // Animate in
+            setTimeout(() => {
+                messageEl.style.transform = 'translateX(0)';
+            }, 10);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                messageEl.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (messageEl.parentNode) {
+                        messageEl.parentNode.removeChild(messageEl);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Set min date for reschedule input
+        document.addEventListener('DOMContentLoaded', function() {
+            const rescheduleDateInput = document.getElementById('newDate');
+            if (rescheduleDateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                rescheduleDateInput.min = today;
+            }
+        });
+
+        // Report Generation Functions
+        function generateReport(reportType) {
+            showMessage(`Generating ${reportType.replace('_', ' ')} report...`, 'info');
+
+            // Show loading state
+            const buttons = document.querySelectorAll('.report-btn');
+            let targetButton = null;
+            buttons.forEach(btn => {
+                if (btn.onclick && btn.onclick.toString().includes(reportType)) {
+                    targetButton = btn;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                    btn.disabled = true;
+                }
+            });
+
+            // Make AJAX call to generate report
+            fetch('/admin-dashboard/generate-report/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: `report_type=${reportType}`
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showMessage(`${data.report_name} generated successfully!`, 'success');
+                    // Display detailed report data
+                    displayReportData(data.report_data, reportType);
+                    // Add to report history
+                    addToReportHistory(data.report_data);
+                } else {
+                    showMessage('Error: ' + (data.error || 'Failed to generate report'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Error: ' + error.message, 'error');
+            })
+            .finally(() => {
+                // Reset button states
+                if (targetButton) {
+                    targetButton.disabled = false;
+                    const originalText = getOriginalButtonText(reportType);
+                    targetButton.innerHTML = originalText;
+                }
+            });
+        }
+
+        function displayReportData(reportData, reportType) {
+            // Create modal to display detailed report
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
+                    <div class="modal-header">
+                        <h3>${reportData.report_name}</h3>
+                        <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        ${generateReportContent(reportData, reportType)}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn" style="background: #6c757d;" onclick="this.closest('.modal').remove()">Close</button>
+                        <button class="btn" style="background: #2196F3;" onclick="generateReportFromModal('${reportType}')">
+                            <i class="fas fa-sync"></i> Generate Report
+                        </button>
+
+                        <button class="btn" style="background: #4CAF50;" onclick="downloadReportFormat('${reportType}', 'csv')">
+                            <i class="fas fa-file-csv"></i>Export Data
+                        </button>
+
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function generateReportContent(reportData, reportType) {
+            let content = `
+                <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <strong>Generated:</strong> ${reportData.generated_at}<br>
+                    <strong>Report Type:</strong> ${reportData.report_name}
+                </div>
+            `;
+
+            if (reportType === 'daily_collection') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #e8f5e8; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">${reportData.total_collections}</div>
+                            <div>Total Collections</div>
+                        </div>
+                        <div style="padding: 1rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #1565c0;">${reportData.total_bags}</div>
+                            <div>Total Bags Collected</div>
+                        </div>
+                    </div>
+
+                    <h4>Today's Collections</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa;">
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Customer</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Address</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Waste Type</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Bags</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (reportData.collections_data && reportData.collections_data.length > 0) {
+                    reportData.collections_data.forEach(collection => {
+                        content += `
+                            <tr>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collection.customer}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collection.address}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collection.waste_type}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collection.bags}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collection.collected_at}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    content += `
+                        <tr>
+                            <td colspan="5" style="padding: 1rem; text-align: center; color: #666;">
+                                No collections recorded for today
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                content += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            else if (reportType === 'customer_summary') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #e8f5e8; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">${reportData.total_customers}</div>
+                            <div>Total Customers</div>
+                        </div>
+                        <div style="padding: 1rem; background: #fff3e0; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef6c00;">${reportData.active_customers}</div>
+                            <div>Active Customers</div>
+                        </div>
+                        <div style="padding: 1rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #1565c0;">${reportData.completed_customers}</div>
+                            <div>Completed Customers</div>
+                        </div>
+                    </div>
+
+                    <h4>Customer Locations</h4>
+                    <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                `;
+
+                if (reportData.customer_locations) {
+                    Object.entries(reportData.customer_locations).forEach(([location, count]) => {
+                        content += `
+                            <div style="padding: 0.75rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                                <span>${location}</span>
+                                <span style="font-weight: bold;">${count} customers</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                content += `</div>`;
+            }
+            else if (reportType === 'active_customers') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #fff3e0; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef6c00;">${reportData.total_active}</div>
+                            <div>Total Active Customers</div>
+                        </div>
+                        <div style="padding: 1rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #1565c0;">${reportData.by_status?.pending || 0}</div>
+                            <div>Pending</div>
+                        </div>
+                        <div style="padding: 1rem; background: #f3e5f5; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #7b1fa2;">${reportData.by_status?.in_progress || 0}</div>
+                            <div>In Progress</div>
+                        </div>
+                    </div>
+
+                    <h4>Active Customer List</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa;">
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Phone</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Address</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Waste Type</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Last Collection</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (reportData.customer_list && reportData.customer_list.length > 0) {
+                    reportData.customer_list.forEach(customer => {
+                        content += `
+                            <tr>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.name}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.phone}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.address}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.waste_type}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">
+                                    <span class="status-badge" data-status="${customer.status}">${customer.status}</span>
+                                </td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.last_collection}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    content += `
+                        <tr>
+                            <td colspan="6" style="padding: 1rem; text-align: center; color: #666;">
+                                No active customers found
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                content += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            else if (reportType === 'revenue_summary') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #e8f5e8; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">₹${reportData.total_revenue?.toFixed(2) || '0.00'}</div>
+                            <div>Total Revenue</div>
+                        </div>
+                        <div style="padding: 1rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #1565c0;">${reportData.total_collections || 0}</div>
+                            <div>Total Collections</div>
+                        </div>
+                        <div style="padding: 1rem; background: #fff3e0; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef6c00;">₹${reportData.average_revenue_per_collection?.toFixed(2) || '0.00'}</div>
+                            <div>Avg Revenue/Collection</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h4>Top Performing Collectors</h4>
+                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                `;
+
+                if (reportData.top_collectors && reportData.top_collectors.length > 0) {
+                    reportData.top_collectors.forEach(collector => {
+                        content += `
+                            <div style="padding: 0.75rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                                <span>${collector.name}</span>
+                                <span style="font-weight: bold; color: #2e7d32;">₹${collector.revenue?.toFixed(2) || '0.00'}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    content += `<div style="padding: 1rem; text-align: center; color: #666;">No collector data available</div>`;
+                }
+
+                content += `
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Payment Methods Distribution</h4>
+                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                `;
+
+                if (reportData.payment_methods) {
+                    Object.entries(reportData.payment_methods).forEach(([method, count]) => {
+                        const percentage = reportData.total_collections > 0 ? (count / reportData.total_collections * 100).toFixed(1) : 0;
+                        content += `
+                            <div style="padding: 0.75rem; border-bottom: 1px solid #eee;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span>${method}</span>
+                                    <span>${count} collections (${percentage}%)</span>
+                                </div>
+                                <div style="background: #f0f0f0; border-radius: 4px; height: 8px;">
+                                    <div style="background: #4CAF50; height: 100%; width: ${percentage}%; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                content += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (reportType === 'payment_analysis') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #e8f5e8; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">${reportData.total_transactions || 0}</div>
+                            <div>Total Transactions</div>
+                        </div>
+                        <div style="padding: 1rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #1565c0;">₹${reportData.total_amount?.toFixed(2) || '0.00'}</div>
+                            <div>Total Amount</div>
+                        </div>
+                        <div style="padding: 1rem; background: #fff3e0; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef6c00;">₹${reportData.average_transaction_amount?.toFixed(2) || '0.00'}</div>
+                            <div>Avg Transaction Amount</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h4>Transaction Type Distribution</h4>
+                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                `;
+
+                if (reportData.transaction_types) {
+                    Object.entries(reportData.transaction_types).forEach(([type, count]) => {
+                        content += `
+                            <div style="padding: 0.75rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                                <span>${type}</span>
+                                <span style="font-weight: bold;">${count} transactions</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                content += `
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Daily Transaction Trends</h4>
+                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                `;
+
+                if (reportData.daily_trends) {
+                    Object.entries(reportData.daily_trends).forEach(([date, data]) => {
+                        content += `
+                            <div style="padding: 0.75rem; border-bottom: 1px solid #eee;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span>${date}</span>
+                                    <span>${data.count} transactions (₹${data.amount?.toFixed(2) || '0.00'})</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                content += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (reportType === 'outstanding_payments') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #ffebee; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #c62828;">${reportData.total_outstanding_customers || 0}</div>
+                            <div>Customers with Outstanding</div>
+                        </div>
+                        <div style="padding: 1rem; background: #ffebee; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #c62828;">₹${reportData.total_outstanding_amount?.toFixed(2) || '0.00'}</div>
+                            <div>Total Outstanding Amount</div>
+                        </div>
+                        <div style="padding: 1rem; background: #fff3e0; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef6c00;">₹${reportData.average_outstanding_per_customer?.toFixed(2) || '0.00'}</div>
+                            <div>Avg per Customer</div>
+                        </div>
+                    </div>
+
+                    <h4>Overdue Customer List</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa;">
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Customer Name</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Phone</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Address</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Waste Type</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Amount</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Collection Date</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Days Overdue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (reportData.overdue_customers && reportData.overdue_customers.length > 0) {
+                    reportData.overdue_customers.forEach(customer => {
+                        const overdueClass = customer.days_overdue > 7 ? 'color: #c62828;' : customer.days_overdue > 3 ? 'color: #ef6c00;' : 'color: #2e7d32;';
+                        content += `
+                            <tr>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.customer_name}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.phone}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.address}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.waste_type}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">₹${customer.amount?.toFixed(2) || '0.00'}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${customer.collection_date}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee; font-weight: bold; ${overdueClass}">${customer.days_overdue} days</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    content += `
+                        <tr>
+                            <td colspan="7" style="padding: 1rem; text-align: center; color: #666;">
+                                No outstanding payments found
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                content += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            else if (reportType === 'collector_performance') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #e8f5e8; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">${reportData.total_collectors || 0}</div>
+                            <div>Total Collectors</div>
+                        </div>
+                        <div style="padding: 1rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #1565c0;">${reportData.performance_data?.length || 0}</div>
+                            <div>Active Collectors</div>
+                        </div>
+                    </div>
+
+                    <h4>Collector Performance Rankings</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa;">
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Rank</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Collector Name</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Collections</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Bags Collected</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Revenue Generated</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Efficiency</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (reportData.performance_data && reportData.performance_data.length > 0) {
+                    reportData.performance_data.forEach((collector, index) => {
+                        content += `
+                            <tr>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee; font-weight: bold;">${index + 1}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collector.collector_name}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collector.total_collections}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collector.total_bags}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">₹${collector.total_revenue?.toFixed(2) || '0.00'}</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${collector.efficiency} collections/day</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    content += `
+                        <tr>
+                            <td colspan="6" style="padding: 1rem; text-align: center; color: #666;">
+                                No performance data available
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                content += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            else if (reportType === 'efficiency_metrics') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #e8f5e8; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">${reportData.on_time_completion_rate || 0}%</div>
+                            <div>On-Time Completion Rate</div>
+                        </div>
+                        <div style="padding: 1rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #1565c0;">${reportData.total_scheduled_collections || 0}</div>
+                            <div>Total Scheduled Collections</div>
+                        </div>
+                        <div style="padding: 1rem; background: #fff3e0; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef6c00;">${reportData.average_collection_time || 0} hrs</div>
+                            <div>Avg Collection Time</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h4>Waste Type Efficiency</h4>
+                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                `;
+
+                if (reportData.waste_type_efficiency) {
+                    Object.entries(reportData.waste_type_efficiency).forEach(([wasteType, data]) => {
+                        const avgBags = data.count > 0 ? (data.total_bags / data.count).toFixed(1) : 0;
+                        content += `
+                            <div style="padding: 0.75rem; border-bottom: 1px solid #eee;">
+                                <div style="font-weight: bold; margin-bottom: 0.25rem;">${wasteType}</div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                                    <span>${data.count} collections</span>
+                                    <span>Avg ${avgBags} bags/collection</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                content += `
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Efficiency Summary</h4>
+                            <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Completed On Time:</strong> ${reportData.completed_on_time || 0} of ${reportData.total_scheduled_collections || 0}
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Efficiency Rating:</strong>
+                                    <span style="padding: 0.25rem 0.5rem; background: ${reportData.on_time_completion_rate >= 90 ? '#4CAF50' : reportData.on_time_completion_rate >= 75 ? '#FFC107' : '#f44336'}; color: white; border-radius: 4px; font-size: 0.9rem;">
+                                        ${reportData.on_time_completion_rate >= 90 ? 'Excellent' : reportData.on_time_completion_rate >= 75 ? 'Good' : 'Needs Improvement'}
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong>Reporting Period:</strong> ${reportData.period}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (reportType === 'service_level') {
+                content += `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="padding: 1rem; background: #e8f5e8; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">${reportData.service_completion_rate || 0}%</div>
+                            <div>Service Completion Rate</div>
+                        </div>
+                        <div style="padding: 1rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #1565c0;">${reportData.customer_retention_rate || 0}%</div>
+                            <div>Customer Retention Rate</div>
+                        </div>
+                        <div style="padding: 1rem; background: #fff3e0; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef6c00;">${reportData.average_response_time_days || 0} days</div>
+                            <div>Avg Response Time</div>
+                        </div>
+                        <div style="padding: 1rem; background: #f3e5f5; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #7b1fa2;">${reportData.customer_satisfaction_score || 0}/5</div>
+                            <div>Customer Satisfaction</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h4>Service Metrics</h4>
+                            <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Total Customers:</strong> ${reportData.total_customers || 0}
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Active Customers:</strong> ${reportData.active_customers || 0}
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>SLA Compliance:</strong> ${reportData.service_level_agreement_compliance || 0}%
+                                </div>
+                                <div>
+                                    <strong>Reporting Period:</strong> ${reportData.reporting_period}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Performance Indicators</h4>
+                            <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                        <span>Service Completion:</span>
+                                        <span>${reportData.service_completion_rate || 0}%</span>
+                                    </div>
+                                    <div style="background: #f0f0f0; border-radius: 4px; height: 8px;">
+                                        <div style="background: ${reportData.service_completion_rate >= 90 ? '#4CAF50' : reportData.service_completion_rate >= 75 ? '#FFC107' : '#f44336'}; height: 100%; width: ${reportData.service_completion_rate}%; border-radius: 4px;"></div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                        <span>Customer Retention:</span>
+                                        <span>${reportData.customer_retention_rate || 0}%</span>
+                                    </div>
+                                    <div style="background: #f0f0f0; border-radius: 4px; height: 8px;">
+                                        <div style="background: ${reportData.customer_retention_rate >= 80 ? '#4CAF50' : reportData.customer_retention_rate >= 60 ? '#FFC107' : '#f44336'}; height: 100%; width: ${reportData.customer_retention_rate}%; border-radius: 4px;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                        <span>SLA Compliance:</span>
+                                        <span>${reportData.service_level_agreement_compliance || 0}%</span>
+                                    </div>
+                                    <div style="background: #f0f0f0; border-radius: 4px; height: 8px;">
+                                        <div style="background: ${reportData.service_level_agreement_compliance >= 95 ? '#4CAF50' : reportData.service_level_agreement_compliance >= 85 ? '#FFC107' : '#f44336'}; height: 100%; width: ${reportData.service_level_agreement_compliance}%; border-radius: 4px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return content;
+        }
+
+        function addToReportHistory(reportData) {
+            // In a real implementation, this would add to the report history table
+            console.log('Adding to report history:', reportData);
+        }
+
+        function downloadReportFormat(reportType, format) {
+            showMessage(`Downloading ${format.toUpperCase()} report...`, 'info');
+
+            // Construct the download URL with report type and format
+            const downloadUrl = `/admin-dashboard/download-report/0/?type=${reportType}&format=${format}`;
+
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.target = '_blank'; // Open in new tab for PDF, download for CSV/JSON
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showMessage(`${format.toUpperCase()} report download started`, 'success');
+        }
+
+        function generateReportFromModal(reportType) {
+            showMessage(`Regenerating ${reportType.replace('_', ' ')} report...`, 'info');
+
+            // Close current modal
+            const currentModal = document.querySelector('.modal');
+            if (currentModal) {
+                currentModal.remove();
+            }
+
+            // Generate new report
+            generateReport(reportType);
+        }
+
+        function getOriginalButtonText(reportType) {
+            const buttonTextMap = {
+                'daily_collection': '<i class="fas fa-calendar-day"></i> Daily Collection Report',
+                'weekly_collection': '<i class="fas fa-calendar-week"></i> Weekly Collection Report',
+                'monthly_collection': '<i class="fas fa-calendar-alt"></i> Monthly Collection Report',
+                'customer_summary': '<i class="fas fa-user-friends"></i> Customer Summary Report',
+                'active_customers': '<i class="fas fa-user-check"></i> Active Customers Report',
+                'customer_growth': '<i class="fas fa-chart-line"></i> Customer Growth Report',
+                'revenue_summary': '<i class="fas fa-file-invoice-dollar"></i> Revenue Summary Report',
+                'payment_analysis': '<i class="fas fa-credit-card"></i> Payment Analysis Report',
+                'outstanding_payments': '<i class="fas fa-exclamation-circle"></i> Outstanding Payments Report',
+                'collector_performance': '<i class="fas fa-truck"></i> Collector Performance Report',
+                'efficiency_metrics': '<i class="fas fa-percentage"></i> Efficiency Metrics Report',
+                'service_level': '<i class="fas fa-star"></i> Service Level Report'
+            };
+            return buttonTextMap[reportType] || 'Generate Report';
+        }
+
+        function openCustomReportModal(reportCategory) {
+            showMessage(`Opening custom ${reportCategory} report configuration...`, 'info');
+            // In a real implementation, this would open a modal with custom report options
+            alert(`Custom ${reportCategory} report configuration would open here.`);
+        }
+
+        function downloadReport(reportId) {
+            showMessage('Downloading report...', 'info');
+            // In a real implementation, this would trigger file download
+            window.open(buildUrl('admin_dashboard:download_report', {id: reportId}), '_blank');
+        }
+
+        function viewReport(reportId) {
+            showMessage('Opening report viewer...', 'info');
+            // In a real implementation, this would open report in new tab or modal
+            window.open(buildUrl('admin_dashboard:view_report', {id: reportId}), '_blank');
+        }
+
+        // deleteReport function removed - using form-based deletion instead
+    </script>
+</body>
+</html>
