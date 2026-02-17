@@ -1180,6 +1180,19 @@
             {% endif %}
         </div>
 
+
+
+ <!-- Chart Section -->
+        <div class="chart-container">
+            <h4 class="section-title">
+                <i class="fas fa-chart-bar"></i> This Month's Impact
+            </h4>
+            <div style="position: relative; height: 350px;">
+                <canvas id="impactChart"></canvas>
+            </div>
+        </div>
+
+
         <!-- Statistics Section -->
         <div class="stats-section">
             <div class="row g-3">
@@ -1224,64 +1237,7 @@
             </div>
         </div>
 
-        <!-- Chart Section -->
-        <div class="chart-container">
-            <h4 class="section-title">
-                <i class="fas fa-chart-bar"></i> Performance Analytics
-            </h4>
-            <div class="row">
-                <div class="col-lg-8">
-                    <div style="height: 400px; position: relative;">
-                        <canvas id="performanceChart"></canvas>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div style="height: 400px; position: relative;">
-                        <canvas id="wasteTypeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Metrics Section -->
-        <div class="row g-3 mb-4">
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card total">
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="stat-number" id="avgDailyCollections">0</div>
-                    <div class="stat-label">Avg Daily Collections</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card today">
-                    <div class="stat-icon">
-                        <i class="fas fa-weight"></i>
-                    </div>
-                    <div class="stat-number" id="avgWeightPerCollection">0 KG</div>
-                    <div class="stat-label">Avg Weight per Collection</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card weight">
-                    <div class="stat-icon">
-                        <i class="fas fa-rupee-sign"></i>
-                    </div>
-                    <div class="stat-number" id="avgRevenuePerCollection">₹0</div>
-                    <div class="stat-label">Avg Revenue per Collection</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card revenue">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-number" id="efficiencyRate">95%</div>
-                    <div class="stat-label">Collection Efficiency</div>
-                </div>
-            </div>
-        </div>
+       
 
         <div class="quick-actions">
             <h3 class="section-title">
@@ -1336,6 +1292,7 @@
             </div>
         </div>
 
+       
         <!-- Recent Activity Section -->
         <div class="table-container">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1366,7 +1323,7 @@
                     </thead>
                     <tbody>
                         {% for activity in recent_activities %}
-                        <tr>
+                        <tr data-localbody="{{ activity.localbody.name|default:'Unknown' }}" data-weight="{{ activity.kg|default:0 }}" data-revenue="{{ activity.total_amount|default:0 }}">
                             <td><strong>{{ forloop.counter }}</strong></td>
                             <td>
                                 <div class="d-flex align-items-center">
@@ -1442,13 +1399,11 @@
             <div class="empty-state text-center py-5">
                 <i class="fas fa-clipboard-list fa-3x text-muted mb-3 empty-icon"></i>
                 <h5 class="text-muted mb-2">No Recent Activity</h5>
-                <p class="text-muted">No recent activity to display. Start a new waste assignment to see your data here
-                </p>
+                <p class="text-muted">No recent activity to display. Start a new waste assignment to see your data here.</p>
             </div>
             {% endif %}
         </div>
     </div>
-
 
     <!-- Report Generation Modal -->
     <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
@@ -1741,6 +1696,121 @@
                                 labels: {
                                     padding: 15,
                                     usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Impact Chart - This Month's Impact
+            const impactCanvas = document.getElementById('impactChart');
+            if (impactCanvas) {
+                const ctx = impactCanvas.getContext('2d');
+                
+                // Extract local body data from the page - this will be populated by Django
+                const localBodyData = {
+                    names: [],
+                    weights: [],
+                    revenues: []
+                };
+                
+                // Process recent activities from the DOM or use fallback data
+                const activityElements = document.querySelectorAll('[data-localbody]');
+                if (activityElements.length > 0) {
+                    const bodyMap = {};
+                    activityElements.forEach(el => {
+                        const name = el.dataset.localbody;
+                        const weight = parseFloat(el.dataset.weight) || 0;
+                        const revenue = parseFloat(el.dataset.revenue) || 0;
+                        
+                        if (!bodyMap[name]) {
+                            bodyMap[name] = { weight: 0, revenue: 0 };
+                        }
+                        bodyMap[name].weight += weight;
+                        bodyMap[name].revenue += revenue;
+                    });
+                    
+                    Object.keys(bodyMap).forEach(name => {
+                        localBodyData.names.push(name);
+                        localBodyData.weights.push(bodyMap[name].weight);
+                        localBodyData.revenues.push(bodyMap[name].revenue);
+                    });
+                } else {
+                    // Fallback data when no activities exist
+                    localBodyData.names = ['No Data Available'];
+                    localBodyData.weights = [0];
+                    localBodyData.revenues = [0];
+                }
+                
+                // Destroy existing chart if it exists to prevent duplicates
+                if (window.impactChartInstance) {
+                    window.impactChartInstance.destroy();
+                }
+                
+                window.impactChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: localBodyData.names,
+                        datasets: [
+                            {
+                                label: 'Weight Collected (KG)',
+                                data: localBodyData.weights,
+                                backgroundColor: 'rgba(74, 222, 128, 0.7)',
+                                borderColor: 'rgba(74, 222, 128, 1)',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            },
+                            {
+                                label: 'Earnings (₹)',
+                                data: localBodyData.revenues,
+                                backgroundColor: 'rgba(34, 211, 238, 0.7)',
+                                borderColor: 'rgba(34, 211, 238, 1)',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                cornerRadius: 8,
+                                titleFont: {
+                                    size: 14
+                                },
+                                bodyFont: {
+                                    size: 13
                                 }
                             }
                         }
