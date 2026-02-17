@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collected Waste Records - SuchiGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #e1f3f8 100%);
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .navbar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #666, #999);
+            padding: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-logo:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #ffffff, #999999);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .navbar-links a {
+            color: #cccccc;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #666, #999);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-links a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-links a:hover::before {
+            width: 80%;
+        }
+
+        .navbar-links a.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-links a.active::before {
+            width: 80%;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .menu-toggle {
+                display: flex;
+                order: 3;
+            }
+
+            .navbar-left {
+                flex: 1;
+            }
+
+            .navbar-links {
+                flex-direction: column;
+                width: 100%;
+                max-height: 0;
+                overflow: hidden;
+                gap: 0;
+                order: 4;
+                background: rgba(0, 0, 0, 0.95);
+                margin: 1rem -1rem -1rem;
+                padding: 0 1rem;
+                border-radius: 0 0 12px 12px;
+                transition: max-height 0.3s ease, padding 0.3s ease;
+            }
+
+            .navbar-links.active {
+                max-height: 300px;
+                padding: 1rem;
+                border-top: 1px solid #333;
+            }
+
+            .navbar-links li {
+                width: 100%;
+            }
+
+            .navbar-links a {
+                display: block;
+                width: 100%;
+                padding: 1rem;
+                text-align: center;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .navbar-links li:last-child a {
+                border-bottom: none;
+            }
+
+            .logo-text {
+                font-size: 1.25rem;
+            }
+
+            .navbar-logo {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        /* Modal Styling */
+        #confirmModal,
+        #crudModal,
+        #imageModal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            /* Added padding to prevent edge touching on small screens */
+        }
+
+        #confirmModalContent,
+        #crudModalContent {
+            position: relative;
+            /* Changed from absolute to relative for Flexbox */
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 90%;
+            max-width: 400px;
+            margin: auto;
+            /* Important for flex centering */
+            animation: zoomIn 0.3s ease;
+        }
+
+        #crudModalContent {
+            max-width: 600px;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Close Button Style */
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #666;
+            font-size: 24px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        /* Mobile Specific Adjustments */
+        @media (max-width: 576px) {
+
+            #confirmModalContent,
+            #crudModalContent {
+                padding: 20px;
+                width: 95%;
+            }
+        }
+
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            margin: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255, 255, 255, 0.05) 10px,
+                    rgba(255, 255, 255, 0.05) 20px);
+            animation: movePattern 20s linear infinite;
+        }
+
+        @keyframes movePattern {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .brand-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-tagline {
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-weight: 400;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            position: relative;
+            z-index: 1;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid #e9ecef;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        /* Desktop Table Styles */
+        .desktop-table {
+            display: block;
+        }
+
+        .mobile-cards {
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            background: white;
+        }
+
+        table th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 15px 10px;
+            text-align: left;
+            border-bottom: 2px solid #2196F3;
+            font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e9ecef;
+            color: #2c3e50;
+            vertical-align: middle;
+            font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+            word-wrap: break-word;
+            max-width: 150px;
+        }
+
+        table tr {
+            transition: all 0.3s ease;
+        }
+
+        table tr:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+        }
+
+        table tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        table tr:nth-child(even):hover {
+            background: linear-gradient(135deg, #f0f0f0 0%, #e1f5fe 100%);
+        }
+
+        .actions-column {
+            width: 150px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        /* Mobile Card Styles */
+        .card {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .card-row:last-child {
+            border-bottom: none;
+        }
+
+        .card-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-value {
+            color: #2c3e50;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .card-value.amount {
+            font-weight: 600;
+            color: #4CAF50;
+            font-size: 1.1rem;
+        }
+
+        .card-value.weight {
+            font-weight: 600;
+            color: #2196F3;
+        }
+
+        /* Responsive table */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 15px;
+        }
+
+        /* Image styling */
+        table img,
+        .card-image img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card-image img {
+            width: 80px;
+            height: 80px;
+        }
+
+        table img:hover,
+        .card-image img:hover {
+            transform: scale(1.1);
+            z-index: 100;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Amount styling */
+        td:nth-child(8) {
+            font-weight: 600;
+            color: #4CAF50;
+            font-size: clamp(0.85rem, 1.5vw, 1rem);
+        }
+
+        /* KG styling */
+        td:nth-child(7) {
+            font-weight: 600;
+            color: #2196F3;
+        }
+
+        /* No records message */
+        p[style*="text-align:center"] {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-weight: 500;
+            color: #e74c3c !important;
+            text-align: center !important;
+        }
+
+        /* Back button styling */
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 180px;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Stats cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 15px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 700;
+            color: #2196F3;
+            margin-bottom: 5px;
+            word-wrap: break-word;
+        }
+
+        .stat-label {
+            font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 1024px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                border-radius: 15px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            table th,
+            table td {
+                padding: 8px 5px;
+                font-size: 0.8rem;
+            }
+
+            table img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+                min-height: auto;
+            }
+
+            .container {
+                border-radius: 10px;
+                margin-top: 10px;
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .desktop-table {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px 10px;
+            }
+
+            .btn-secondary {
+                min-width: auto;
+                margin-top: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 12px 8px;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .card-header {
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+
+            .card-label {
+                font-size: 0.8rem;
+            }
+
+            .card-value {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e3f2fd;
+            border-top: 5px solid #2196F3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Highlight animations */
+        .highlight-row {
+            animation: highlightPulse 2s ease-in-out;
+        }
+
+        @keyframes highlightPulse {
+
+            0%,
+            100% {
+                background: transparent;
+            }
+
+            50% {
+                background: linear-gradient(135deg, #e8f5e8 0%, #e3f2fd 100%);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media print {
+    .navbar,
+    .menu-toggle,
+    button,
+    .actions-column {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    .container {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    table {
+        font-size: 12px;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <img src="{% static 'images/logo.png.jpg' %}" alt="SuchiGo Logo" class="navbar-logo">
+            <div class="logo-text">SuchiGo</div>
+        </div>
+        <div class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="navbar-links" id="navbarLinks">
+            {% if request.user.role == 1 %}
+            <li><a href="{% url 'waste_collector:waste_collector_dashboard' %}" data-page="home">Home</a></li>
+            {% else %}
+            <li><a href="{% url 'super_admin_dashboard:super_admin_dashboard' %}" data-page="home">Home</a></li>
+            {% endif %}
+
+            <li><a href="{% url 'super_admin_dashboard:view_collected_data' %}" class="active"
+                    data-page="Collected Data">Collected
+                    Data</a></li>
+            <li><a href="{% url 'authentication:logout' %}" data-page="logout">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2>♻️ Collected Waste Records</h2>
+        </div>
+
+        <div class="content">
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalRecords">0</div>
+                    <div class="stat-label">Total Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalKG">0 KG</div>
+                    <div class="stat-label">Total Weight</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalAmount">₹0</div>
+                    <div class="stat-label">Total Amount</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeCollectors">0</div>
+                    <div class="stat-label">Active Collectors</div>
+                </div>
+
+<div style="text-align: right; margin-bottom: 15px;">
+    <button onclick="exportPagePDF()"
+        style="
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        ">
+        ⬇️ Export PDF
+    </button>
+</div>
+
+
+</div>
+
+            {% if all_data %}
+            <!-- Desktop Table View -->
+            <div class="table-container desktop-table">
+                <div class="table-wrapper">
+                    <table border="1">
+                        <tr>
+                            <th>👤 Customer</th>
+                            <th>🏛️ Local Body</th>
+                            <th>🏘️ Ward</th>
+                            <th>📍 Location</th>
+                            <th>🛍️ Bags</th>
+                            <th>⚖️ Weight (KG)</th>
+                            <th>🗓️ Scheduled Date</th>
+                            <th>💰 Total Amount</th>
+                            <th>💳 Payment Method</th>
+                            <th>👤 Collector</th>
+                            <th>🏢 Building No</th>
+                            <th>🛣️ Street Name</th>
+                            <th>📸 Photo</th>
+                            <th>📅 Booking Date</th>
+                            <th>🕕 Collection Time</th>
+                            <th>🕒 Collected At</th>
+                            <th>Actions</th>
+                        </tr>
+                        {% for item in all_data %}
+                        <tr id="row-{{ item.id }}">
+                            <td>{{ item.customer.username }}</td>
+                            <td>{% if item.localbody %}{{ item.localbody }}{% else %}<span
+                                    style="color: #6c757d; font-style: italic;">Not assigned</span>{% endif %}</td>
+                            <td>{{ item.ward }}</td>
+                            <td>{{ item.location }}</td>
+                            <td style="font-weight: 600; color: #4CAF50;">{{ item.number_of_bags }}</td>
+                            <td style="font-weight: 600; color: #2196F3;">{{ item.kg }}</td>
+                            <td>
+                                {% if item.scheduled_date %}
+                                {{ item.scheduled_date|date:"Y-m-d" }}
+                                {% else %}
+                                <span style="color: #6c757d; font-style: italic;">Not scheduled</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-weight: 700; color: #e91e63;">₹{{ item.total_amount }}</td>
+                            <td>{{ item.get_payment_method_display }}</td>
+
+                            <td style="font-weight: 600; color: #673AB7;">
+                                <i class="fas fa-user-shield"></i> {{ item.collector.username }}
+                            </td>
+                            <td>{{ item.building_no }}</td>
+                            <td>{{ item.street_name }}</td>
+                            <td>
+                                {% if item.photo %}
+                                <img src="{{ item.photo.url }}" alt="Photo" onclick="openModal(this.src)">
+                                {% else %}
+                                <span style="color: #6c757d; font-style: italic;">No Image</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.booking_date|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                {% if item.collection_time %}
+                                {{ item.collection_time|time:"H:i" }}
+                                {% else %}
+                                <span style="color: #6c757d; font-style: italic;">Not recorded</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                            <td class="actions-column">
+                                <!--<button class="action-btn edit-btn" onclick="editRecord({{ item.id }})"><i class="fas fa-edit"></i> Edit</button>-->
+                                <button class="action-btn delete-btn" onclick="deleteRecord({{ item.id }})"><i
+                                        class="fas fa-trash"></i> Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="mobile-cards">
+                {% for item in all_data %}
+                <div class="card" id="card-{{ item.id }}">
+                    <div class="card-header">
+                        <span>👤 {{ item.collector.username }}</span>
+                        <span>{{ item.created_at|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-row">
+                            <div class="card-label">👤 Customer</div>
+                            <div class="card-value">{{ item.customer.username }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">🏛️ Local Body</div>
+                            <div class="card-value">{% if item.localbody %}{{ item.localbody }}{% else %}<span
+                                    style="color: #6c757d; font-style: italic;">Not assigned</span>{% endif %}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">🏘️ Ward</div>
+                            <div class="card-value">{{ item.ward }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">📍 Location</div>
+                            <div class="card-value">{{ item.location }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">🛍️ Bags</div>
+                            <div class="card-value">{{ item.number_of_bags }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">🏢 Building</div>
+                            <div class="card-value">{{ item.building_no }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">🛣️ Street</div>
+                            <div class="card-value">{{ item.street_name }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">⚖️ Weight</div>
+                            <div class="card-value weight">{{ item.kg }} KG</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">💰 Amount</div>
+                            <div class="card-value amount">₹{{ item.total_amount }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">💳 Payment Method</div>
+                            <div class="card-value">{{ item.get_payment_method_display }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">📸 Photo</div>
+                            <div class="card-value card-image">
+                                {% if item.photo %}
+                                <img src="{{ item.photo.url }}" alt="Photo" onclick="openModal(this.src)">
+                                {% else %}
+                                <span style="color: #6c757d; font-style: italic;">No Image</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">📅 Booking Date</div>
+                            <div class="card-value">{{ item.booking_date|date:"Y-m-d H:i" }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">🗓️ Scheduled Date</div>
+                            <div class="card-value">
+                                {% if item.scheduled_date %}
+                                {{ item.scheduled_date|date:"Y-m-d" }}
+                                {% else %}
+                                <span style="color: #6c757d; font-style: italic;">Not scheduled</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">🕕 Collection Time</div>
+                            <div class="card-value">
+                                {% if item.collection_time %}
+                                {{ item.collection_time|time:"H:i" }}
+                                {% else %}
+                                <span style="color: #6c757d; font-style: italic;">Not recorded</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">🕒 Collected At</div>
+                            <div class="card-value">{{ item.created_at|date:"Y-m-d H:i" }}</div>
+                        </div>
+                        <div class="card-row">
+                            <div class="card-label">Actions</div>
+                            <div class="card-value">
+                                <!--<button class="action-btn edit-btn" onclick="editRecord({{ item.id }})"><i class="fas fa-edit"></i> Edit</button>-->
+                                <button class="action-btn delete-btn" onclick="deleteRecord({{ item.id }})"><i
+                                        class="fas fa-trash"></i> Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="text-align:center; color: #e74c3c;">📋 No records found. Start collecting waste to see data here!
+            </p>
+            {% endif %}
+
+            <!-- CRUD Modal -->
+            <div id="crudModal" onclick="closeCrudModal(event)">
+                <div id="crudModalContent">
+                    <div class="modal-close" onclick="closeCrudModal()">×</div>
+                    <h3 id="modalTitle">Edit Waste Collection Record</h3>
+                    <form id="crudForm">
+                        {% csrf_token %}
+                        <div style="margin-bottom: 15px;">
+                            <label>Customer:</label>
+                            <input type="text" name="customer" id="customer" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                                placeholder="Customer username">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Local Body:</label>
+                            <input type="text" name="localbody" id="localbody"
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                                placeholder="Local body name">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Ward:</label>
+                            <input type="text" name="ward" id="ward" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Location:</label>
+                            <input type="text" name="location" id="location" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Number of Bags:</label>
+                            <input type="number" name="number_of_bags" id="number_of_bags" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Building No:</label>
+                            <input type="text" name="building_no" id="building_no" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Street Name:</label>
+                            <input type="text" name="street_name" id="street_name" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Weight (KG):</label>
+                            <input type="number" step="0.01" name="kg" id="kg" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Scheduled Date:</label>
+                            <input type="date" name="scheduled_date" id="scheduled_date"
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label>Collection Time:</label>
+                            <input type="time" name="collection_time" id="collection_time"
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-top: 20px; display: flex; gap: 10px;">
+                            <button type="submit"
+                                style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Save</button>
+                            <button type="button" onclick="closeCrudModal()"
+                                style="background: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Using alert-based confirmation instead of modal -->
+
+        <!--            <a href="{% url 'super_admin_dashboard:super_admin_dashboard' %}" class="btn-secondary">-->
+        <!--                ◀️ Back to Dashboard-->
+        <!--            </a-->
+    </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal"
+        style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);"
+        onclick="closeModal()">
+        <div
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; max-height: 90%;">
+            <img id="modalImage"
+                style="max-width: 100%; max-height: 100%; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <div style="position: absolute; top: 10px; right: 10px; color: white; font-size: 30px; cursor: pointer; background: rgba(0,0,0,0.5); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"
+                onclick="closeModal()">×</div>
+        </div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navbarLinks = document.getElementById('navbarLinks');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navbarLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when window is resized to desktop view
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                navbarLinks.classList.remove('active');
+                menuToggle.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Calculate and display stats
+            calculateStats();
+
+            // Add loading animation for back button
+            const backButton = document.querySelector('.btn-secondary');
+            backButton.addEventListener('click', function (e) {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+            });
+
+            // Add hover effects to table rows
+            const tableRows = document.querySelectorAll('table tr:not(:first-child)');
+            tableRows.forEach((row, index) => {
+                row.addEventListener('mouseenter', function () {
+                    this.style.transform = 'scale(1.01)';
+                });
+
+                row.addEventListener('mouseleave', function () {
+                    this.style.transform = 'scale(1)';
+                });
+
+                // Add staggered fade-in animation
+                row.style.opacity = '0';
+                row.style.animation = `fadeInUp 0.6s ease forwards ${index * 0.1}s`;
+            });
+
+            // Add animation to mobile cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.animation = `fadeInUp 0.6s ease forwards ${index * 0.1}s`;
+            });
+        });
+
+        function calculateStats() {
+            const rows = document.querySelectorAll('table tr:not(:first-child)');
+            let totalKG = 0;
+            let totalAmount = 0;
+            const collectors = new Set();
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 0) {
+                    // Based on the table structure in the template
+                    // Customer is at index 0, Collector is at index 8, KG at index 5, Amount at index 7
+                    const collector = cells[8].textContent.replace('👤', '').trim();
+                    const kg = parseFloat(cells[5].textContent) || 0;
+                    const amount = parseFloat(cells[7].textContent.replace('₹', '')) || 0;
+
+                    collectors.add(collector);
+                    totalKG += kg;
+                    totalAmount += amount;
+                }
+            });
+
+            // Update stats with animation
+            animateCounter('totalRecords', rows.length);
+            animateCounter('totalKG', totalKG, 'KG', true);
+            animateCounter('totalAmount', totalAmount, '₹', true);
+            animateCounter('activeCollectors', collectors.size);
+        }
+
+        function animateCounter(elementId, targetValue, suffix = '', isDecimal = false) {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const currentValue = startValue + (targetValue - startValue) * easeOutCubic;
+
+                const displayValue = isDecimal ? currentValue.toFixed(2) : Math.floor(currentValue);
+
+                element.textContent =
+                    suffix === '₹' ? `₹${displayValue}` :
+                        suffix === 'KG' ? `${displayValue} KG` :
+                            displayValue;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        function openModal(imageSrc) {
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('imageModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // CRUD Functions
+        function editRecord(id) {
+            // Get the row data
+            const row = document.getElementById(`row-${id}`);
+            if (!row) return;
+
+            // Extract data from the row
+            const cells = row.querySelectorAll('td');
+            const customer = cells[0].textContent;
+            const localbody = cells[1].textContent.replace('Not assigned', '').trim();
+            const ward = cells[2].textContent;
+            const location = cells[3].textContent;
+            const numberOfBags = cells[4].textContent;
+            const kg = cells[5].textContent;
+            const scheduledDate = cells[6].textContent.replace('Not scheduled', '').trim();
+            const totalAmount = cells[7].textContent.replace('₹', '').trim();
+            const collector = cells[8].textContent.replace('👤 ', '').replace('👤', '').trim();
+            const buildingNo = cells[9].textContent;
+            const streetName = cells[10].textContent;
+            const collectionTime = cells[13].textContent.replace('Not recorded', '').trim(); // This is now the second-to-last cell
+
+            // Populate the modal form
+            document.getElementById('customer').value = customer;
+            document.getElementById('localbody').value = localbody;
+            document.getElementById('ward').value = ward;
+            document.getElementById('location').value = location;
+            document.getElementById('number_of_bags').value = numberOfBags;
+            document.getElementById('building_no').value = buildingNo;
+            document.getElementById('street_name').value = streetName;
+            document.getElementById('kg').value = kg;
+            document.getElementById('scheduled_date').value = scheduledDate.includes('-') ? scheduledDate.split(' ')[0] : '';
+            document.getElementById('collection_time').value = collectionTime.includes(':') ? collectionTime : '';
+
+            // Store the ID for update
+            document.getElementById('crudForm').dataset.recordId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Waste Collection Record';
+
+            // Show the modal
+            // Show the modal
+            document.getElementById('crudModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function deleteRecord(id) {
+            // Store the ID for deletion
+            window.currentDeleteId = id;
+
+            // Show confirmation alert
+            if (confirm('⚠️ Confirm Deletion\n\nAre you sure you want to delete this waste collection record?\n\nThis action cannot be undone.')) {
+                // User confirmed deletion
+                performDelete(id);
+            }
+            // If user cancels, nothing happens
+        }
+
+        function performDelete(id) {
+            // Show loading indicator
+            const loadingAlert = alert('🗑️ Deleting record... Please wait');
+
+            // Make AJAX request to delete the record
+            fetch(`/admin/collected-data/${id}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the row from the table
+                        const row = document.getElementById(`row-${id}`);
+                        if (row) row.remove();
+
+                        const card = document.getElementById(`card-${id}`);
+                        if (card) card.remove();
+
+                        // Update stats
+                        calculateStats();
+
+                        // Show success message
+                        alert('✅ Record deleted successfully!');
+                    } else {
+                        alert('❌ Error deleting record: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ An error occurred while deleting the record');
+                });
+        }
+
+        function closeCrudModal(event) {
+            if (event && event.target.id !== 'crudModal') return;
+            document.getElementById('crudModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Using alert-based confirmation instead of modal - closeConfirmModal not needed
+
+        // Override modal open functions to ensure correct display type
+        const originalOpenEditModal = editRecord;
+        editRecord = function (recordId) {
+            originalOpenEditModal(recordId);
+        };
+
+        // Delete function is now handled directly without modal
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('crudForm');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(form);
+                    const recordId = form.dataset.recordId;
+
+                    // Make AJAX request to update the record
+                    fetch(`/admin/collected-data/${recordId}/update/`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Record updated successfully!');
+                                location.reload(); // Reload the page to show updated data
+                            } else {
+                                alert('Error updating record: ' + data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while updating the record');
+                        });
+                });
+            }
+
+
+
+
+
+
+            // Handle confirm deletion
+            document.getElementById('confirmYesBtn')?.addEventListener('click', function () {
+                if (window.currentDeleteId) {
+                    fetch(`/admin/collected-data/${window.currentDeleteId}/delete/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Remove the row from the table
+                                const row = document.getElementById(`row-${window.currentDeleteId}`);
+                                if (row) row.remove();
+
+                                const card = document.getElementById(`card-${window.currentDeleteId}`);
+                                if (card) card.remove();
+
+                                // Update stats
+                                calculateStats();
+
+                                alert('Record deleted successfully!');
+                            } else {
+                                alert('Error deleting record: ' + data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while deleting the record');
+                        });
+
+                    // Close modal
+                    closeConfirmModal();
+                }
+            });
+        });
+
+         function exportPagePDF() {
+        window.print();
+    }
+    </script>
+</body>
+
+</html>
